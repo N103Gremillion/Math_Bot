@@ -1,2 +1,3 @@
 # Math_Bot
--discord bot to analyze math progress
+
+Discord bot to analyze math progress
