@@ -2,17 +2,22 @@
   "name": "math_bot",
   "version": "1.0.0",
   "description": "Discord bot to analyze math progress",
-  "main": "main.js",
+  "main": "bot.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "tsx watch src/bot.ts",
+    "start": "npm run dev",
+    "build": "tsup src/bot.ts --minify"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "discord.js": "^14.19.1",
     "dotenv": "^16.5.0"
   },
   "devDependencies": {
-    "@types/node": "^22.14.1"
-  }
+    "@types/node": "^22.14.1",
+    "tsx": "^4.19.3"
+  },
+  "type": "module"
 }
