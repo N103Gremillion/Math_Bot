@@ -1,8 +1,7 @@
 // setup
 import { Client, GatewayIntentBits } from "discord.js";
 import { config } from "../config";
-import { COMMAND_TYPE } from "../commands/command_types";
-import { check_message } from "../commands/validate";
+import { check_message } from "./validate";
 
 export function init_client() : Client {
   // setup intents for bot and create instance
