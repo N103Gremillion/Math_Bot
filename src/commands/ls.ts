@@ -10,7 +10,7 @@ export async function execute_ls(cmd : ChatInputCommandInteraction) : Promise<vo
     if(!commands_string) {
         let cur_cmd = 1;
         commands_g.forEach(cmd => {
-            commands_string += `${cur_cmd++}) - ${cmd.description}`;
+            commands_string += `${cur_cmd++}) ${cmd.command} - ${cmd.description}`;
             if(cur_cmd != commands_g.length - 1) {
                 commands_string += `\n`;
             }
