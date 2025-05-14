@@ -16,13 +16,13 @@ export async function check_command( cmd : ChatInputCommandInteraction) : Promis
   const command_type : COMMAND_TYPE = get_command_type(cmd_contents);
 
   if (command_type == COMMAND_TYPE.PING) {
-    await cmd.deferReply();
+    // await cmd.deferReply();
+    
     await execute_ping(cmd);
   } else if (command_type == COMMAND_TYPE.LS) {
-    await cmd.deferReply();
+    // await cmd.deferReply();
     await execute_ls(cmd);
   }
-
 }
 
 function get_command_type(msg_contents : string) {
