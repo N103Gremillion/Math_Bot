@@ -16,8 +16,6 @@ export type Command = {
    * or if user types command with help
    */
   description: string;
-  /**
-   * function to run when command is received
-   */
+  // function to run when command is received
   action: (cmd : ChatInputCommandInteraction) => Promise<void>; 
 }

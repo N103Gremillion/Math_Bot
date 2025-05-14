@@ -16,9 +16,9 @@ export function init_client() : Client {
   });
 
   client.on("ready", async () => {
-    console.log(`logged in as ${client.user?.username}!`)
-    const guild : Guild = await client.guilds.fetch(config.SERVER_ID);
+    console.log(`logged in as ${client.user?.username}!`);
 
+    const guild = await client.guilds.fetch(config.SERVER_ID);
     const commands: SlashCommandBuilder[] = [];
 
     commands_g.forEach(cmd => {

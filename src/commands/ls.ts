@@ -4,8 +4,8 @@ import { wrap_str_in_code_block } from "../util";
 import { Command, COMMAND_TYPE } from "./command_types";
 
 const commands_string : string = `
-1.) /ping - pings Math Bot and shows latency
-2.) /ls - list info about Math Bot commands
+1.) ,ping - pings Math Bot and shows latency
+2.) ,ls - list info about Math Bot commands
 `;
 
 export async function execute_ls(cmd : ChatInputCommandInteraction) : Promise<void> {
@@ -16,6 +16,6 @@ export async function execute_ls(cmd : ChatInputCommandInteraction) : Promise<vo
 export const ls_command: Command = {
     command_type: COMMAND_TYPE.LS,
     command: "ls",
-    description: "List Math Bot commands",
+    description: "List commands and their descriptions",
     action: execute_ls
 }

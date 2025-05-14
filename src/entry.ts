@@ -1,4 +1,4 @@
-import {init_client} from "./events/setup_bot";
+import { init_client } from "./events/setup_bot";
 import { Client } from "discord.js";
 import { Command } from "./commands/command_types";
 import { ls_command } from "./commands/ls";
