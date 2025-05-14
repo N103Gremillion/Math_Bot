@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Channel } from "discord.js";
 import { send_message } from "../events/message";
 
 const commands_string : string = `1.) ,ping - pings Math Bot and shows latency
@@ -12,9 +12,9 @@ function is_ls(command : string) : boolean {
     return false;
 }
 
-function execute_ls(msg : Message) : void {
+function execute_ls(channel : Channel) : void {
     const block_commands_string : string = `\`\`\`\n${commands_string}\n\`\`\``;
-    send_message(block_commands_string, msg);
+    send_message(block_commands_string, channel);
 }
 
 export {is_ls, execute_ls}

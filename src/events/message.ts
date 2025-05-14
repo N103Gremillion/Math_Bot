@@ -2,13 +2,10 @@ import {
     TextChannel,
     DMChannel,
     NewsChannel,
-    Message,
     Channel
 } from "discord.js";
-import { bot } from "../bot";
 
-async function send_message(out_string : string, msg : Message) : Promise<void> {
-    let channel : Channel | null = await bot.channels.fetch(msg.channelId);
+async function send_message(out_string : string, channel : Channel) : Promise<void> {
     if (!channel) {
         console.log("Null channel");
         return;

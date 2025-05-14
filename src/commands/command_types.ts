@@ -3,6 +3,5 @@ enum COMMAND_TYPE {
   PING,
   LS
 }
-
 export { COMMAND_TYPE};
 
