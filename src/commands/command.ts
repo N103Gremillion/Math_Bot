@@ -21,7 +21,7 @@ export async function execute_command(cmd : ChatInputCommandInteraction) : Promi
   }
 
   if(command_type == COMMAND_TYPE.INVALID) {
-      console.log("invalid bot command! use `,ls` to view commands.");
+      console.log("invalid bot command! use `/ls` to view commands.");
       return;
   }
 }
