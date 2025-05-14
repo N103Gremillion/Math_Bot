@@ -4,9 +4,11 @@
   "description": "Discord bot to analyze math progress",
   "main": "bot.js",
   "scripts": {
-    "dev": "tsx watch src/bot.ts",
+    "dev": "tsx watch src/entry.ts",
     "start": "npm run dev",
-    "build": "tsup src/bot.ts --minify"
+    "build": "tsup src/entry.ts --minify",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix"
   },
   "keywords": [],
   "author": "",
@@ -16,8 +18,14 @@
     "dotenv": "^16.5.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.26.0",
     "@types/node": "^22.14.1",
-    "tsx": "^4.19.3"
+    "@typescript-eslint/eslint-plugin": "^8.32.1",
+    "@typescript-eslint/parser": "^8.32.1",
+    "eslint": "^9.26.0",
+    "globals": "^16.1.0",
+    "tsx": "^4.19.3",
+    "typescript-eslint": "^8.32.1"
   },
   "type": "module"
 }

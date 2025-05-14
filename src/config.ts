@@ -4,8 +4,16 @@ dotenv.config();
 
 const {DISCORD_TOKEN, CLIENT_ID, SERVER_ID} = process.env;
 
-if (!DISCORD_TOKEN || !CLIENT_ID || !SERVER_ID) {
-  throw new Error("Eviornment variable not present");
+if (!DISCORD_TOKEN) {
+  throw new Error("DISCORD_TOKEN not defined");
+}
+
+if (!CLIENT_ID) {
+  throw new Error("CLIENT_ID not defined");
+}
+
+if (!SERVER_ID) {
+  throw new Error("SERVER_ID not defined");
 }
 
 export const config = {
