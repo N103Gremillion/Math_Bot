@@ -8,19 +8,19 @@ export async function check_command( cmd : ChatInputCommandInteraction) : Promis
   if (!cmd.channel) {
     console.log("invalid channel");
   }
-  const channel : Channel = cmd.channel as Channel;
   const cmd_contents : string = cmd.commandName;
   const cmd_sender : string = cmd.user.username;
-
 
   console.log(`${cmd_sender}, sent : ${cmd_contents}`);
 
   const command_type : COMMAND_TYPE = get_command_type(cmd_contents);
 
   if (command_type == COMMAND_TYPE.PING) {
-    execute_ping(channel, cmd.createdTimestamp);
+    await cmd.deferReply();
+    await execute_ping(cmd);
   } else if (command_type == COMMAND_TYPE.LS) {
-    execute_ls(channel);
+    await cmd.deferReply();
+    await execute_ls(cmd);
   }
 
 }

@@ -1,4 +1,4 @@
-import { Channel } from "discord.js";
+import { ChatInputCommandInteraction } from "discord.js";
 import { send_message } from "../events/message";
 
 const commands_string : string = `1.) ,ping - pings Math Bot and shows latency
@@ -12,9 +12,9 @@ function is_ls(command : string) : boolean {
     return false;
 }
 
-function execute_ls(channel : Channel) : void {
+async function execute_ls(cmd : ChatInputCommandInteraction) : Promise<void> {
     const block_commands_string : string = `\`\`\`\n${commands_string}\n\`\`\``;
-    send_message(block_commands_string, channel);
+    await send_message(cmd, block_commands_string);
 }
 
 export {is_ls, execute_ls}

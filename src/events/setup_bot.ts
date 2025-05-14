@@ -38,12 +38,11 @@ export function init_client() : Client {
 
 function setup_command_listener(client : Client) : void {
   // Listen for messages and print info
-  client.on('interactionCreate', (interaction : any) => {
+  client.on('interactionCreate', async (interaction : any) : Promise<void> => {
     // ignore bot messages
     if (!interaction.isChatInputCommand()) return;
     console.log("yo");
     const cmd = interaction as ChatInputCommandInteraction;
-
-    check_command(cmd);
+    await check_command(cmd);
   });
 }
