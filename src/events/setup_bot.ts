@@ -41,7 +41,6 @@ function setup_command_listener(client : Client) : void {
   client.on('interactionCreate', async (interaction : any) : Promise<void> => {
     // ignore bot messages
     if (!interaction.isChatInputCommand()) return;
-    console.log("yo");
     const cmd = interaction as ChatInputCommandInteraction;
     await check_command(cmd);
   });
