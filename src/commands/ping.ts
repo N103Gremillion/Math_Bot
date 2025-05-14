@@ -14,6 +14,6 @@ export async function execute_ping (cmd : ChatInputCommandInteraction) : Promise
 export const ping_command: Command = {
     command_type: COMMAND_TYPE.PING,
     command: "ping",
-    description: "FIXME",
+    description: "Pings bot",
     action: execute_ping
 }
