@@ -8,14 +8,16 @@
     "start": "npm run dev",
     "build": "tsup src/entry.ts --minify",
     "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix"
+    "lint:fix": "eslint . --ext .ts --fix",
+    "db:seed": "tsx src_dev/entry.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "discord.js": "^14.19.1",
-    "dotenv": "^16.5.0"
+    "dotenv": "^16.5.0",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.26.0",
