@@ -3,7 +3,8 @@ import { ChatInputCommandInteraction } from "discord.js";
 export enum COMMAND_TYPE {
   INVALID,
   PING,
-  LS
+  LS,
+  REIGSTER_USER
 }
 
 export type Command = {

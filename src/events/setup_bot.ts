@@ -1,5 +1,5 @@
 import { Client, GatewayIntentBits, Interaction, SlashCommandBuilder } from "discord.js";
-import { config } from "../config";
+import { config } from "../../src_shared/config";
 import { execute_command } from "../commands/command";
 import { commands_g } from "../entry";
 
