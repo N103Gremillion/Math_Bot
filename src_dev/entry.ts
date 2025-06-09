@@ -2,6 +2,7 @@ import path from "path";
 import { config } from "../src_shared/config";
 import fs from 'fs/promises';
 import sqlite3 from 'sqlite3';
+import { database_g } from "../src/entry";
 
 export async function init_database() : Promise<sqlite3.Database> {
     console.log(`using db folder path: ${config.ROOT_REPO}`);
@@ -13,7 +14,7 @@ export async function init_database() : Promise<sqlite3.Database> {
         })
 
     const full_path: string = path.join(config.ROOT_REPO, config.DB_NAME);
-    console.log(`using db name: ${config.ROOT_REPO}`);
+    console.log(`Using this file for database: ${full_path}`);
 
     // Wait for file access check
     await fs.access(full_path, fs.constants.R_OK | fs.constants.W_OK)
@@ -38,6 +39,18 @@ export async function init_database() : Promise<sqlite3.Database> {
             }
         });
     });
+}
+
+export async function create_tables() : Promise<void> {
+
+    // Create tables if the do not exist yet
+    database_g.run(
+        `
+        CREATE TABLE IF NOT EXISTS users (
+            
+        )
+        `
+    )
 }
 
 // // Create table if not exists

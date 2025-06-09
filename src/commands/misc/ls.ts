@@ -1,8 +1,8 @@
 import { ChatInputCommandInteraction } from "discord.js";
-import { send_message } from "../events/message";
-import { wrap_str_in_code_block } from "../util";
-import { Command, COMMAND_TYPE } from "./command_types";
-import { commands_g } from "../entry";
+import { send_message } from "../../events/message";
+import { wrap_str_in_code_block } from "../../util";
+import { Command, COMMAND_TYPE } from "../command_types";
+import { commands_g } from "../../entry";
 
 let commands_string : string = ``;
 
