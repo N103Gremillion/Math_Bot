@@ -2,7 +2,7 @@ import path from "path";
 import { config } from "../src_shared/config";
 import fs from 'fs/promises';
 import sqlite3 from 'sqlite3';
-import { database_g } from "../src/entry";
+import { run_query } from "../src/utils/util";
 
 export async function init_database() : Promise<sqlite3.Database> {
     console.log(`using db folder path: ${config.ROOT_REPO}`);
@@ -44,13 +44,21 @@ export async function init_database() : Promise<sqlite3.Database> {
 export async function create_tables() : Promise<void> {
 
     // Create tables if the do not exist yet
-    database_g.run(
-        `
-        CREATE TABLE IF NOT EXISTS users (
-            
-        )
-        `
-    )
+    try {
+        await run_query(
+            `
+            CREATE TABLE IF NOT EXISTS users (
+                user_name TEXT PRIMARY KEY,
+                time_created DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+            `, 
+            []
+        );
+        console.log("created users");
+    }
+    catch (err) {
+        console.log(err);
+    }
 }
 
 // // Create table if not exists
