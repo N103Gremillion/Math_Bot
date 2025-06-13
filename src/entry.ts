@@ -9,7 +9,7 @@ import sqlite3 from 'sqlite3';
 import { ls_command } from "./commands/misc/ls";
 import { ping_command } from "./commands/misc/ping";
 import { register_user_command } from "./commands/users/register_user";
-import { view_users_table, clear_users_table } from "./tables/users";
+import { clear_table, TABLE_TYPE, view_table } from "./tables/table_type";
 
 
 

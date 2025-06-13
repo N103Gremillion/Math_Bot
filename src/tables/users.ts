@@ -1,4 +1,4 @@
-import { run_query, get_rows } from "../utils/util";
+import { run_query } from "./table_type";
 
 export async function insert_users_table(user_name : string) : Promise<boolean> {
   try {
@@ -19,30 +19,5 @@ export async function delete_users_table() : Promise<void> {
 
 }
 
-export async function clear_users_table() : Promise<void> {
-  try {
-    await run_query(
-      `
-      DELETE FROM users;
-      `,[]
-    );
-  } catch (err) {
-    console.log("Error clearing users table ", err);
-  }
-}
-
-export async function view_users_table() : Promise<void> {
-  try {
-    const rows = await get_rows(
-      `
-      SELECT * FROM users;
-      `
-    );
-    console.table(rows);
-    
-  } catch (err) {
-    console.log("Error viewing users table:", err);
-  }
-}
 
 
