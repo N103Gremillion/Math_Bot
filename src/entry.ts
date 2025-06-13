@@ -12,7 +12,6 @@ import { register_user_command } from "./commands/users/register_user";
 import { clear_table, TABLE_TYPE, view_table } from "./tables/table_type";
 
 
-
 // setup list of all commands
 export const commands_g: Command[] = [
     ping_command,
