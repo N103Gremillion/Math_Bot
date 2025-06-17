@@ -4,7 +4,7 @@ export async function insert_users_table(user_name : string) : Promise<boolean> 
   try {
     await run_query(
       `
-      INSERT INTO users(user_name) VALUES(?);
+      INSERT OR IGNORE INTO users(user_name) VALUES(?);
       `
       ,[user_name]
     );

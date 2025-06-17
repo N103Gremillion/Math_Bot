@@ -22,11 +22,11 @@ export async function execute_register_book (cmd : ChatInputCommandInteraction) 
   const book_registered : boolean = await insert_books_table(title, author, pages, chapters, description);
   let resulting_response : string = "";
 
-  // if (user_registered) {
-  //   resulting_response = `Successfully registered user \n`;
-  // } else {
-  //   resulting_response = `Issue registering user \n`;
-  // }
+  if (book_registered) {
+    resulting_response = `Successfully registered book \n`;
+  } else {
+    resulting_response = `Issue registering book \n`;
+  }
 
   await cmd.editReply(wrap_str_in_code_block(resulting_response));
 } 

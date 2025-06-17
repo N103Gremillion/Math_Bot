@@ -53,7 +53,7 @@ export async function create_tables() : Promise<void> {
                 user_name TEXT,
                 time_created DATETIME DEFAULT CURRENT_TIMESTAMP,
                 UNIQUE (user_name)
-            )
+            );
             `, 
             []
         );
@@ -71,11 +71,11 @@ export async function create_tables() : Promise<void> {
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT NOT NULL,
                 author TEXT NOT NULL,
-                page_count INTEGER NOT NULL,
-                chapters INTEGER NOT NULL,
-                description TEXT NOT NULL,
-                UNIQUE (title, author)
-            )
+                page_count INTEGER,
+                chapters INTEGER,
+                description TEXT,
+                UNIQUE(title, author)
+            );
             `,
             []
         );
