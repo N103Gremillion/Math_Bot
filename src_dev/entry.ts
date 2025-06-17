@@ -71,9 +71,9 @@ export async function create_tables() : Promise<void> {
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT NOT NULL,
                 author TEXT NOT NULL,
-                page_count INTEGER,
-                chapters INTEGER,
-                description TEXT,
+                page_count INTEGER NOT NULL,
+                chapters INTEGER NOT NULL,
+                description TEXT NOT NULL,
                 UNIQUE (title, author)
             )
             `,
