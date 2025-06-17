@@ -25,5 +25,6 @@ export const ls_command: Command = {
     command_type: COMMAND_TYPE.LS,
     command: "ls",
     description: "List commands and their descriptions",
-    action: execute_ls
+    action: execute_ls,
+    requires_params : false
 }

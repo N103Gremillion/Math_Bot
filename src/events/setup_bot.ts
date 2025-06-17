@@ -2,6 +2,7 @@ import { Client, GatewayIntentBits, Interaction, SlashCommandBuilder } from "dis
 import { config } from "../../src_shared/config";
 import { execute_command } from "../commands/command";
 import { commands_g } from "../entry";
+import { Command } from "../commands/command_types";
 
 export function init_client() : Client {
   const client = new Client({
@@ -22,7 +23,12 @@ export function init_client() : Client {
     const commands: SlashCommandBuilder[] = [];
 
     commands_g.forEach(cmd => {
-      commands.push(new SlashCommandBuilder().setName(cmd.command).setDescription(cmd.description));
+      if (cmd.requires_params) {
+        const slash_command : SlashCommandBuilder = setup_SlashCommand_with_params(cmd);
+        commands.push(slash_command);
+      } else {
+        commands.push(new SlashCommandBuilder().setName(cmd.command).setDescription(cmd.description));
+      }
     });
     
     await guild.commands.set(commands);
@@ -42,4 +48,31 @@ function setup_command_listener(client : Client) : void {
 
     await execute_command(cmd);
   });
+}
+
+function setup_SlashCommand_with_params(cmd: Command): SlashCommandBuilder {
+  if (cmd.command === "register_book") {
+    return new SlashCommandBuilder()
+      .setName(cmd.command)
+      .setDescription(cmd.description)
+      .addStringOption(option =>
+        option.setName("title").setDescription("Title of the book").setRequired(true)
+      )
+      .addStringOption(option =>
+        option.setName("author").setDescription("Author of the book").setRequired(true)
+      )
+      .addIntegerOption(option =>
+        option.setName("pages").setDescription("Page count").setRequired(true)
+      )
+      .addIntegerOption(option =>
+        option.setName("chapters").setDescription("Chapter count").setRequired(true)
+      )
+      .addStringOption(option =>
+        option.setName("description").setDescription("Short description of book").setRequired(true)
+      ) as SlashCommandBuilder;
+  } else {
+    return new SlashCommandBuilder()
+      .setName(cmd.command)
+      .setDescription(cmd.description);
+  }
 }

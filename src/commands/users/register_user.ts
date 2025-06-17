@@ -29,5 +29,6 @@ export const register_user_command: Command = {
     command_type: COMMAND_TYPE.REIGSTER_USER,
     command: "register_user",
     description: "Adds a user to the database",
-    action: execute_register_user
+    action: execute_register_user,
+    requires_params : false
 }

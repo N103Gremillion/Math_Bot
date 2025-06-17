@@ -44,21 +44,46 @@ export async function init_database() : Promise<sqlite3.Database> {
 export async function create_tables() : Promise<void> {
 
     // Create tables if the do not exist yet
+    // 1.) users
     try {
         await run_query(
             `
             CREATE TABLE IF NOT EXISTS users (
-                user_name TEXT PRIMARY KEY,
-                time_created DATETIME DEFAULT CURRENT_TIMESTAMP
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_name TEXT,
+                time_created DATETIME DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE (user_name)
             )
             `, 
             []
         );
-        console.log("created users");
+        console.log("created users table");
     }
     catch (err) {
-        console.log(err);
+        console.log("Issue creating users table ", err);
     }
+
+    // 2.) books
+    try {
+        await run_query(
+            `
+            CREATE TABLE IF NOT EXISTS books (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                author TEXT NOT NULL,
+                page_count INTEGER,
+                chapters INTEGER,
+                description TEXT,
+                UNIQUE (title, author)
+            )
+            `,
+            []
+        );
+        console.log("created books table");
+    } catch (err) {
+        console.log("Issue creating books table ", err);
+    }
+
 }
 
 // // Create table if not exists

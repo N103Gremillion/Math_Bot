@@ -2,14 +2,16 @@ import { database_g } from "../entry";
 
 export enum TABLE_TYPE {
   USERS, 
+  BOOKS,
   INVALID
 }
 
 function get_table_string(table_type : TABLE_TYPE) : string {
   if (table_type == TABLE_TYPE.USERS) {
     return "users";
-  } 
-  else {
+  } else if (table_type == TABLE_TYPE.BOOKS) {
+    return "books";
+  } else {
     return "invalid";
   }
 }

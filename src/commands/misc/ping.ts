@@ -15,5 +15,6 @@ export const ping_command: Command = {
     command_type: COMMAND_TYPE.PING,
     command: "ping",
     description: "Ping server and display latency",
-    action: execute_ping
+    action: execute_ping,
+    requires_params : false
 }

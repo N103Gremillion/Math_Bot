@@ -4,7 +4,9 @@ export enum COMMAND_TYPE {
   INVALID,
   PING,
   LS,
-  REIGSTER_USER
+  REIGSTER_USER,
+  REMOVE_USER,
+  REGISTER_BOOK
 }
 
 export type Command = {
@@ -19,4 +21,7 @@ export type Command = {
   description: string;
   // function to run when command is received
   action: (cmd : ChatInputCommandInteraction) => Promise<void>; 
+
+  // tells if the function takes parameter
+  requires_params : boolean;
 }

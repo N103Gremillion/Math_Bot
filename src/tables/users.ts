@@ -15,8 +15,19 @@ export async function insert_users_table(user_name : string) : Promise<boolean> 
   }
 }
 
-export async function delete_users_table() : Promise<void> {
-
+export async function remove_from_users_table(user_name : string) : Promise<boolean> {
+  try {
+    await run_query(
+      `
+      DELETE FROM users WHERE users.user_name = ?;
+      `
+      ,[user_name]
+    );
+    return true;
+  } catch (err) {
+    console.log("Issue deleting user: ", err);
+    return false;
+  }
 }
 
 

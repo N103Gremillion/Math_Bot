@@ -10,13 +10,17 @@ import { ls_command } from "./commands/misc/ls";
 import { ping_command } from "./commands/misc/ping";
 import { register_user_command } from "./commands/users/register_user";
 import { clear_table, TABLE_TYPE, view_table } from "./tables/table_type";
+import { remove_user_command } from "./commands/users/remove_user";
+import { register_book_command } from "./commands/books/register_book";
 
 
 // setup list of all commands
 export const commands_g: Command[] = [
     ping_command,
     ls_command,
-    register_user_command
+    register_user_command,
+    remove_user_command,
+    register_book_command
 ];
 
 // initalize globals 
@@ -35,7 +39,10 @@ main()
     })
     .catch ((error) => {
         console.log(error);
-    });
+    })
+    .finally(() => {
+        view_table(TABLE_TYPE.BOOKS);
+    });  
 
 export { bot_g, database_g };
 
