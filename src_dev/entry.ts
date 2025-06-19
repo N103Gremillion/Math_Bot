@@ -2,7 +2,7 @@ import path from "path";
 import { config } from "../src_shared/config";
 import fs from 'fs/promises';
 import sqlite3 from 'sqlite3';
-import { run_query } from "../src/tables/table_type";
+import { run_query, TABLE_TYPE, view_table } from "../src/tables/table_type";
 
 export async function init_database() : Promise<sqlite3.Database> {
     console.log(`using db folder path: ${config.ROOT_REPO}`);
@@ -48,8 +48,6 @@ export async function create_tables() : Promise<void> {
     try {
         await run_query(
             `
-            DROP TABLE IF EXISTS users;
-
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_name TEXT NOT NULL,
@@ -69,8 +67,6 @@ export async function create_tables() : Promise<void> {
     try {
         await run_query(
             `
-            DROP TABLE IF EXISTS books;
-
             CREATE TABLE IF NOT EXISTS books (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT NOT NULL,
@@ -92,8 +88,6 @@ export async function create_tables() : Promise<void> {
     try {
         await run_query(
             `
-            DROP TABLE IF EXISTS reading;
-
             CREATE TABLE IF NOT EXISTS reading (
                 user_id INTEGER,
                 book_id INTEGER,
@@ -118,8 +112,6 @@ export async function create_tables() : Promise<void> {
     try {
         await run_query(
             `
-            DROP TABLE IF EXISTS chapters;
-
             CREATE TABLE IF NOT EXISTS chapters (
                 book_id INTEGER,
                 chapter_name TEXT NOT NULL,
@@ -145,8 +137,6 @@ export async function create_tables() : Promise<void> {
     try {
         await run_query(
             `
-            DROP TABLE IF EXISTS sections;
-
             CREATE TABLE IF NOT EXISTS sections (
                 book_id INTEGER,
                 chapter_number INTEGER,
@@ -193,4 +183,34 @@ export async function create_tables() : Promise<void> {
         console.log("Issue creating progress_logs table ", err);
     } 
 }   
+
+export async function clear_database() : Promise<void> {
+    try {
+        await run_query(
+            `
+            DROP TABLE IF EXISTS users;
+            DROP TABLE IF EXISTS books;
+            DROP TABLE IF EXISTS reading;
+            DROP TABLE IF EXISTS chapters;
+            DROP TABLE IF EXISTS sections;
+            DROP TABLE IF EXISTS progress_logs;
+            `,
+            []
+        );
+        console.log("Database cleared");
+    } catch (err) {
+        console.log("Issue clearing the database ", err);
+    }
+}
+
+export async function view_database() : Promise<void> {
+    const allTableTypes: TABLE_TYPE[] = Object.values(TABLE_TYPE) as TABLE_TYPE[];
+
+    for (const table of allTableTypes) {
+        if (table === TABLE_TYPE.INVALID) {
+            continue;
+        }
+        await view_table(table); 
+    }
+}
 

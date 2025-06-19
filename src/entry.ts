@@ -2,7 +2,7 @@ import { init_client } from "./events/setup_bot";
 import { Client } from "discord.js";
 import { Command } from "./commands/command_types";
 
-import { init_database, create_tables } from "../src_dev/entry";
+import { init_database, create_tables, clear_database, view_database } from "../src_dev/entry";
 import sqlite3 from 'sqlite3';
 
 // commands
@@ -31,11 +31,11 @@ async function main () : Promise<void> {
     database_g = await init_database()
     await create_tables();
     bot_g = init_client();
+    await view_database();
 }
 
 main()
     .then(() => {
-        console.log("Main Finished");
     })
     .catch ((error) => {
         console.log(error);

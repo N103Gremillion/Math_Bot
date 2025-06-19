@@ -3,14 +3,26 @@ import { database_g } from "../entry";
 export enum TABLE_TYPE {
   USERS, 
   BOOKS,
+  READING,
+  CHAPTERS,
+  SECTIONS,
+  PROGRESS_LOGS,
   INVALID
 }
 
 function get_table_string(table_type : TABLE_TYPE) : string {
   if (table_type == TABLE_TYPE.USERS) {
     return "users";
+  } else if (table_type == TABLE_TYPE.READING) {
+    return "reading";
   } else if (table_type == TABLE_TYPE.BOOKS) {
     return "books";
+  } else if (table_type == TABLE_TYPE.CHAPTERS) {
+    return "chapters";
+  } else if (table_type == TABLE_TYPE.SECTIONS) {
+    return "sections";
+  } else if (table_type == TABLE_TYPE.PROGRESS_LOGS) {
+    return "progress_logs";
   } else {
     return "invalid";
   }
@@ -40,7 +52,6 @@ export async function view_table(table_type : TABLE_TYPE) : Promise<void> {
   const query_string : string = "SELECT * FROM " + table_string + ";";
   
   if (table_string === "invalid"){
-    console.log("Invalid Table Type.");
     return 
   }
 
@@ -73,3 +84,4 @@ export async function get_rows(sql_query: string): Promise<any[]> {
     });
   });
 }
+
