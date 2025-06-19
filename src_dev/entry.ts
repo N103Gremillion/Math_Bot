@@ -48,9 +48,11 @@ export async function create_tables() : Promise<void> {
     try {
         await run_query(
             `
+            DROP TABLE IF EXISTS users;
+
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_name TEXT,
+                user_name TEXT NOT NULL,
                 time_created DATETIME DEFAULT CURRENT_TIMESTAMP,
                 UNIQUE (user_name)
             );
@@ -63,10 +65,12 @@ export async function create_tables() : Promise<void> {
         console.log("Issue creating users table ", err);
     }
 
-    // 2.) books
+    // 2.) books 
     try {
         await run_query(
             `
+            DROP TABLE IF EXISTS books;
+
             CREATE TABLE IF NOT EXISTS books (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT NOT NULL,
@@ -84,48 +88,109 @@ export async function create_tables() : Promise<void> {
         console.log("Issue creating books table ", err);
     }
 
-}
+    // 3.) reading (maps userId's to bookId's)
+    try {
+        await run_query(
+            `
+            DROP TABLE IF EXISTS reading;
 
-// // Create table if not exists
-// db.run(`
-// CREATE TABLE IF NOT EXISTS users (
-//     id INTEGER PRIMARY KEY AUTOINCREMENT,
-//     name TEXT NOT NULL,
-//     age INTEGER NOT NULL
-// )
-// `, (err) => {
-// if (err) {
-//     console.error('Error creating table:', err.message);
-//     return;
-// }
-// console.log('Table created or already exists.');
+            CREATE TABLE IF NOT EXISTS reading (
+                user_id INTEGER,
+                book_id INTEGER,
+                start_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+                last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,
+                cur_page INTEGER NOT NULL,
 
-// // Insert a user
-// db.run(`INSERT INTO users (name, age) VALUES (?, ?)`, ['Alice', 30], function (err) {
-//             if (err) {
-//                 console.error('error inserting row:', err.message);
-//                 return;
-//             }
+                PRIMARY KEY (user_id, book_id),
 
-//             console.log(`inserted user with id ${this.lastID}`);
+                FOREIGN KEY (user_id) REFERENCES users(id),
+                FOREIGN KEY (book_id) REFERENCES books(id)
+            );
+            `
+            , []
+        );
+        console.log("Created reading table ");
+    } catch (err) {
+        console.log("Issue when creating reading table ", err);
+    }
 
-//             // Query the inserted user back
-//             db.get(`SELECT id, name, age FROM users WHERE id = ?`, [this.lastID], (err, row) => {
-//             if (err) {
-//                 console.error('error querying row:', err.message);
-//                 return;
-//             }
+    // 4.) chapters
+    try {
+        await run_query(
+            `
+            DROP TABLE IF EXISTS chapters;
 
-//             console.log('queried user:', row);
+            CREATE TABLE IF NOT EXISTS chapters (
+                book_id INTEGER,
+                chapter_name TEXT NOT NULL,
+                chapter_number INTEGER NOT NULL,
+                start_page INTEGER NOT NULL,
+                end_page INTEGER NOT NULL,
 
-//             // Close the database after operations
-//             db.close((err) => {
-//                 if (err) {
-//                 console.error('error closing database:', err.message);
-//                 } else {
-//                 console.log('database closed');
-//                 }
-//             });
-//         });
-//     })
-// });
+                PRIMARY KEY (book_id, chapter_number),
+
+                FOREIGN KEY (book_id) REFERENCES books(id),
+
+                CHECK (start_page <= end_page)
+            );
+            `,
+            []
+        );
+        console.log("created chapters table");
+    } catch (err) {
+        console.log("Issue creating chapters table ", err);
+    }
+
+    // 5.) sections
+    try {
+        await run_query(
+            `
+            DROP TABLE IF EXISTS sections;
+
+            CREATE TABLE IF NOT EXISTS sections (
+                book_id INTEGER,
+                chapter_number INTEGER,
+                section_number INTEGER NOT NULL,
+                section_name TEXT NOT NULL,
+                start_page INTEGER NOT NULL,
+                end_page INTEGER NOT NULL,
+                total_questions INTEGER NOT NULL,
+
+                PRIMARY KEY (book_id, chapter_number, section_number),
+
+                FOREIGN KEY (book_id, chapter_number) REFERENCES chapters(book_id, chapter_number),
+
+                CHECK (start_page <= end_page)
+            );
+            `,
+            []
+        );
+        console.log("created sections table");
+    } catch (err) {
+        console.log("Issue creating sections table ", err);
+    }
+    
+    // 6.) progress_logs
+    try {
+        await run_query(
+            `
+            CREATE TABLE IF NOT EXISTS progress_logs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                book_id INTEGER,
+                start_page INTEGER,
+                end_page INTEGER,
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+                FOREIGN KEY (user_id) REFERENCES users(id),
+                FOREIGN KEY (book_id) REFERENCES books(id)
+            );
+            `, 
+            []
+        );
+        console.log("created progress_logs table");
+    } catch (err) {
+        console.log("Issue creating progress_logs table ", err);
+    } 
+}   
+
