@@ -6,7 +6,8 @@ export enum COMMAND_TYPE {
   LS,
   REIGSTER_USER,
   REMOVE_USER,
-  REGISTER_BOOK
+  REGISTER_BOOK,
+  REGISTER_CHAPTER
 }
 
 export type Command = {

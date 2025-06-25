@@ -1,8 +1,10 @@
-import { Client, GatewayIntentBits, Interaction, SlashCommandBuilder } from "discord.js";
+import { COMMAND_TYPE } from './../commands/command_types';
+import { Client, GatewayIntentBits, Interaction, SlashCommandBuilder, StringSelectMenuInteraction } from "discord.js";
 import { config } from "../../src_shared/config";
 import { execute_command } from "../commands/command";
 import { commands_g } from "../entry";
 import { Command } from "../commands/command_types";
+import { handle_menu_select } from '../commands/selection_menus';
 
 export function init_client() : Client {
   const client = new Client({
@@ -42,16 +44,23 @@ export function init_client() : Client {
 
 function setup_command_listener(client : Client) : void {
   client.on('interactionCreate', async (interaction : Interaction) : Promise<void> => {
+
+    // for menu selection events
+    if (interaction.isStringSelectMenu()) {
+      await handle_menu_select(interaction as StringSelectMenuInteraction);
+      return;
+    }
+
     // ignore bot messages
     if (!interaction.isChatInputCommand()) return;
     const cmd = interaction;
-
+  
     await execute_command(cmd);
   });
 }
 
 function setup_SlashCommand_with_params(cmd: Command): SlashCommandBuilder {
-  if (cmd.command === "register_book") {
+  if (cmd.command_type === COMMAND_TYPE.REGISTER_BOOK) {
     return new SlashCommandBuilder()
       .setName(cmd.command)
       .setDescription(cmd.description)
@@ -70,7 +79,8 @@ function setup_SlashCommand_with_params(cmd: Command): SlashCommandBuilder {
       .addStringOption(option =>
         option.setName("description").setDescription("Short description of book").setRequired(true)
       ) as SlashCommandBuilder;
-  } else {
+  } 
+  else {
     return new SlashCommandBuilder()
       .setName(cmd.command)
       .setDescription(cmd.description);

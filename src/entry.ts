@@ -2,7 +2,7 @@ import { init_client } from "./events/setup_bot";
 import { Client } from "discord.js";
 import { Command } from "./commands/command_types";
 
-import { init_database, create_tables, clear_database, view_database } from "../src_dev/entry";
+import { init_database, create_tables, clear_database, view_database } from "../src_dev/database_entry";
 import sqlite3 from 'sqlite3';
 
 // commands
@@ -12,6 +12,7 @@ import { register_user_command } from "./commands/users/register_user";
 import { clear_table, run_query, TABLE_TYPE, view_table } from "./tables/table_type";
 import { remove_user_command } from "./commands/users/remove_user";
 import { register_book_command } from "./commands/books/register_book";
+import { register_chapter_command } from "./commands/chapters/register_chapter";
 
 
 // setup list of all commands
@@ -20,7 +21,8 @@ export const commands_g: Command[] = [
     ls_command,
     register_user_command,
     remove_user_command,
-    register_book_command
+    register_book_command,
+    register_chapter_command
 ];
 
 // initalize globals 
@@ -31,7 +33,7 @@ async function main () : Promise<void> {
     database_g = await init_database()
     await create_tables();
     bot_g = init_client();
-    await view_database();
+    await view_database(); 
 }
 
 main()

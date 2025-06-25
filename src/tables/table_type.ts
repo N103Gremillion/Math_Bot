@@ -57,6 +57,7 @@ export async function view_table(table_type : TABLE_TYPE) : Promise<void> {
 
   try {
     const rows = await get_rows(query_string);
+    console.log(table_string);
     console.table(rows);
     
   } catch (err) {
