@@ -1,10 +1,12 @@
 import { COMMAND_TYPE } from './../commands/command_types';
-import { Client, GatewayIntentBits, Interaction, SlashCommandBuilder, StringSelectMenuInteraction } from "discord.js";
+import { Client, GatewayIntentBits, Interaction, ModalSubmitInteraction, SlashCommandBuilder, StringSelectMenuInteraction } from "discord.js";
 import { config } from "../../src_shared/config";
 import { execute_command } from "../commands/command";
 import { commands_g } from "../entry";
 import { Command } from "../commands/command_types";
 import { handle_menu_select } from '../commands/selection_menus';
+import { BookField } from '../commands/books/BookField';
+import { handleModalSubmit } from '../commands/modals';
 
 export function init_client() : Client {
   const client = new Client({
@@ -50,6 +52,11 @@ function setup_command_listener(client : Client) : void {
       await handle_menu_select(interaction as StringSelectMenuInteraction);
       return;
     }
+    
+    // for modal submitions
+    if (interaction.isModalSubmit()) {
+      await handleModalSubmit(interaction as ModalSubmitInteraction);
+    }
 
     // ignore bot messages
     if (!interaction.isChatInputCommand()) return;
@@ -65,19 +72,19 @@ function setup_SlashCommand_with_params(cmd: Command): SlashCommandBuilder {
       .setName(cmd.command)
       .setDescription(cmd.description)
       .addStringOption(option =>
-        option.setName("title").setDescription("Title of the book").setRequired(true)
+        option.setName(BookField.BookTitle).setDescription("Title of the book").setRequired(true)
       )
       .addStringOption(option =>
-        option.setName("author").setDescription("Author of the book").setRequired(true)
+        option.setName(BookField.Author).setDescription("Author of the book").setRequired(true)
       )
       .addIntegerOption(option =>
-        option.setName("pages").setDescription("Page count").setRequired(true)
+        option.setName(BookField.PageCount).setDescription("Page count").setRequired(true)
       )
       .addIntegerOption(option =>
-        option.setName("chapters").setDescription("Chapter count").setRequired(true)
+        option.setName(BookField.TotalChapters).setDescription("Chapter count").setRequired(true)
       )
       .addStringOption(option =>
-        option.setName("description").setDescription("Short description of book").setRequired(true)
+        option.setName(BookField.Description).setDescription("Short description of book").setRequired(true)
       ) as SlashCommandBuilder;
   } 
   else {
@@ -86,3 +93,4 @@ function setup_SlashCommand_with_params(cmd: Command): SlashCommandBuilder {
       .setDescription(cmd.description);
   }
 }
+

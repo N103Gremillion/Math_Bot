@@ -2,15 +2,16 @@ import { ChatInputCommandInteraction } from "discord.js";
 import { COMMAND_TYPE, Command } from "../command_types";
 import { wrap_str_in_code_block } from "../../utils/util";
 import { insert_books_table } from "../../tables/books";
+import { BookField } from "./BookField";
 
 export async function execute_register_book (cmd : ChatInputCommandInteraction) : Promise<void> {
 
   // ! prevents null sense it is already enfored when we created the options
-  const title : string = cmd.options.getString("title")!;
-  const author : string = cmd.options.getString("author")!;
-  const pages : number = cmd.options.getInteger("pages")!;
-  const chapters : number = cmd.options.getInteger("chapters")!;
-  const description : string = cmd.options.getString("description")!;
+  const title : string = cmd.options.getString(BookField.BookTitle)!;
+  const author : string = cmd.options.getString(BookField.Author)!;
+  const pages : number = cmd.options.getInteger(BookField.PageCount)!;
+  const chapters : number = cmd.options.getInteger(BookField.TotalChapters)!;
+  const description : string = cmd.options.getString(BookField.Description)!;
 
   // make sure values are valid to put in table
   if (pages <= 0 || chapters <= 0) {
