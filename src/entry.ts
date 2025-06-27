@@ -13,6 +13,7 @@ import { clear_table, run_query, TABLE_TYPE, view_table } from "./tables/table_t
 import { remove_user_command } from "./commands/users/remove_user";
 import { register_book_command } from "./commands/books/register_book";
 import { register_chapter_command } from "./commands/chapters/register_chapter";
+import { view_books_command } from "./commands/books/view_books";
 
 
 // setup list of all commands
@@ -22,6 +23,7 @@ export const commands_g: Command[] = [
     register_user_command,
     remove_user_command,
     register_book_command,
+    view_books_command,
     register_chapter_command
 ];
 
