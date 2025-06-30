@@ -1,9 +1,11 @@
 import { ModalSubmitInteraction } from "discord.js";
 import { ChapterField } from "./chapters/ChapterField";
+import { handle_chapter_info_submission } from "./chapters/register_chapter";
 
 export enum ModalType {
   ChapterInput = "chapter_input_modal",
-  SectionInput = "section_input_modal"
+  SectionInput = "section_input_modal",
+  View_Book_Infor = "",
 }
 
 export async function handleModalSubmit(interaction : ModalSubmitInteraction) : Promise<void> {
@@ -24,5 +26,6 @@ export async function handleModalSubmit(interaction : ModalSubmitInteraction) : 
     const chapterNumber : string = interaction.fields.getTextInputValue(ChapterField.ChapterNumber);
     const startPage : string = interaction.fields.getTextInputValue(ChapterField.StartPage);
     const endPage : string = interaction.fields.getTextInputValue(ChapterField.EndPage);
+    await handle_chapter_info_submission(bookID, chapterName, chapterNumber, startPage, endPage, interaction);
   }
 }

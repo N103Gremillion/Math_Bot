@@ -74,9 +74,9 @@ export async function run_query(sql_query : string, params : any[] = []) : Promi
   });
 }
 
-export async function get_rows(sql_query: string): Promise<any[]> {
+export async function get_rows(sql_query: string, params : any[] = []): Promise<any[]> {
   return new Promise((resolve, reject) => {
-    database_g.all(sql_query, (err, rows) => {
+    database_g.all(sql_query, params, (err, rows) => {
       if (err) {
         reject(err);
       } else {
@@ -85,4 +85,3 @@ export async function get_rows(sql_query: string): Promise<any[]> {
     });
   });
 }
-

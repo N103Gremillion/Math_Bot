@@ -1,6 +1,7 @@
 import { ActionRowBuilder, ChatInputCommandInteraction, Interaction, MessageFlags, ModalBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction, TextInputBuilder, TextInputStyle } from "discord.js";
 import { BookInfo, fetch_books_and_authors } from "../tables/books";
 import { get_chapter_info } from "./chapters/register_chapter";
+import { show_book_info } from "./books/view_book_info";
 
 export enum SelectionMenuType {
   SelectBook = "select_book",
@@ -15,9 +16,9 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
 
     // pull off the ID of the book
     const book_ID : string | undefined = interaction.values[0];
-    
+    const book_ID_num : number = Number(book_ID)
     // null check for the id
-    if (book_ID === undefined){
+    if (book_ID === undefined || isNaN(book_ID_num)){
       await interaction.reply({
         content: "Something went wrong — no book was selected. Please try again.",
       });
@@ -27,6 +28,9 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
     if (command_type === "register_chapter") {
       await get_chapter_info(interaction, book_ID);
     } 
+    else if (command_type === "view_book") {
+      await show_book_info(interaction, book_ID_num); 
+    }
     else {
       await interaction.reply({
         content : `Unknown command: ${command_type}`
