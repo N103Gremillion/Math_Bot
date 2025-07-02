@@ -5,7 +5,6 @@ import { handle_chapter_info_submission } from "./chapters/register_chapter";
 export enum ModalType {
   ChapterInput = "chapter_input_modal",
   SectionInput = "section_input_modal",
-  View_Book_Infor = "",
 }
 
 export async function handleModalSubmit(interaction : ModalSubmitInteraction) : Promise<void> {

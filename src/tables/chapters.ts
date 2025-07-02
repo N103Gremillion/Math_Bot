@@ -1,4 +1,12 @@
-import { run_query } from "./table_type";
+import { get_rows, run_query } from "./table_type";
+
+export type ChapterInfo = {
+  book_id? : number,
+  chapter_name : string,
+  chapter_number : number,
+  start_page? : number,
+  end_page? : number
+}
 
 export async function insert_chapters_table(
   book_id : number, 
@@ -6,7 +14,6 @@ export async function insert_chapters_table(
   chapter_number : number,  
   start_page : number, 
   end_page : number) : Promise<boolean> { 
-
     try {
       await run_query( 
         `
@@ -20,5 +27,22 @@ export async function insert_chapters_table(
       console.log(err);
       return false; 
     }
+}
 
+export async function fetch_chapters_in_book(book_ID : number) : Promise<ChapterInfo[]> {
+  try {
+    const rows : ChapterInfo[] = await get_rows(
+      `
+      SELECT chapter_name, chapter_number 
+      FROM chapters 
+      WHERE book_id = ?
+      ORDER BY chapter_number;
+      `,
+      [book_ID]
+    );
+    return rows;
+  } catch (err) {
+    console.log(err);
+    return [];
+  }
 }

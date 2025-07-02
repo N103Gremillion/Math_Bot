@@ -2,6 +2,7 @@ import { ActionRowBuilder, ChatInputCommandInteraction, Interaction, MessageFlag
 import { BookInfo, fetch_books_and_authors } from "../tables/books";
 import { get_chapter_info } from "./chapters/register_chapter";
 import { show_book_info } from "./books/view_book_info";
+import { show_chapters_in_book } from "./chapters/view_chapters";
 
 export enum SelectionMenuType {
   SelectBook = "select_book",
@@ -30,6 +31,9 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
     } 
     else if (command_type === "view_book") {
       await show_book_info(interaction, book_ID_num); 
+    }
+    else if (command_type === "view_chapters") {
+      await show_chapters_in_book(interaction, book_ID_num);
     }
     else {
       await interaction.reply({

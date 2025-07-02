@@ -9,6 +9,7 @@ export type BookInfo = {
   chapters? : number;
   description? : string;
 }
+
 export async function insert_books_table(title : string, author : string, pages : number, chapters : number, description : string): Promise<boolean> {
   
   try {
@@ -30,7 +31,9 @@ export async function fetch_book_info(book_id : number) : Promise<BookInfo | nul
   try {
     const rows : BookInfo[] = await get_rows(
       `
-      SELECT title, author, page_count, chapters, description FROM books WHERE id = ?;
+      SELECT title, author, page_count, chapters, description 
+      FROM books 
+      WHERE id = ?;
       `,
       [book_id]
     );
@@ -48,7 +51,8 @@ export async function fetch_books_and_authors() : Promise<BookInfo[]> {
   try {
     const rows : BookInfo[] = await get_rows(
       `
-      SELECT title, author, id FROM books;
+      SELECT title, author, id 
+      FROM books;
       `
     );
     return rows;
@@ -62,7 +66,9 @@ export async function fetch_total_chapters(book_id : number) : Promise<number> {
   try {
     const res = await get_rows(
       `
-      SELECT chapters FROM books WHERE id = ?; 
+      SELECT chapters 
+      FROM books 
+      WHERE id = ?; 
       `,
       [book_id]
     );
@@ -82,7 +88,9 @@ export async function fetch_page_count(book_id : number) : Promise<number> {
   try {
     const res = await get_rows(
       `
-      SELECT page_count FROM books WHERE id = ?;
+      SELECT page_count 
+      FROM books 
+      WHERE id = ?;
       `,
       [book_id]
     );

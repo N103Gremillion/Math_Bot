@@ -9,7 +9,8 @@ export enum COMMAND_TYPE {
   REGISTER_BOOK,
   VIEW_BOOKS,
   VIEW_BOOK_INFO,
-  REGISTER_CHAPTER
+  REGISTER_CHAPTER,
+  VIEW_CHAPTERS
 }
 
 export type Command = {
