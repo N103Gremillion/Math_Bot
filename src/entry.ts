@@ -42,7 +42,7 @@ async function main () : Promise<void> {
     await view_database(); 
 }
 
-main()
+main() 
     .then(() => {
     })
     .catch ((error) => {

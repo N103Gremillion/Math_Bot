@@ -19,13 +19,11 @@ export async function show_book_info(interaction: StringSelectMenuInteraction, b
 
   await interaction.reply(
     wrap_str_in_code_block(
-      `
-      Title: ${book_info.title}
-      Author: ${book_info.author}
-      Pages: ${book_info.page_count}
-      Chapters: ${book_info.chapters}
-      Description: ${book_info.description}
-      `
+      `Title: ${book_info.title}
+Author: ${book_info.author}
+Pages: ${book_info.page_count}
+Chapters: ${book_info.chapters}
+Description: ${book_info.description}` 
     )
   );
 }

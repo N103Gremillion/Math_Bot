@@ -3,6 +3,7 @@ import { BookInfo, fetch_books_and_authors } from "../tables/books";
 import { get_chapter_info } from "./chapters/register_chapter";
 import { show_book_info } from "./books/view_book_info";
 import { show_chapters_in_book } from "./chapters/view_chapters";
+import { wrap_str_in_code_block } from "../utils/util";
 
 export enum SelectionMenuType {
   SelectBook = "select_book",
@@ -53,8 +54,17 @@ export async function select_book_menu(cmd : ChatInputCommandInteraction) : Prom
   // get currently regisetered books [title : string, author : string]
   const books: BookInfo[] = await fetch_books_and_authors();
 
+  if (books.length == 0) {
+    await cmd.reply(
+      wrap_str_in_code_block(
+        `No books currently registered.`
+      )
+    );
+    return;
+  }
+
   // Create dropdown menu
-  const selectMenu : StringSelectMenuBuilder = new StringSelectMenuBuilder()
+  const select_menu : StringSelectMenuBuilder = new StringSelectMenuBuilder()
   .setCustomId(`${SelectionMenuType.SelectBook}|${cmd.commandName}`)
   .setPlaceholder('Choose a book')
   .addOptions(
@@ -63,7 +73,7 @@ export async function select_book_menu(cmd : ChatInputCommandInteraction) : Prom
     value: `${book.id}`
   })));
   
-  const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(selectMenu);
+  const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select_menu);
 
   await cmd.reply({
     content: `Please select the book `,

@@ -116,6 +116,7 @@ export async function create_tables() : Promise<void> {
                 book_id INTEGER,
                 chapter_name TEXT NOT NULL,
                 chapter_number INTEGER NOT NULL,
+                sections INTEGER NOT NULL,
                 start_page INTEGER NOT NULL,
                 end_page INTEGER NOT NULL,
 
@@ -186,17 +187,12 @@ export async function create_tables() : Promise<void> {
 
 export async function clear_database() : Promise<void> {
     try {
-        await run_query(
-            `
-            DROP TABLE IF EXISTS users;
-            DROP TABLE IF EXISTS books;
-            DROP TABLE IF EXISTS reading;
-            DROP TABLE IF EXISTS chapters;
-            DROP TABLE IF EXISTS sections;
-            DROP TABLE IF EXISTS progress_logs;
-            `,
-            []
-        );
+        await run_query(`DROP TABLE IF EXISTS users;`, []);
+        await run_query(`DROP TABLE IF EXISTS books;`, []);
+        await run_query(`DROP TABLE IF EXISTS reading;`, []);
+        await run_query(`DROP TABLE IF EXISTS chapters;`, []);
+        await run_query(`DROP TABLE IF EXISTS sections;`, []);
+        await run_query(`DROP TABLE IF EXISTS progress_logs;`, []);
         console.log("Database cleared");
     } catch (err) {
         console.log("Issue clearing the database ", err);

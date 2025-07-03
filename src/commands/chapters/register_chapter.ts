@@ -12,10 +12,11 @@ export async function execute_register_chapter(cmd : ChatInputCommandInteraction
   await select_book_menu(cmd);
 }
 
-export async function handle_chapter_info_submission(
+export async function handle_chapter_info_modal_submission(
   book_id : number, 
   chapter_name : string, 
   chapter_number_str : string, 
+  total_sections_str : string,
   start_page_str : string, 
   end_page_str : string,
   interaction : ModalSubmitInteraction
@@ -24,17 +25,27 @@ export async function handle_chapter_info_submission(
   const chapter_number : number = Number(chapter_number_str);
   const start_page : number = Number(start_page_str);
   const end_page : number = Number(end_page_str);
+  const total_sections : number = Number(total_sections_str);
 
   // null checks
-  if (isNaN(chapter_number) || isNaN(start_page) || isNaN(end_page)) {
+  if (isNaN(chapter_number) || isNaN(start_page) || isNaN(end_page) || isNaN(total_sections)) {
     await interaction.reply(
       wrap_str_in_code_block(
-      `
-      Invalid input expected a integer but was given a string for either chapter_number, start_page, or end_page.
-      `
+      `Invalid input expected a integer but was given a string for either chapter_number, start_page, or end_page.`
       )
     );
-    return 
+    return; 
+  }
+
+  // check if sections make sense
+  if (total_sections <= 0 || total_sections > 100) {
+    await interaction.reply(
+      wrap_str_in_code_block(
+        `Total sections is invalid. 
+It is either to large or to small.` 
+      )
+    );
+    return;
   }
 
   // query the total chapters
@@ -44,22 +55,20 @@ export async function handle_chapter_info_submission(
   if (total_book_chapters === -1) {
     await interaction.reply(
       wrap_str_in_code_block(
-      `
-      Issue fetching from books table.
-      Invalid book_id.`
+      `Issue fetching from books table.
+Invalid book_id.`
       )
     );
-    return 
+    return;
   }
   else if (chapter_number > total_book_chapters || chapter_number < 1) {
     await interaction.reply(
       wrap_str_in_code_block(
-      `
-      Invalid chapter number either it is to big or to small.
-      Note: use /view_book to select a book and its info`
+      `Invalid chapter number either it is to big or to small.
+Note: use /view_book to select a book and its info`
       )
     );
-    return 
+    return; 
   }
 
   // query page information
@@ -68,45 +77,42 @@ export async function handle_chapter_info_submission(
   if (page_count === -1) {
     await interaction.reply(
       wrap_str_in_code_block(
-      `
-      Issue fetching from books table.
-      Invalid book_id.`
+      `Issue fetching from books table.
+Invalid book_id.`
       )
     );
-    return 
+    return; 
   }
   else if (start_page > page_count || end_page > page_count || start_page < 0 || end_page < 0 || end_page < start_page) {
     interaction.reply(
       wrap_str_in_code_block(
-      `
-      Invalid end_page or start_page.
-      Note: use /view_book_info to select a book and its info`
+      `Invalid end_page or start_page.
+Note: use /view_book_info to select a book and its info`
       )
     );
-    return 
+    return; 
   }
 
-  const insert_successful : boolean = await insert_chapters_table(book_id, chapter_name, chapter_number, start_page, end_page);
+  const insert_successful : boolean = await insert_chapters_table(book_id, chapter_name, chapter_number, total_sections, start_page, end_page);
 
   if (!insert_successful) {
     await interaction.reply(
       wrap_str_in_code_block(
-        `
-        Insertion unseccessful
-        `)
+        `Insertion issue.`
+      )
     );
   } else {
     await interaction.reply(
-      wrap_str_in_code_block(`Insertion seccessful`)
+      wrap_str_in_code_block(`Insertion seccessful.`)
     );
   }
 
 }
 
-export async function get_chapter_info(interaction : StringSelectMenuInteraction, book_selected : string) : Promise<void> {
+export async function get_chapter_info(interaction : StringSelectMenuInteraction, book_ID : string) : Promise<void> {
 
   const modal = new ModalBuilder()
-  .setCustomId(`${ModalType.ChapterInput}|${book_selected}`)
+  .setCustomId(`${ModalType.ChapterInput}|${book_ID}`)
   .setTitle("Enter Chapter Details")
   .addComponents(
     // get components
@@ -121,6 +127,13 @@ export async function get_chapter_info(interaction : StringSelectMenuInteraction
       new TextInputBuilder()
         .setCustomId(ChapterField.ChapterNumber)
         .setLabel("Chapter Number")
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true)
+    ),
+    new ActionRowBuilder<TextInputBuilder>().addComponents(
+      new TextInputBuilder()
+        .setCustomId(ChapterField.Sections)
+        .setLabel("Total Number of Sections")
         .setStyle(TextInputStyle.Short)
         .setRequired(true)
     ),
