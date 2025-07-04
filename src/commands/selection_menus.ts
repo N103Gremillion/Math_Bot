@@ -1,12 +1,15 @@
-import { ActionRowBuilder, ChatInputCommandInteraction, Interaction, MessageFlags, ModalBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction, TextInputBuilder, TextInputStyle } from "discord.js";
+import { ActionRowBuilder, ChatInputCommandInteraction, CommandInteraction, Interaction, MessageFlags, ModalBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction, TextInputBuilder, TextInputStyle } from "discord.js";
 import { BookInfo, fetch_books_and_authors } from "../tables/books";
 import { get_chapter_info } from "./chapters/register_chapter";
 import { show_book_info } from "./books/view_book_info";
 import { show_chapters_in_book } from "./chapters/view_chapters";
 import { wrap_str_in_code_block } from "../utils/util";
+import { ChapterInfo, fetch_chapters_in_book } from "../tables/chapters";
+import { get_section_info } from "./sections/register_section";
 
 export enum SelectionMenuType {
   SelectBook = "select_book",
+  SelectChapter = "select_chapter"
 }
 
 export async function handle_menu_select(interaction : StringSelectMenuInteraction) : Promise<void> {
@@ -18,7 +21,8 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
 
     // pull off the ID of the book
     const book_ID : string | undefined = interaction.values[0];
-    const book_ID_num : number = Number(book_ID)
+    const book_ID_num : number = Number(book_ID);
+
     // null check for the id
     if (book_ID === undefined || isNaN(book_ID_num)){
       await interaction.reply({
@@ -36,18 +40,84 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
     else if (command_type === "view_chapters") {
       await show_chapters_in_book(interaction, book_ID_num);
     }
+    else if (command_type === "register_section") {
+      await select_chapter_menu(interaction, book_ID_num, command_type);
+    }
     else {
       await interaction.reply({
         content : `Unknown command: ${command_type}`
       });
     }
 
-  } else {
+  } 
+  else if (type === SelectionMenuType.SelectChapter) {
+
+    if (interaction.values === undefined || interaction.values[0] === undefined){
+      await interaction.reply(
+        wrap_str_in_code_block(
+          `Issue extracting book id and chapter number from chapter selection`
+        )
+      );
+      return;
+    }
+    
+    // pull off the book ID and the chapter number
+    const [book_Id_string, chapter_number_string] : string[] | undefined = interaction.values[0].split(":");
+
+    const book_ID = Number(book_Id_string);
+    const chapter_number = Number(chapter_number_string);
+
+    // null check for the id
+    if (book_ID === undefined || isNaN(book_ID) || chapter_number === undefined || isNaN(chapter_number)){
+      await interaction.reply({
+        content: "Something went wrong — no book was selected. Please try again.",
+      });
+      return;
+    }
+
+    if (command_type === "register_section") {
+      await get_section_info(interaction, book_ID, chapter_number);
+    }
+    else {
+      await interaction.reply({
+        content : `Unknown command: ${command_type}`
+      });
+    }
+  }
+  else {
     await interaction.reply({
       content: `Unhandled interaction type: ${type}`,
       ephemeral: true,
     });
   }
+}
+
+async function select_chapter_menu(
+  interaction : ChatInputCommandInteraction | StringSelectMenuInteraction, 
+  book_ID : number,
+  command_type : string
+) : Promise<void> {
+  
+  // get currently regisetered books [title : string, author : string]
+  const chapters: ChapterInfo[] = await fetch_chapters_in_book(book_ID);
+
+  // Create dropdown menu
+  const select_menu : StringSelectMenuBuilder = new StringSelectMenuBuilder()
+  .setCustomId(`${SelectionMenuType.SelectChapter}|${command_type}`)
+  .setPlaceholder('Choose a chapter')
+  .addOptions(
+    chapters.map(chapter => ({
+    label: `Chapter ${chapter.chapter_number}: ${chapter.chapter_name}`,
+    value: `${book_ID}:${chapter.chapter_number}`
+  })));
+  
+  const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select_menu);
+
+  await interaction.reply({
+    content: `Please select the chapter `,
+    components: [row],
+    flags: MessageFlags.Ephemeral
+  })
 }
 
 export async function select_book_menu(cmd : ChatInputCommandInteraction) : Promise<void> {

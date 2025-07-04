@@ -41,7 +41,6 @@ export async function show_chapters_in_book(
     response_string += cur_chapter_info;
   }
 
-  console.log(response_string);
   await interaction.reply(wrap_str_in_code_block(response_string));
 }
 

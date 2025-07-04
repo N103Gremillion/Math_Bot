@@ -16,6 +16,7 @@ import { register_chapter_command } from "./commands/chapters/register_chapter";
 import { view_books_command } from "./commands/books/view_books";
 import { view_book_info_command } from "./commands/books/view_book_info";
 import { view_chapters_command } from "./commands/chapters/view_chapters";
+import { register_section_command } from "./commands/sections/register_section";
 
 
 // setup list of all commands
@@ -28,7 +29,8 @@ export const commands_g: Command[] = [
     view_books_command,
     view_book_info_command,
     register_chapter_command,
-    view_chapters_command
+    view_chapters_command,
+    register_section_command
 ];
 
 // initalize globals 

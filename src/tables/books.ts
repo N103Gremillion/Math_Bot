@@ -23,7 +23,7 @@ export async function insert_books_table(title : string, author : string, pages 
     return true;
   } catch (err) {
     console.log(err);
-    return false;
+    return false; 
   }
 }
 

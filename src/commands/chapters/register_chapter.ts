@@ -38,7 +38,7 @@ export async function handle_chapter_info_modal_submission(
   }
 
   // check if sections make sense
-  if (total_sections <= 0 || total_sections > 100) {
+  if (total_sections <= 0 || total_sections > 10000) {
     await interaction.reply(
       wrap_str_in_code_block(
         `Total sections is invalid. 
@@ -103,7 +103,7 @@ Note: use /view_book_info to select a book and its info`
     );
   } else {
     await interaction.reply(
-      wrap_str_in_code_block(`Insertion seccessful.`)
+      wrap_str_in_code_block(`Insertion successful.`)
     );
   }
 
