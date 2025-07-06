@@ -14,7 +14,7 @@ export async function insert_dummy_books(): Promise<void> {
       const title = `Book ${i + 1}`;
       const author = `Author ${i + 1}`;
       const pageCount = 200 + i;
-      const chapterCount = 1 + i;
+      const chapterCount = 15;
       const description = `This is the ${i + 1} book`;
 
       const insert_successful = await insert_books_table(
@@ -40,31 +40,28 @@ export async function insert_dummy_books(): Promise<void> {
 export async function insert_dummy_chapters(): Promise<void> {
   try {
     const books: BookInfo[] = await fetch_books_info();
-    let totalChaptersInserted = 0;
 
     for (const book of books) {
-      if (totalChaptersInserted >= 10) break;
+      for (let chapterNum = 1; chapterNum <= 10; chapterNum++) {
+        const totalSections = 10;
+        const chapterTitle = `Chapter ${chapterNum}`;
+        const startPage = 1 + (chapterNum - 1) * 10;
+        const endPage = startPage + 9;
 
-      const chapterNum = 1;
-      const totalSections = 10;
-      const chapterTitle = `Chapter ${chapterNum}`;
-      const startPage = 1;
-      const endPage = 10;
+        const inserted = await insert_chapters_table(
+          book.id!,
+          chapterTitle,
+          chapterNum,
+          totalSections,
+          startPage,
+          endPage
+        );
 
-      const inserted = await insert_chapters_table(
-        book.id!,
-        chapterTitle,
-        chapterNum,
-        totalSections,
-        startPage,
-        endPage
-      );
-
-      if (inserted) {
-        console.log(`Inserted ${chapterTitle} for ${book.title}`);
-        totalChaptersInserted++;
-      } else {
-        console.warn(`Failed to insert ${chapterTitle} for ${book.title}`);
+        if (inserted) {
+          console.log(`Inserted ${chapterTitle} for ${book.title}`);
+        } else {
+          console.warn(`Failed to insert ${chapterTitle} for ${book.title}`);
+        }
       }
     }
   } catch (err) {
