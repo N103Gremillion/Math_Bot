@@ -59,7 +59,7 @@ export async function create_tables() : Promise<void> {
             `, 
             []
         );
-        console.log("created users table");
+        console.log("Created users table");
     }
     catch (err) {
         console.log("Issue creating users table ", err);
@@ -81,7 +81,7 @@ export async function create_tables() : Promise<void> {
             `,
             []
         );
-        console.log("created books table");
+        console.log("Created books table");
     } catch (err) {
         console.log("Issue creating books table ", err);
     }
@@ -131,7 +131,7 @@ export async function create_tables() : Promise<void> {
             `,
             []
         );
-        console.log("created chapters table");
+        console.log("Created chapters table");
     } catch (err) {
         console.log("Issue creating chapters table ", err);
     }
@@ -160,7 +160,7 @@ export async function create_tables() : Promise<void> {
             `,
             []
         );
-        console.log("created sections table");
+        console.log("Created sections table");
     } catch (err) {
         console.log("Issue creating sections table ", err);
     }
@@ -183,7 +183,7 @@ export async function create_tables() : Promise<void> {
             `, 
             []
         );
-        console.log("created progress_logs table");
+        console.log("Created progress_logs table");
     } catch (err) {
         console.log("Issue creating progress_logs table ", err);
     } 

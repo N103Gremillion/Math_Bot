@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ChatInputCommandInteraction, CommandInteraction, Interaction, MessageFlags, ModalBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction, TextInputBuilder, TextInputStyle } from "discord.js";
+import { ActionRowBuilder, ChatInputCommandInteraction, MessageFlags, StringSelectMenuBuilder, StringSelectMenuInteraction } from "discord.js";
 import { BookInfo, fetch_books_and_authors } from "../tables/books";
 import { get_chapter_info } from "./chapters/register_chapter";
 import { show_book_info } from "./books/view_book_info";
@@ -72,11 +72,13 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
     const chapter_number = Number(chapter_number_string);
 
     // null check for the id
-    if (book_ID === undefined || isNaN(book_ID) || chapter_number === undefined || isNaN(chapter_number)){
+    if (book_ID === undefined || chapter_number === undefined){
       await interaction.reply({
-        content: "Something went wrong — no book was selected. Please try again.",
+        content: "bookId or chapter_number is undefined",
       });
       return;
+    } else if (isNaN(book_ID) || isNaN(chapter_number)) {
+
     }
 
     if (command_type === "register_section") {

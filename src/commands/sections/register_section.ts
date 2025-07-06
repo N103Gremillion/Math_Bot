@@ -2,7 +2,6 @@ import { ActionRowBuilder, ChatInputCommandInteraction, ModalBuilder, ModalSubmi
 import { Command, COMMAND_TYPE } from "../command_types";
 import { select_book_menu } from "../selection_menus";
 import { ModalType } from "../modals";
-import { ChapterField } from "../chapters/ChapterField";
 import { SectionField } from "./SectionField";
 import { wrap_str_in_code_block } from "../../utils/util";
 import { fetch_chapter_end_page, fetch_chapter_start_page, fetch_total_sections_in_chapter } from "../../tables/chapters";
@@ -30,21 +29,48 @@ export async function handle_section_info_modal_submission(
   const total_questions : number = Number(total_questions_str);
 
   // null checks
-  if (isNaN(section_number) || isNaN(start_page) || isNaN(end_page) || isNaN(total_questions)) {
+  if (isNaN(section_number)) {
     await interaction.reply(
       wrap_str_in_code_block(
-      `Invalid input expected a integer but was given a string for either chapter_number, start_page, or end_page.`
+      `Invalid input expected a integer but was given a string for section_number.`
       )
     );
     return; 
+  } else if (isNaN(start_page)){
+    await interaction.reply(
+      wrap_str_in_code_block(
+      `Invalid input expected a integer but was given a string for start_page.`
+      )
+    );
+    return;
+  } else if (isNaN(end_page)) {
+    await interaction.reply(
+      wrap_str_in_code_block(
+      `Invalid input expected a integer but was given a string for end_page.`
+      )
+    );
+    return;
+  } else if (isNaN(total_questions)) {
+    await interaction.reply(
+      wrap_str_in_code_block(
+      `Invalid input expected a integer but was given a string for total_questions.`
+      )
+    );
+    return;
   }
 
   // limit input for the total questions
-  if (total_questions < 0 || total_questions > 10000) {
+  if (total_questions < 0) {
     await interaction.reply(
       wrap_str_in_code_block(
-        `Total questions is invalid. 
-It is either to large or to small.` 
+        `Total questions is to small expected value >= 1.` 
+      )
+    );
+    return;
+  } else if (total_questions >= 1000) {
+    await interaction.reply(
+      wrap_str_in_code_block(
+        `Total questions is to large the limit is 1000`
       )
     );
     return;
@@ -56,16 +82,23 @@ It is either to large or to small.`
   if (total_sections_in_chapter === -1) {
     await interaction.reply(
       wrap_str_in_code_block(
-      `Issue fetching from chapters table.`
+      `Error fetching total sections in chapter.`
       )
     );
     return;
   }
-  else if (section_number > total_sections_in_chapter || section_number < 1) {
+  else if (section_number < 1) {
     await interaction.reply(
       wrap_str_in_code_block(
-        `Section number is Invalid.
-It is either to large or to small.` 
+        `Section number is to small the smallest possible section_number is 1.` 
+      )
+    );
+    return;
+  }
+  else if (section_number > total_sections_in_chapter) {
+    await interaction.reply(
+      wrap_str_in_code_block(
+        `Section number is to large for this chapter this chapter has a total of ${total_sections_in_chapter} sections.` 
       )
     );
     return;
@@ -78,27 +111,45 @@ It is either to large or to small.`
   if (start_page > end_page) {
     await interaction.reply(
       wrap_str_in_code_block(
-        `Start page cannot be greater than end page.`
+        `Start page cannot be greater than end page | you put start_page: ${start_page}, end_page: ${end_page}.`
       )
     );
     return;
   }
   
-  if (start_page < chapter_start_page || start_page > chapter_end_page) {
+  if (start_page < chapter_start_page) {
     await interaction.reply(
       wrap_str_in_code_block(
-        `Section start_page is invalid.
-It is either to large or to small.` 
+        `Section start page is smaller than chapter start page.
+chapter_start: ${chapter_start_page}, chapter_end: ${chapter_end_page}` 
+      )
+    );
+    return;
+  }
+  else if (start_page > chapter_end_page) {
+    await interaction.reply(
+      wrap_str_in_code_block(
+        `Section start page is larger than chapter end page.
+chapter_start: ${chapter_start_page}, chapter_end: ${chapter_end_page}` 
       )
     );
     return;
   }
 
-  if (end_page > chapter_end_page || end_page < chapter_start_page) {
+  if (end_page < chapter_start_page) {
     await interaction.reply(
       wrap_str_in_code_block(
-        `Section end_page is invalid.
-It is either to large or to small.` 
+        `Section end page is smaller than chapter start page.
+chapter_start: ${chapter_start_page}, chapter_end: ${chapter_end_page}` 
+      )
+    );
+    return;
+  } 
+  else if (end_page > chapter_end_page) {
+    await interaction.reply(
+      wrap_str_in_code_block(
+        `Section end page is larger than chapter end page.
+chapter_start: ${chapter_start_page}, chapter_end: ${chapter_end_page}` 
       )
     );
     return;

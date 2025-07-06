@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction } from "discord.js";
 import { wrap_str_in_code_block } from "../../utils/util";
 import { Command, COMMAND_TYPE } from "../command_types";
-import { check_user_registered, insert_users_table, remove_from_users_table } from "../../tables/users";
+import { check_user_registered, remove_from_users_table } from "../../tables/users";
 
 export async function execute_remove_user(cmd : ChatInputCommandInteraction) : Promise<void> {
   await cmd.deferReply();
@@ -30,7 +30,7 @@ export async function execute_remove_user(cmd : ChatInputCommandInteraction) : P
   let resulting_response : string = "";
 
   if (user_removed) {
-    resulting_response = `Successfully removed user. \n`;
+    resulting_response = `Successfully removed user: ${user_name}. \n`;
   } else {
     resulting_response = `Issue registering user. \n`;
   }

@@ -30,7 +30,7 @@ export async function execute_register_user (cmd : ChatInputCommandInteraction) 
   let resulting_response : string = "";
 
   if (user_registered) {
-    resulting_response = `Successfully registered user \n`;
+    resulting_response = `Successfully registered user: ${user_name}\n`;
   } else {
     resulting_response = `Issue registering user \n`;
   }
