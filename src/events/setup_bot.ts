@@ -85,7 +85,10 @@ function setup_SlashCommand_with_params(cmd: Command): SlashCommandBuilder {
       )
       .addStringOption(option =>
         option.setName(BookField.Description).setDescription("Short description of book").setRequired(true)
-      ) as SlashCommandBuilder;
+      ) 
+      .addIntegerOption(option =>
+        option.setName(BookField.Edition).setDescription("The edition of the book").setRequired(true)
+      )as SlashCommandBuilder;
   } 
   else {
     return new SlashCommandBuilder()

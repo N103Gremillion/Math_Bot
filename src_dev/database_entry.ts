@@ -2,7 +2,7 @@ import path from "path";
 import { config } from "../src_shared/config";
 import fs from 'fs/promises';
 import sqlite3 from 'sqlite3';
-import { clear_table, run_query, TABLE_TYPE, view_table } from "../src/tables/table_type";
+import { clear_table, drop_table, run_query, TABLE_TYPE, view_table } from "../src/tables/table_type";
 import { clear } from "console";
 import { insert_dummy_data } from "./dummy_data";
 
@@ -73,10 +73,11 @@ export async function create_tables() : Promise<void> {
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT NOT NULL,
                 author TEXT NOT NULL,
+                edition INTEGER,
                 page_count INTEGER,
                 chapters INTEGER,
                 description TEXT,
-                UNIQUE(title, author)
+                UNIQUE(title, author, edition)
             );
             `,
             []
@@ -188,6 +189,20 @@ export async function create_tables() : Promise<void> {
         console.log("Issue creating progress_logs table ", err);
     } 
 }   
+
+export async function drop_database() : Promise<void> {
+    try {
+        await drop_table(TABLE_TYPE.USERS);
+        await drop_table(TABLE_TYPE.BOOKS);
+        await drop_table(TABLE_TYPE.READING);
+        await drop_table(TABLE_TYPE.CHAPTERS);
+        await drop_table(TABLE_TYPE.SECTIONS);
+        await drop_table(TABLE_TYPE.PROGRESS_LOGS);
+        console.log("Database dropped");
+    } catch (err) {
+        console.log("Issue dropping the database ", err);
+    }
+}
 
 export async function clear_database() : Promise<void> {
     try {

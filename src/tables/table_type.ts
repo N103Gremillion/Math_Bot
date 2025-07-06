@@ -46,6 +46,25 @@ export async function clear_table(table_type : TABLE_TYPE) : Promise<void> {
 
 }
 
+export async function drop_table(table_type: TABLE_TYPE): Promise<void> {
+  const table_string = get_table_string(table_type);
+
+  if (table_string === "invalid") {
+    console.log("Invalid Table Type.");
+    return;
+  }
+
+  const query_string = `DROP TABLE IF EXISTS ${table_string};`;
+
+  try {
+    await run_query(query_string, []);
+    console.log(`Dropped table: ${table_string}`);
+  } catch (err) {
+    console.error(`Error dropping ${table_string} table:`, err);
+  }
+}
+
+
 export async function view_table(table_type : TABLE_TYPE) : Promise<void> {
   
   const table_string : string = "\n" + get_table_string(table_type);

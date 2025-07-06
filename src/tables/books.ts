@@ -7,18 +7,19 @@ export type BookInfo = {
   author : string;
   page_count? : number;
   chapters? : number;
-  description? : string; 
+  description? : string;
+  edition? : number 
 }
 
-export async function insert_books_table(title : string, author : string, pages : number, chapters : number, description : string): Promise<boolean> {
+export async function insert_books_table(title : string, author : string, pages : number, chapters : number, description : string, edition : number): Promise<boolean> {
   
   try {
     await run_query(
       `
-      INSERT OR IGNORE INTO books(title, author, page_count, chapters, description)
-      VALUES(?, ?, ?, ?, ?);
+      INSERT OR IGNORE INTO books(title, author, page_count, chapters, description, edition)
+      VALUES(?, ?, ?, ?, ?, ?);
       `,
-      [title, author, pages, chapters, description]
+      [title, author, pages, chapters, description, edition]
     );
     return true;
   } catch (err) {
@@ -49,7 +50,7 @@ export async function fetch_book_info(book_id : number) : Promise<BookInfo | nul
   try {
     const rows : BookInfo[] = await get_rows(
       `
-      SELECT title, author, page_count, chapters, description 
+      SELECT title, author, page_count, chapters, description, edition
       FROM books 
       WHERE id = ?;
       `,

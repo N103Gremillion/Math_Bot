@@ -29,6 +29,7 @@ This is likely do to an invalid bookID.`
       wrap_str_in_code_block(
         `====================== Successful removal for ===========================
 Title: ${book_info.title}
+Edition: ${book_info.edition}
 Author: ${book_info.author}
 Pages: ${book_info.page_count}
 Total Chapters: ${book_info.chapters}
@@ -40,6 +41,7 @@ Description: ${book_info.description}`
       wrap_str_in_code_block(
         `Issue trying to remove book from database.
 Title: ${book_info.title}
+Edition: ${book_info.edition}
 Author: ${book_info.author}
 Pages: ${book_info.page_count}
 Total Chapters: ${book_info.chapters}
