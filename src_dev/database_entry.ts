@@ -2,7 +2,7 @@ import path from "path";
 import { config } from "../src_shared/config";
 import fs from 'fs/promises';
 import sqlite3 from 'sqlite3';
-import { run_query, TABLE_TYPE, view_table } from "../src/tables/table_type";
+import { clear_table, run_query, TABLE_TYPE, view_table } from "../src/tables/table_type";
 
 export async function init_database() : Promise<sqlite3.Database> {
     console.log(`using db folder path: ${config.ROOT_REPO}`);
@@ -189,13 +189,12 @@ export async function create_tables() : Promise<void> {
 
 export async function clear_database() : Promise<void> {
     try {
-
-        await run_query(`DROP TABLE IF EXISTS users;`, []);
-        await run_query(`DROP TABLE IF EXISTS books;`, []);
-        await run_query(`DROP TABLE IF EXISTS reading;`, []);
-        await run_query(`DROP TABLE IF EXISTS chapters;`, []);
-        await run_query(`DROP TABLE IF EXISTS sections;`, []);
-        await run_query(`DROP TABLE IF EXISTS progress_logs;`, []);
+        await clear_table(TABLE_TYPE.USERS);
+        await clear_table(TABLE_TYPE.BOOKS);
+        await clear_table(TABLE_TYPE.READING);
+        await clear_table(TABLE_TYPE.CHAPTERS);
+        await clear_table(TABLE_TYPE.SECTIONS);
+        await clear_table(TABLE_TYPE.PROGRESS_LOGS);
         console.log("Database cleared");
     } catch (err) {
         console.log("Issue clearing the database ", err);

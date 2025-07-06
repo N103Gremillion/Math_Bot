@@ -18,6 +18,8 @@ import { view_book_info_command } from "./commands/books/view_book_info";
 import { view_chapters_command } from "./commands/chapters/view_chapters";
 import { register_section_command } from "./commands/sections/register_section";
 import { remove_book_command } from "./commands/books/remove_book";
+import { insert_dummy_books, insert_dummy_chapters, insert_dummy_data, insert_dummy_sections } from "../src_dev/dummy_data";
+import { clear } from "console";
 
 
 // setup list of all commands
@@ -41,12 +43,14 @@ let database_g : sqlite3.Database;
 
 async function main () : Promise<void> {
     database_g = await init_database();
-    await run_query("PRAGMA foreign_keys = ON;");
+    // await run_query("PRAGMA foreign_keys = ON;");
     await create_tables();
+    await insert_dummy_data();
+    //await clear_database();
     bot_g = init_client();
     await view_database(); 
 }
-
+ 
 main() 
     .then(() => {
     })
