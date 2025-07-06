@@ -43,6 +43,8 @@ export async function init_database() : Promise<sqlite3.Database> {
 
 export async function create_tables() : Promise<void> {
 
+    await run_query("PRAGMA foreign_keys = ON;");
+
     // Create tables if the do not exist yet
     // 1.) users
     try {
@@ -97,8 +99,8 @@ export async function create_tables() : Promise<void> {
 
                 PRIMARY KEY (user_id, book_id),
 
-                FOREIGN KEY (user_id) REFERENCES users(id),
-                FOREIGN KEY (book_id) REFERENCES books(id)
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE 
             );
             `
             , []
@@ -122,7 +124,7 @@ export async function create_tables() : Promise<void> {
 
                 PRIMARY KEY (book_id, chapter_number),
 
-                FOREIGN KEY (book_id) REFERENCES books(id),
+                FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
 
                 CHECK (start_page <= end_page)
             );
@@ -149,7 +151,9 @@ export async function create_tables() : Promise<void> {
 
                 PRIMARY KEY (book_id, chapter_number, section_number),
 
-                FOREIGN KEY (book_id, chapter_number) REFERENCES chapters(book_id, chapter_number),
+                FOREIGN KEY (book_id, chapter_number) 
+                REFERENCES chapters(book_id, chapter_number)
+                ON DELETE CASCADE,
 
                 CHECK (start_page <= end_page)
             );
@@ -187,6 +191,7 @@ export async function create_tables() : Promise<void> {
 
 export async function clear_database() : Promise<void> {
     try {
+
         await run_query(`DROP TABLE IF EXISTS users;`, []);
         await run_query(`DROP TABLE IF EXISTS books;`, []);
         await run_query(`DROP TABLE IF EXISTS reading;`, []);

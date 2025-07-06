@@ -17,6 +17,7 @@ import { view_books_command } from "./commands/books/view_books";
 import { view_book_info_command } from "./commands/books/view_book_info";
 import { view_chapters_command } from "./commands/chapters/view_chapters";
 import { register_section_command } from "./commands/sections/register_section";
+import { remove_book_command } from "./commands/books/remove_book";
 
 
 // setup list of all commands
@@ -26,6 +27,7 @@ export const commands_g: Command[] = [
     register_user_command,
     remove_user_command,
     register_book_command,
+    remove_book_command,
     view_books_command,
     view_book_info_command,
     register_chapter_command,

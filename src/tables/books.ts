@@ -27,6 +27,24 @@ export async function insert_books_table(title : string, author : string, pages 
   }
 }
 
+// removals ----------------------------------
+export async function remove_book_from_database(bookID : number) : Promise<boolean> {
+  try {
+    await run_query(
+      `
+      DELETE FROM books 
+      WHERE id = ?;
+      `, 
+      [bookID]
+    );
+    return true;
+  } catch (err) {
+    console.log(`Issue removing book from database `, err);
+    return false;
+  }
+}
+
+// fetches -----------------------------------
 export async function fetch_book_info(book_id : number) : Promise<BookInfo | null> {
   try {
     const rows : BookInfo[] = await get_rows(

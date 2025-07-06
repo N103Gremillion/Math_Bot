@@ -22,7 +22,7 @@ export async function show_book_info(interaction: StringSelectMenuInteraction, b
       `Title: ${book_info.title}
 Author: ${book_info.author}
 Pages: ${book_info.page_count}
-Chapters: ${book_info.chapters}
+Total Chapters: ${book_info.chapters}
 Description: ${book_info.description}` 
     )
   );

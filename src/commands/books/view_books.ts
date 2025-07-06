@@ -15,8 +15,6 @@ export async function execute_view_books (cmd : ChatInputCommandInteraction) : P
   // try and add the book to books table
   const books_fetched : BookInfo[] = await fetch_books_and_authors();
 
-  console.log(books_fetched);
-
   if (books_fetched.length === 0) {
     await cmd.editReply(
       wrap_str_in_code_block(

@@ -6,6 +6,7 @@ import { show_chapters_in_book } from "./chapters/view_chapters";
 import { wrap_str_in_code_block } from "../utils/util";
 import { ChapterInfo, fetch_chapters_in_book } from "../tables/chapters";
 import { get_section_info } from "./sections/register_section";
+import { finish_executing_remove_book } from "./books/remove_book";
 
 export enum SelectionMenuType {
   SelectBook = "select_book",
@@ -42,6 +43,9 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
     }
     else if (command_type === "register_section") {
       await select_chapter_menu(interaction, book_ID_num, command_type);
+    }
+    else if (command_type === "remove_book") {
+      await finish_executing_remove_book(interaction, book_ID_num);
     }
     else {
       await interaction.reply({
