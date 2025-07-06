@@ -2,7 +2,6 @@ import { BookInfo, fetch_book_info } from './../../tables/books';
 import { ChatInputCommandInteraction, StringSelectMenuInteraction } from "discord.js";
 import { Command, COMMAND_TYPE } from "../command_types";
 import { select_book_menu } from "../selection_menus";
-import { BookField } from './BookField';
 import { wrap_str_in_code_block } from '../../utils/util';
 
 export async function execute_view_book_info(cmd : ChatInputCommandInteraction) : Promise<void> {
@@ -13,7 +12,11 @@ export async function show_book_info(interaction: StringSelectMenuInteraction, b
   const book_info : BookInfo = (await fetch_book_info(book_ID))!;
 
   if (!book_info) {
-    await interaction.reply("Book not found.");
+    await interaction.reply(
+      wrap_str_in_code_block(
+        `No book found with bookID ${book_ID}` 
+      )
+    );
     return;
   }
 

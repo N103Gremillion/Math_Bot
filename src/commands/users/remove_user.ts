@@ -19,7 +19,7 @@ export async function execute_remove_user(cmd : ChatInputCommandInteraction) : P
   if (!is_registered) {
     cmd.editReply(
       wrap_str_in_code_block(
-        `User doesn't exists in database.`
+        `User ${user_name} doesn't exists in database.`
       )
     );
     return;
@@ -32,7 +32,7 @@ export async function execute_remove_user(cmd : ChatInputCommandInteraction) : P
   if (user_removed) {
     resulting_response = `Successfully removed user: ${user_name}. \n`;
   } else {
-    resulting_response = `Issue registering user. \n`;
+    resulting_response = `Issue registering user: ${user_name}. \n`;
   }
 
   await cmd.editReply(wrap_str_in_code_block(resulting_response));

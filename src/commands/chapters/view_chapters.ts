@@ -23,19 +23,38 @@ export async function show_chapters_in_book(
     let cur_chapter_info = '';
 
     if (chapters_index >= chapters.length) {
-      cur_chapter_info += `Chapter ${i + 1} : Is not registered\n`;
+      cur_chapter_info += 
+          `\n=== Chapter ${i + 1}: Unknown Title ===\n` +
+          `Start Page : Unknown\n` +
+          `End Page   : Unknown\n` +
+          `Sections   : Unknown\n`;
+      ;
       response_string += cur_chapter_info;
       continue;
     }
 
     const chapter: ChapterInfo = chapters[chapters_index]!;
-    const { chapter_name, chapter_number } = chapter;
+    const { 
+      chapter_name, 
+      chapter_number, 
+      sections, 
+      start_page, 
+      end_page 
+    } = chapter;
 
     if (i + 1 === chapter_number) {
-      cur_chapter_info += `Chapter ${chapter_number} : ${chapter_name}\n`;
+      cur_chapter_info += 
+        `\n=== Chapter ${chapter_number}: ${chapter_name} ===\n` +
+        `Start Page : ${start_page}\n` +
+        `End Page   : ${end_page}\n` +
+        `Sections   : ${sections}\n`;
       chapters_index++;
     } else {
-      cur_chapter_info += `Chapter ${i + 1} : Is not registered\n`;
+      cur_chapter_info += 
+        `\n=== Chapter ${i + 1}: Unknown Title ===\n` +
+        `Start Page : Unknown\n` +
+        `End Page   : Unknown\n` +
+        `Sections   : Unknown\n`;
     }
 
     response_string += cur_chapter_info;

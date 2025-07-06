@@ -14,11 +14,19 @@ export async function execute_register_book (cmd : ChatInputCommandInteraction) 
   const description : string = cmd.options.getString(BookField.Description)!;
 
   // make sure values are valid to put in table
-  if (pages <= 0 || chapters <= 0) {
-    cmd.reply({
-      content: "Pages and chapters must be positive numbers.",
-      ephemeral: true
-    });
+  if (pages <= 0) {
+    cmd.reply(
+      wrap_str_in_code_block(
+        `Pages must be positive numbers.`
+      ),
+    );
+    return;
+  } else if (chapters <= 0) {
+    cmd.reply(
+      wrap_str_in_code_block(
+        `Chapters must be positive numbers.`
+      ),
+    );
     return;
   }
 
@@ -34,9 +42,21 @@ export async function execute_register_book (cmd : ChatInputCommandInteraction) 
   let resulting_response : string = "";
 
   if (book_registered) {
-    resulting_response = `Successfully registered book \n`;
+    resulting_response =
+`=================== Insertion successful for =======================
+Book Title: ${title}
+Book Author: ${author}
+Page Count: ${pages}
+Chapter Count: ${chapters}
+Description: ${description}`;
   } else {
-    resulting_response = `Issue registering book \n`;
+    resulting_response = 
+`=================== Insertion failed for =======================
+Book Title: ${title}
+Book Author: ${author}
+Page Count: ${pages}
+Chapter Count: ${chapters}
+Description: ${description}`;
   }
 
   await cmd.editReply(wrap_str_in_code_block(resulting_response));

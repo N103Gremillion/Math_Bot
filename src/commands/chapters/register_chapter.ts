@@ -1,4 +1,4 @@
-import { Interaction, ModalSubmitInteraction, StringSelectMenuInteraction } from 'discord.js';
+import { ModalSubmitInteraction, StringSelectMenuInteraction } from 'discord.js';
 import { Command, COMMAND_TYPE } from './../command_types';
 import { ActionRowBuilder, ChatInputCommandInteraction, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { select_book_menu } from '../selection_menus';
@@ -28,21 +28,48 @@ export async function handle_chapter_info_modal_submission(
   const total_sections : number = Number(total_sections_str);
 
   // null checks
-  if (isNaN(chapter_number) || isNaN(start_page) || isNaN(end_page) || isNaN(total_sections)) {
+  if (isNaN(chapter_number)) {
     await interaction.reply(
       wrap_str_in_code_block(
-      `Invalid input expected a integer but was given a string for either chapter_number, start_page, or end_page.`
+      `Invalid input expected a integer for chapter_number.`
       )
     );
     return; 
+  } else if (isNaN(start_page)) {
+    await interaction.reply(
+      wrap_str_in_code_block(
+      `Invalid input expected a integer for start_page.`
+      )
+    );
+    return;
+  } else if (isNaN(end_page)) {
+    await interaction.reply(
+      wrap_str_in_code_block(
+      `Invalid input expected a integer for end_page.`
+      )
+    );
+    return;
+  } else if (isNaN(total_sections)) {
+    await interaction.reply(
+      wrap_str_in_code_block(
+      `Invalid input expected a integer for total_sections.`
+      )
+    );
+    return;
   }
 
   // check if sections make sense
-  if (total_sections <= 0 || total_sections > 10000) {
+  if (total_sections <= 0) {
     await interaction.reply(
       wrap_str_in_code_block(
-        `Total sections is invalid. 
-It is either to large or to small.` 
+        `Total sections is to small it must be > 0.` 
+      )
+    );
+    return;
+  } else if (total_sections > 10000) {
+    await interaction.reply(
+      wrap_str_in_code_block(
+        `Total sections is to large it must be < 10000.` 
       )
     );
     return;
@@ -61,14 +88,21 @@ Invalid book_id.`
     );
     return;
   }
-  else if (chapter_number > total_book_chapters || chapter_number < 1) {
+  else if (chapter_number < 1) {
     await interaction.reply(
       wrap_str_in_code_block(
-      `Invalid chapter number either it is to big or to small.
-Note: use /view_book to select a book and its info`
+      `Chapter number is to small it must be > 0`
       )
     );
     return; 
+  }
+  else if (chapter_number > total_book_chapters) {
+    await interaction.reply(
+      wrap_str_in_code_block(
+      `Chapter number is to large this book has a max of ${total_book_chapters} chapters.`
+      )
+    );
+    return;
   }
 
   // query page information
@@ -83,14 +117,41 @@ Invalid book_id.`
     );
     return; 
   }
-  else if (start_page > page_count || end_page > page_count || start_page < 0 || end_page < 0 || end_page < start_page) {
+  else if (start_page < 0) {
     interaction.reply(
       wrap_str_in_code_block(
-      `Invalid end_page or start_page.
-Note: use /view_book_info to select a book and its info`
+      `Start page can not be less than 0`
       )
     );
     return; 
+  } else if (end_page < 0) {
+    interaction.reply(
+      wrap_str_in_code_block(
+      `End page can not be less than 0`
+      )
+    );
+    return; 
+  } else if (start_page > page_count) {
+    interaction.reply(
+      wrap_str_in_code_block(
+      `Start page can not be greater than total pages in book, this book has a total of ${page_count} pages.`
+      )
+    );
+    return; 
+  } else if (end_page > page_count) {
+    interaction.reply(
+      wrap_str_in_code_block(
+      `End page can not be greater than total pages in book, this book has a total of ${page_count} pages.`
+      )
+    );
+    return;
+  } else if (end_page < start_page) {
+    interaction.reply(
+      wrap_str_in_code_block(
+      `End page cannot be greater then end page. Input(start_page : ${start_page}, end_page : ${end_page})`
+      )
+    );
+    return;
   }
 
   const insert_successful : boolean = await insert_chapters_table(book_id, chapter_name, chapter_number, total_sections, start_page, end_page);
@@ -98,12 +159,22 @@ Note: use /view_book_info to select a book and its info`
   if (!insert_successful) {
     await interaction.reply(
       wrap_str_in_code_block(
-        `Insertion issue.`
+        `====================== Insertion issue for =======================
+Chapter name: ${chapter_name}
+Chapter number: ${chapter_number}
+Total sections: ${total_sections}
+Start page: ${start_page}
+End page: ${end_page}`
       )
     );
   } else {
     await interaction.reply(
-      wrap_str_in_code_block(`Insertion successful.`)
+      wrap_str_in_code_block(`=================== Insertion successful for =======================
+Chapter name: ${chapter_name}
+Chapter number: ${chapter_number}
+Total sections: ${total_sections}
+Start page: ${start_page}
+End page: ${end_page}`)
     );
   }
 

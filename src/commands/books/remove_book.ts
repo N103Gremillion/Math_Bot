@@ -2,30 +2,51 @@ import { ChatInputCommandInteraction, StringSelectMenuInteraction } from "discor
 import { Command, COMMAND_TYPE } from "../command_types";
 import { select_book_menu } from "../selection_menus";
 import { wrap_str_in_code_block } from "../../utils/util";
-import { remove_book_from_database } from "../../tables/books";
+import { BookInfo, fetch_book_info, remove_book_from_database } from "../../tables/books";
 
 export async function execute_remove_book(cmd : ChatInputCommandInteraction) : Promise<void> {
   await select_book_menu(cmd);
 }
 
 export async function finish_executing_remove_book(interaction : StringSelectMenuInteraction, bookID : number) : Promise<void> {
-  // try to remove the book 
+  // try to remove the book
+  const book_info : BookInfo | null = await fetch_book_info(bookID); 
+
+  if (book_info === null) {
+    interaction.reply(
+      wrap_str_in_code_block(
+        `Issue fetching book info.
+This is likely do to an invalid bookID.`
+      )
+    );
+    return;
+  }
+
   const successful_removal : boolean = await remove_book_from_database(bookID);
 
   if (successful_removal) {
     interaction.reply(
       wrap_str_in_code_block(
-        `Book successfully removed from database.`
+        `====================== Successful removal for ===========================
+Title: ${book_info.title}
+Author: ${book_info.author}
+Pages: ${book_info.page_count}
+Total Chapters: ${book_info.chapters}
+Description: ${book_info.description}`
       )
     );
   } else {
     interaction.reply(
       wrap_str_in_code_block(
-        `Issue trying to remove book from database.`
+        `Issue trying to remove book from database.
+Title: ${book_info.title}
+Author: ${book_info.author}
+Pages: ${book_info.page_count}
+Total Chapters: ${book_info.chapters}
+Description: ${book_info.description}`
       )
     )
   }
-
 }
 
 export const remove_book_command : Command = {

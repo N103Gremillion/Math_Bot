@@ -7,7 +7,7 @@ export type BookInfo = {
   author : string;
   page_count? : number;
   chapters? : number;
-  description? : string;
+  description? : string; 
 }
 
 export async function insert_books_table(title : string, author : string, pages : number, chapters : number, description : string): Promise<boolean> {
@@ -65,11 +65,11 @@ export async function fetch_book_info(book_id : number) : Promise<BookInfo | nul
   }
 }
 
-export async function fetch_books_and_authors() : Promise<BookInfo[]> {
+export async function fetch_books_info() : Promise<BookInfo[]> {
   try {
     const rows : BookInfo[] = await get_rows(
       `
-      SELECT title, author, id 
+      SELECT id, title, author, page_count, chapters
       FROM books;
       `
     );

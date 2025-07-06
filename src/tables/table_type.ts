@@ -48,7 +48,7 @@ export async function clear_table(table_type : TABLE_TYPE) : Promise<void> {
 
 export async function view_table(table_type : TABLE_TYPE) : Promise<void> {
   
-  const table_string : string = get_table_string(table_type);
+  const table_string : string = "\n" + get_table_string(table_type);
   const query_string : string = "SELECT * FROM " + table_string + ";";
   
   if (table_string === "invalid"){

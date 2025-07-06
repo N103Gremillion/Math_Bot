@@ -119,7 +119,7 @@ export async function fetch_chapters_in_book(book_ID : number) : Promise<Chapter
   try {
     const rows : ChapterInfo[] = await get_rows(
       `
-      SELECT chapter_name, chapter_number 
+      SELECT chapter_name, chapter_number, sections, start_page, end_page
       FROM chapters 
       WHERE book_id = ?
       ORDER BY chapter_number;

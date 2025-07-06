@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ChatInputCommandInteraction, MessageFlags, StringSelectMenuBuilder, StringSelectMenuInteraction } from "discord.js";
-import { BookInfo, fetch_books_and_authors } from "../tables/books";
+import { BookInfo, fetch_books_info } from "../tables/books";
 import { get_chapter_info } from "./chapters/register_chapter";
 import { show_book_info } from "./books/view_book_info";
 import { show_chapters_in_book } from "./chapters/view_chapters";
@@ -128,7 +128,7 @@ async function select_chapter_menu(
 
 export async function select_book_menu(cmd : ChatInputCommandInteraction) : Promise<void> {
   // get currently regisetered books [title : string, author : string]
-  const books: BookInfo[] = await fetch_books_and_authors();
+  const books: BookInfo[] = await fetch_books_info();
 
   if (books.length == 0) {
     await cmd.reply(

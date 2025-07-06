@@ -40,7 +40,8 @@ let bot_g : Client;
 let database_g : sqlite3.Database;
 
 async function main () : Promise<void> {
-    database_g = await init_database()
+    database_g = await init_database();
+    await run_query("PRAGMA foreign_keys = ON;");
     await create_tables();
     bot_g = init_client();
     await view_database(); 

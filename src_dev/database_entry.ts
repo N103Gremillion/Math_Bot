@@ -43,8 +43,6 @@ export async function init_database() : Promise<sqlite3.Database> {
 
 export async function create_tables() : Promise<void> {
 
-    await run_query("PRAGMA foreign_keys = ON;");
-
     // Create tables if the do not exist yet
     // 1.) users
     try {

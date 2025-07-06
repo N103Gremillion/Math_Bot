@@ -19,7 +19,7 @@ export async function execute_register_user (cmd : ChatInputCommandInteraction) 
   if (is_registered) {
     await cmd.editReply(
       wrap_str_in_code_block(
-        `User has already been registered.`
+        `User ${user_name} has already been registered.`
       )
     );
     return;
@@ -32,7 +32,7 @@ export async function execute_register_user (cmd : ChatInputCommandInteraction) 
   if (user_registered) {
     resulting_response = `Successfully registered user: ${user_name}\n`;
   } else {
-    resulting_response = `Issue registering user \n`;
+    resulting_response = `Issue registering user user: ${user_name}\n`;
   }
 
   await cmd.editReply(wrap_str_in_code_block(resulting_response));
