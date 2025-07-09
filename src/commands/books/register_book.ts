@@ -5,6 +5,7 @@ import { BookInfo, insert_books_table } from "../../tables/books";
 import { BookField } from "./BookField";
 
 
+
 interface Open_Library_Book_Response {
   full_title?: string;
   title?: string;
@@ -14,14 +15,19 @@ interface Open_Library_Book_Response {
   authors?: Array<{ key: string } | string >;
 }
 
+const HEADER_INFO = {
+  "User-Agent": "MathBot/0.1 (nathan103grem@gmail.com)"
+}
 
 export async function execute_register_book (cmd : ChatInputCommandInteraction) : Promise<void> {
 
   // get isbn from response
   const isbn : string = cmd.options.getString(BookField.ISBN)!;
 
-  const book_info : BookInfo | null = await fetch_book_by_ISBN(isbn)
+  const book_info : BookInfo | null = await fetch_book_by_ISBN(isbn);
 
+  console.log(book_info);
+  
   if (book_info === null || book_info === undefined) {
     cmd.reply(
       wrap_str_in_code_block(
@@ -32,7 +38,7 @@ Either this books info is not available or the isbn is invalid.`
     return;
   }
 
-  if (!book_info!.title || !book_info!.author || !book_info!.number_of_pages){
+  if (!book_info!.title || !book_info!.authors || !book_info!.number_of_pages){
     cmd.reply(
       wrap_str_in_code_block(
         `Issue fetching book with ISBN: ${isbn}.
@@ -40,8 +46,9 @@ Could not fetch vital infor like title, author, and page count.`
       )
     );
   }
+
   // try and add the book to books table
-  const book_registered : boolean = await insert_books_table(isbn, book_info.title, book_info.author, book_info.number_of_pages, book_info.cover_id);
+  const book_registered : boolean = await insert_books_table(isbn, book_info.title, book_info.authors, book_info.number_of_pages, book_info.cover_id);
   let resulting_response : string = "";
   
   if (book_registered) {  
@@ -63,9 +70,7 @@ Note: you can view registered books using /view_books.`;
 async function fetch_book_by_ISBN(isbn : string) : Promise<BookInfo | null> {
   try {
     const response : Response = await fetch(`https://openlibrary.org/isbn/${isbn}.json`, {
-      headers: {
-        "User-Agent" : "MathBot/0.1 (nathan103grem@gmail.com)"
-      }
+      headers : HEADER_INFO
     });
 
     if (!response.ok) {
@@ -79,7 +84,7 @@ async function fetch_book_by_ISBN(isbn : string) : Promise<BookInfo | null> {
     let res : BookInfo = {
       isbn : isbn,
       title : data.full_title ?? data.title ?? "Unknown Title",
-      author : await get_author_info_from_response(data),
+      authors : await get_authors_info_from_response(data),
       number_of_pages: data.number_of_pages,
       cover_id : Array.isArray(data.covers) ? data.covers[0] : undefined
     };
@@ -91,32 +96,38 @@ async function fetch_book_by_ISBN(isbn : string) : Promise<BookInfo | null> {
   }
 }
 
-async function get_author_info_from_response(data : Open_Library_Book_Response) : Promise<string> {
-  // first see if the author is given directly on the author field of the body
-  if (data.author && data.author[0]){
-    return data.author[0];
+async function get_authors_info_from_response(data : Open_Library_Book_Response) : Promise<string[]> {
+  const authors : string[] = []
+
+  // Case 1: author field is a simple array of strings
+  if (Array.isArray(data.author) && data.author.length > 0){
+    authors.push(...data.author);
   }
-  // else try and query the author info from the key in the authors field of the body
-  else if (data.authors && Array.isArray(data.authors) && data.authors[0]) {
-    const first_author_info = data.authors[0];
-    // Subcase 1: if it is a hard coded string of the author name
-    if (typeof first_author_info === 'string') {
-      return first_author_info;
+  // else try and query the authors info from the key in the authors field of the body
+  else if (data.authors && Array.isArray(data.authors) && data.authors.length > 0) {
+    for (let i = 0; i < data.authors.length; i++) {
+      const author_info : { key: string } | string | undefined = data.authors[i]; 
+      if (author_info === undefined) {
+        continue;
+      }
+      else if (typeof author_info === 'string'){
+        authors.push(author_info)
+      } else {
+        authors.push(await fetch_author_with_key(author_info.key))
+      }
     }
-    // Subcase 2: if the info is an object with a key we can query the resulting info
-    else if (first_author_info.key){
-      return fetch_author_with_key(first_author_info.key);
-    }
-  } 
+  }
   // else we have no other way off fetching the author name
-  return "Unknown Author";
+  else {
+    authors.push("Unknown Authors")
+  }
+  
+  return authors;
 }
 
 async function fetch_author_with_key(author_key : string) : Promise<string> {
   const author_resp = await fetch(`https://openlibrary.org${author_key}.json`, {
-    headers: {
-      "User-Agent": "MathBot/0.1 (nathan103grem@gmail.com)"
-    }
+    headers : HEADER_INFO
   });
   if (author_resp.ok) {
     const author_data = await author_resp.json();

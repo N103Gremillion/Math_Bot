@@ -3,6 +3,7 @@ import { database_g } from "../entry";
 export enum TABLE_TYPE {
   USERS, 
   BOOKS,
+  AUTHORS,
   READING,
   CHAPTERS,
   SECTIONS,
@@ -10,20 +11,23 @@ export enum TABLE_TYPE {
   INVALID
 }
 
+const table_strings : Record<TABLE_TYPE, string> = {
+  [TABLE_TYPE.USERS]: "users",
+  [TABLE_TYPE.READING]: "reading",
+  [TABLE_TYPE.BOOKS]: "books",
+  [TABLE_TYPE.AUTHORS]: "authors",
+  [TABLE_TYPE.CHAPTERS]: "chapters",
+  [TABLE_TYPE.SECTIONS]: "sections",
+  [TABLE_TYPE.PROGRESS_LOGS]: "progress_logs",
+  [TABLE_TYPE.INVALID]: "invalid"
+}
+
 function get_table_string(table_type : TABLE_TYPE) : string {
-  if (table_type == TABLE_TYPE.USERS) {
-    return "users";
-  } else if (table_type == TABLE_TYPE.READING) {
-    return "reading";
-  } else if (table_type == TABLE_TYPE.BOOKS) {
-    return "books";
-  } else if (table_type == TABLE_TYPE.CHAPTERS) {
-    return "chapters";
-  } else if (table_type == TABLE_TYPE.SECTIONS) {
-    return "sections";
-  } else if (table_type == TABLE_TYPE.PROGRESS_LOGS) {
-    return "progress_logs";
-  } else {
+  const type_string = table_strings[table_type];
+  if (type_string) {
+    return type_string;
+  }
+   else {
     return "invalid";
   }
 }

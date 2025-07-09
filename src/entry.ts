@@ -2,7 +2,7 @@ import { init_client } from "./events/setup_bot";
 import { Client } from "discord.js";
 import { Command } from "./commands/command_types";
 
-import { init_database, create_tables, clear_database, view_database, reset_database_with_dummy_data, drop_database } from "../src_dev/database_entry";
+import { init_database, create_tables, clear_database, view_database, drop_database} from "../src_dev/database_entry";
 import sqlite3 from 'sqlite3';
 
 // commands
@@ -18,7 +18,6 @@ import { view_book_info_command } from "./commands/books/view_book_info";
 import { view_chapters_command } from "./commands/chapters/view_chapters";
 import { register_section_command } from "./commands/sections/register_section";
 import { remove_book_command } from "./commands/books/remove_book";
-import { insert_dummy_books, insert_dummy_chapters, insert_dummy_data, insert_dummy_sections } from "../src_dev/dummy_data";
 import { clear } from "console";
 
 
@@ -44,12 +43,12 @@ let database_g : sqlite3.Database;
 async function main () : Promise<void> {
     database_g = await init_database();
     // await run_query("PRAGMA foreign_keys = ON;");
-    // await drop_database();
+    await drop_database();
     await create_tables(); 
     bot_g = init_client(); 
     await view_database(); 
 }
-  
+   
 main() 
     .then(() => {
     })

@@ -4,7 +4,7 @@ import fs from 'fs/promises';
 import sqlite3 from 'sqlite3';
 import { clear_table, drop_table, run_query, TABLE_TYPE, view_table } from "../src/tables/table_type";
 import { clear } from "console";
-import { insert_dummy_data } from "./dummy_data";
+import { run } from "node:test";
 
 export async function init_database() : Promise<sqlite3.Database> {
     console.log(`using db folder path: ${config.ROOT_REPO}`);
@@ -71,8 +71,7 @@ export async function create_tables() : Promise<void> {
             `
             CREATE TABLE IF NOT EXISTS books (
                 isbn TEXT PRIMARY KEY,                 
-                title TEXT NOT NULL,
-                author TEXT NOT NULL,                                 
+                title TEXT NOT NULL,                               
                 number_of_pages INTEGER NOT NULL,                                       
                 cover_id INTEGER,                     
                 total_chapters INTEGER                  
@@ -85,21 +84,39 @@ export async function create_tables() : Promise<void> {
         console.log("Issue creating books table ", err); 
     }
 
-    // 3.) reading (maps userId's to bookId's)
+    // 3.) authors (isbn -> author names)
+    try {
+        await run_query(
+            `
+            CREATE TABLE IF NOT EXISTS authors (
+                isbn TEXT NOT NULL,
+                author TEXT NOT NULL,
+                PRIMARY KEY (isbn, author),
+                FOREIGN KEY (isbn) REFERENCES books(isbn) ON DELETE CASCADE         
+            );
+            `,
+            []
+        );
+        console.log("Created books table");
+    } catch (err) {
+        console.log("Issue creating authors table ", err);
+    }
+
+    // 4.) reading (maps userId's to bookId's)
     try {
         await run_query(
             `
             CREATE TABLE IF NOT EXISTS reading (
-                user_id INTEGER,
-                book_id INTEGER,
+                user_id INTEGER NOT NULL,
+                book_isbn TEXT NOT NULL,
                 start_date DATETIME DEFAULT CURRENT_TIMESTAMP,
                 last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,
                 cur_page INTEGER NOT NULL,
 
-                PRIMARY KEY (user_id, book_id),
+                PRIMARY KEY (user_id, book_isbn),
 
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-                FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE 
+                FOREIGN KEY (book_isbn) REFERENCES books(isbn) ON DELETE CASCADE 
             );
             `
             , []
@@ -109,21 +126,21 @@ export async function create_tables() : Promise<void> {
         console.log("Issue when creating reading table ", err);
     }
 
-    // 4.) chapters
+    // 5.) chapters
     try {
         await run_query(
             `
             CREATE TABLE IF NOT EXISTS chapters (
-                book_id INTEGER,
+                book_isbn TEXT NOT NULL,
                 chapter_name TEXT NOT NULL,
                 chapter_number INTEGER NOT NULL,
                 sections INTEGER NOT NULL,
                 start_page INTEGER NOT NULL,
                 end_page INTEGER NOT NULL,
 
-                PRIMARY KEY (book_id, chapter_number),
+                PRIMARY KEY (book_isbn, chapter_number),
 
-                FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
+                FOREIGN KEY (book_isbn) REFERENCES books(isbn) ON DELETE CASCADE,
 
                 CHECK (start_page <= end_page)
             );
@@ -135,23 +152,23 @@ export async function create_tables() : Promise<void> {
         console.log("Issue creating chapters table ", err);
     }
 
-    // 5.) sections
+    // 6.) sections
     try {
         await run_query(
             `
             CREATE TABLE IF NOT EXISTS sections (
-                book_id INTEGER,
-                chapter_number INTEGER,
+                book_isbn TEXT NOT NULL,
+                chapter_number INTEGER NOT NULL,
                 section_number INTEGER NOT NULL,
                 section_name TEXT NOT NULL,
                 start_page INTEGER NOT NULL,
                 end_page INTEGER NOT NULL,
                 total_questions INTEGER NOT NULL,
 
-                PRIMARY KEY (book_id, chapter_number, section_number),
+                PRIMARY KEY (book_isbn, chapter_number, section_number),
 
-                FOREIGN KEY (book_id, chapter_number) 
-                REFERENCES chapters(book_id, chapter_number)
+                FOREIGN KEY (book_isbn, chapter_number) 
+                REFERENCES chapters(book_isbn, chapter_number)
                 ON DELETE CASCADE,
 
                 CHECK (start_page <= end_page)
@@ -164,20 +181,20 @@ export async function create_tables() : Promise<void> {
         console.log("Issue creating sections table ", err);
     }
     
-    // 6.) progress_logs
+    // 7.) progress_logs
     try {
         await run_query(
             `
             CREATE TABLE IF NOT EXISTS progress_logs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER,
-                book_id INTEGER,
+                user_id INTEGER NOT NULL,
+                book_isbn TEXT NOT NULL,
                 start_page INTEGER,
                 end_page INTEGER,
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
 
-                FOREIGN KEY (user_id) REFERENCES users(id),
-                FOREIGN KEY (book_id) REFERENCES books(id)
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY (book_isbn) REFERENCES books(isbn) ON DELETE CASCADE
             );
             `, 
             []
@@ -225,9 +242,4 @@ export async function view_database() : Promise<void> {
         }
         await view_table(table); 
     }
-}
-
-export async function reset_database_with_dummy_data() : Promise<void> {
-    await clear_database();
-    await insert_dummy_data();
 }

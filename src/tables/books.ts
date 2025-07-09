@@ -4,7 +4,7 @@ import { get_rows, run_query } from "./table_type";
 export type BookInfo = {
   isbn? : string;
   title : string;
-  author : string;
+  authors : string[];
   number_of_pages : number;
   cover_id? : number | undefined;
   total_chapters? : number;
