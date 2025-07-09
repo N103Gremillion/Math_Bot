@@ -21,11 +21,10 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
   if (type === SelectionMenuType.SelectBook) {
 
     // pull off the ID of the book
-    const book_ID : string | undefined = interaction.values[0];
-    const book_ID_num : number = Number(book_ID);
+    const book_ISBN : string | undefined = interaction.values[0];
 
     // null check for the id
-    if (book_ID === undefined || isNaN(book_ID_num)){
+    if (book_ISBN === undefined){
       await interaction.reply({
         content: "Something went wrong — no book was selected. Please try again.",
       });
@@ -33,10 +32,10 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
     }
 
     if (command_type === "register_chapter") {
-      await get_chapter_info(interaction, book_ID);
+      await get_chapter_info(interaction, book_ISBN);
     } 
     else if (command_type === "view_book") {
-      await show_book_info(interaction, book_ID_num); 
+      await show_book_info(interaction, book_ISBN); 
     }
     else if (command_type === "view_chapters") {
       await show_chapters_in_book(interaction, book_ID_num);
@@ -45,7 +44,7 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
       await select_chapter_menu(interaction, book_ID_num, command_type);
     }
     else if (command_type === "remove_book") {
-      await finish_executing_remove_book(interaction, book_ID_num);
+      await finish_executing_remove_book(interaction, book_ISBN);
     }
     else {
       await interaction.reply({
@@ -146,7 +145,7 @@ export async function select_book_menu(cmd : ChatInputCommandInteraction) : Prom
   .addOptions(
     books.map(book => ({
     label: `${book.title} by ${book.author}`,
-    value: `${book.id}`
+    value: `${book.isbn}`
   })));
   
   const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select_menu);

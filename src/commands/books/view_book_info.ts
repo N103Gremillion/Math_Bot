@@ -1,5 +1,5 @@
 import { BookInfo, fetch_book_info } from './../../tables/books';
-import { ChatInputCommandInteraction, StringSelectMenuInteraction } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder, StringSelectMenuInteraction } from "discord.js";
 import { Command, COMMAND_TYPE } from "../command_types";
 import { select_book_menu } from "../selection_menus";
 import { wrap_str_in_code_block } from '../../utils/util';
@@ -8,27 +8,26 @@ export async function execute_view_book_info(cmd : ChatInputCommandInteraction) 
   await select_book_menu(cmd);
 }
 
-export async function show_book_info(interaction: StringSelectMenuInteraction, book_ID: number): Promise<void> {
-  const book_info : BookInfo = (await fetch_book_info(book_ID))!;
+export async function show_book_info(interaction: StringSelectMenuInteraction, isbn : string): Promise<void> {
+  const book_info : BookInfo = (await fetch_book_info(isbn))!;
 
   if (!book_info) {
     await interaction.reply(
       wrap_str_in_code_block(
-        `No book found with bookID ${book_ID}` 
+        `No book found with ISBN: ${isbn}` 
       )
     );
     return;
   }
 
-  await interaction.reply(
-    wrap_str_in_code_block(
-      `Title: ${book_info.title}
-Author: ${book_info.author}
-Pages: ${book_info.page_count}
-Total Chapters: ${book_info.chapters}
-Description: ${book_info.description}` 
-    )
-  );
+  // fetch the cover image using the cover_id
+  const response : EmbedBuilder = new EmbedBuilder()
+    .setTitle(book_info.title)
+    .setAuthor({name : book_info.author})
+    .setImage(`https://covers.openlibrary.org/b/id/${book_info.cover_id}-M.jpg`)
+    .setFooter({text : `Page Count : ${book_info.number_of_pages}`});
+  
+  await interaction.reply({ embeds : [response] });
 }
 
 export const view_book_info_command : Command =  {

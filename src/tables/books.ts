@@ -5,8 +5,8 @@ export type BookInfo = {
   isbn? : string;
   title : string;
   author : string;
-  page_count : number;
-  cover_id? : number;
+  number_of_pages : number;
+  cover_id? : number | undefined;
   total_chapters? : number;
 }
 
@@ -34,14 +34,14 @@ export async function insert_books_table(
 }
 
 // removals ----------------------------------
-export async function remove_book_from_database(bookID : number) : Promise<boolean> {
+export async function remove_book_from_database(isbn : string) : Promise<boolean> {
   try {
     await run_query(
       `
       DELETE FROM books 
-      WHERE id = ?;
+      WHERE isbn = ?;
       `, 
-      [bookID]
+      [isbn]
     );
     return true;
   } catch (err) {
@@ -51,15 +51,15 @@ export async function remove_book_from_database(bookID : number) : Promise<boole
 }
 
 // fetches -----------------------------------
-export async function fetch_book_info(book_id : number) : Promise<BookInfo | null> {
+export async function fetch_book_info(isbn : string) : Promise<BookInfo | null> {
   try {
     const rows : BookInfo[] = await get_rows(
       `
-      SELECT title, author, page_count, chapters, description, edition
+      SELECT title, author, number_of_pages, cover_id, total_chapters
       FROM books 
-      WHERE id = ?;
+      WHERE isbn = ?;
       `,
-      [book_id]
+      [isbn]
     );
     if (rows.length === 0 || rows === undefined || rows[0] === undefined) {
       return null;
@@ -75,7 +75,7 @@ export async function fetch_books_info() : Promise<BookInfo[]> {
   try {
     const rows : BookInfo[] = await get_rows(
       `
-      SELECT id, title, author, page_count, chapters
+      SELECT isbn, title, author, number_of_pages, cover_id
       FROM books;
       `
     );
