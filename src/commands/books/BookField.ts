@@ -5,5 +5,6 @@ export enum BookField {
   PageCount = "page_count",
   TotalChapters = "chapters",
   Description = "descriptions",
-  Edition = "edition"
+  Edition = "edition",
+  ISBN = "isbn"
 }

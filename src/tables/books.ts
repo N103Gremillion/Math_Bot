@@ -2,28 +2,33 @@ import { BookField } from "../commands/books/BookField";
 import { get_rows, run_query } from "./table_type";
 
 export type BookInfo = {
-  id?: number; // optional if not fetched
+  isbn? : string;
   title : string;
   author : string;
-  page_count? : number;
-  chapters? : number;
-  description? : string;
-  edition? : number 
+  page_count : number;
+  cover_id? : number;
+  total_chapters? : number;
 }
 
-export async function insert_books_table(title : string, author : string, pages : number, chapters : number, description : string, edition : number): Promise<boolean> {
+export async function insert_books_table(
+  isbn : string, 
+  title : string, 
+  author : string, 
+  total_pages : number, 
+  cover_id : number | undefined)
+  : Promise<boolean> {
   
   try {
     await run_query(
       `
-      INSERT OR IGNORE INTO books(title, author, page_count, chapters, description, edition)
-      VALUES(?, ?, ?, ?, ?, ?);
+      INSERT OR IGNORE INTO books(isbn, title, author, number_of_pages, cover_id)
+      VALUES(?, ?, ?, ?, ?);
       `,
-      [title, author, pages, chapters, description, edition]
+      [isbn, title, author, total_pages, cover_id]
     );
     return true;
   } catch (err) {
-    console.log(err);
+    console.log("Issue inserting into books table.", err);
     return false; 
   }
 }

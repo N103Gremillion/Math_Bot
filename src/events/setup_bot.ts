@@ -67,33 +67,17 @@ function setup_command_listener(client : Client) : void {
 }
 
 function setup_SlashCommand_with_params(cmd: Command): SlashCommandBuilder {
-  if (cmd.command_type === COMMAND_TYPE.REGISTER_BOOK) {
-    return new SlashCommandBuilder()
-      .setName(cmd.command)
-      .setDescription(cmd.description)
-      .addStringOption(option =>
-        option.setName(BookField.BookTitle).setDescription("Title of the book").setRequired(true)
-      )
-      .addStringOption(option =>
-        option.setName(BookField.Author).setDescription("Author of the book").setRequired(true)
-      )
-      .addIntegerOption(option =>
-        option.setName(BookField.PageCount).setDescription("Page count").setRequired(true)
-      )
-      .addIntegerOption(option =>
-        option.setName(BookField.TotalChapters).setDescription("Chapter count").setRequired(true)
-      )
-      .addStringOption(option =>
-        option.setName(BookField.Description).setDescription("Short description of book").setRequired(true)
-      ) 
-      .addIntegerOption(option =>
-        option.setName(BookField.Edition).setDescription("The edition of the book").setRequired(true)
-      )as SlashCommandBuilder;
-  } 
-  else {
-    return new SlashCommandBuilder()
-      .setName(cmd.command)
-      .setDescription(cmd.description);
-  }
-}
+  const builder = new SlashCommandBuilder()
+    .setName(cmd.command)
+    .setDescription(cmd.description);
 
+  if (cmd.command_type === COMMAND_TYPE.REGISTER_BOOK) {
+    builder.addStringOption(option =>
+      option
+        .setName(BookField.ISBN)
+        .setDescription("What is the ISBN of the book you want to register.")
+        .setRequired(true)
+    );
+  }
+  return builder;
+}

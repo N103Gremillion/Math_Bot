@@ -1,78 +1,96 @@
 import { ChatInputCommandInteraction } from "discord.js";
 import { COMMAND_TYPE, Command } from "../command_types";
 import { wrap_str_in_code_block } from "../../utils/util";
-import { insert_books_table } from "../../tables/books";
+import { BookInfo, insert_books_table } from "../../tables/books";
 import { BookField } from "./BookField";
+import { wrap } from "module";
 
 export async function execute_register_book (cmd : ChatInputCommandInteraction) : Promise<void> {
 
-  // ! prevents null sense it is already enfored when we created the options
-  const title : string = cmd.options.getString(BookField.BookTitle)!;
-  const author : string = cmd.options.getString(BookField.Author)!;
-  const pages : number = cmd.options.getInteger(BookField.PageCount)!;
-  const chapters : number = cmd.options.getInteger(BookField.TotalChapters)!;
-  const description : string = cmd.options.getString(BookField.Description)!;
-  const edition : number = cmd.options.getInteger(BookField.Edition)!;
+  // get isbn from response
+  const isbn : string = cmd.options.getString(BookField.ISBN)!;
 
-  // make sure values are valid to put in table
-  if (edition <= 0) {
+  const book_info : BookInfo | null = await fetch_book_by_ISBN(isbn)
+
+  if (book_info === null || book_info === undefined) {
     cmd.reply(
       wrap_str_in_code_block(
-        `Edition must be > 0.`
-      ),
+        `Issue fetching book with ISBN: ${isbn}.
+Either this books info is not available or the isbn is invalid.`
+      )
     );
     return;
   }
 
-  if (pages <= 0) {
+  if (!book_info!.title || !book_info!.author || !book_info!.page_count){
     cmd.reply(
       wrap_str_in_code_block(
-        `Pages must be > 0.`
-      ),
+        `Issue fetching book with ISBN: ${isbn}.
+Could not fetch vital infor like title, author, and page count.`
+      )
     );
-    return;
-  } else if (chapters <= 0) {
-    cmd.reply(
-      wrap_str_in_code_block(
-        `Chapters must be positive numbers.`
-      ),
-    );
-    return;
   }
-
-  await cmd.deferReply();
-
-  const pending_response : string = `Trying to register book...\n`;
-  await cmd.editReply(wrap_str_in_code_block(pending_response));
-
-  await new Promise(resolve => setTimeout(resolve, 250));
-
   // try and add the book to books table
-  const book_registered : boolean = await insert_books_table(title, author, pages, chapters, description, edition);
+  const book_registered : boolean = await insert_books_table(isbn, book_info.title, book_info.author, book_info.page_count, book_info.cover_id);
   let resulting_response : string = "";
 
-  if (book_registered) {
+  console.log(book_info);
+  
+  if (book_registered) {  
     resulting_response =
 `=================== Insertion successful for =======================
-Book Title: ${title}
-Edition: ${edition}
-Book Author: ${author}
-Page Count: ${pages}
-Chapter Count: ${chapters}
-Description: ${description}`;
+Book Title: ${book_info.title}
+Book Author: ${book_info.author}
+Page Count: ${book_info.page_count}`;
   } else {
     resulting_response = 
 `=================== Insertion failed for =======================
-Book Title: ${title}
-Edition: ${edition}
-Book Author: ${author}
-Page Count: ${pages}
-Chapter Count: ${chapters}
-Description: ${description}`;
+Issue inserting book with ISBN: ${isbn}.
+This ISBN is likely already registered. 
+Note: you can view registered books using /view_books.`;
   }
-
-  await cmd.editReply(wrap_str_in_code_block(resulting_response));
+  await cmd.reply(wrap_str_in_code_block(resulting_response));
 } 
+
+async function fetch_book_by_ISBN(isbn : string) : Promise<BookInfo | null> {
+  try {
+    const response : Response = await fetch(`https://openlibrary.org/isbn/${isbn}.json`);
+
+    if (!response.ok) {
+      console.error(`HTTP error! Status: ${response.status}`);
+      return null;
+    }
+    
+    const data : any = await response.json();
+
+    // map the data onto the Book_Info res
+    let res : BookInfo = {
+      isbn : isbn,
+      title : data.full_title ?? data.title ?? "Unknown Title",
+      author : "", // needs to be fetched with the author key
+      page_count: (data.number_of_pages !== undefined && data.number_of_pages !== null) ? data.number_of_pages : null,
+      cover_id : Array.isArray(data.covers) ? data.covers[0] : null,
+    };
+    
+    // fetch the author using the author key
+    if (data.authors && Array.isArray(data.authors) && data.authors.length > 0 && data.authors[0] && data.authors[0].key) {
+      const author_key = data.authors[0].key;
+      const authorResp = await fetch(`https://openlibrary.org${author_key}.json`);
+      if (authorResp.ok) {
+        const authorData = await authorResp.json();
+        res.author = authorData.name ?? "Unknown Author";
+      } else {
+        res.author = "Unknown Author";
+      }
+    }
+
+    return res;
+
+  } catch (error) {
+    console.log(`Issue fetching book with ISBN: ${isbn}.`, error);
+    return null;
+  }
+}
 
 export const register_book_command : Command = {
   command: "register_book",

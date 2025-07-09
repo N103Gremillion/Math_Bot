@@ -70,21 +70,19 @@ export async function create_tables() : Promise<void> {
         await run_query(
             `
             CREATE TABLE IF NOT EXISTS books (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                isbn TEXT PRIMARY KEY,                 
                 title TEXT NOT NULL,
-                author TEXT NOT NULL,
-                edition INTEGER,
-                page_count INTEGER,
-                chapters INTEGER,
-                description TEXT,
-                UNIQUE(title, author, edition)
+                author TEXT NOT NULL,                                 
+                number_of_pages INTEGER NOT NULL,                                       
+                cover_id INTEGER,                     
+                total_chapters INTEGER                  
             );
             `,
             []
         );
         console.log("Created books table");
     } catch (err) {
-        console.log("Issue creating books table ", err);
+        console.log("Issue creating books table ", err); 
     }
 
     // 3.) reading (maps userId's to bookId's)
