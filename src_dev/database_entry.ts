@@ -126,6 +126,27 @@ export async function create_tables() : Promise<void> {
         console.log("Issue when creating reading table ", err);
     }
 
+    // 5.) bookshelf
+    try {
+        await run_query(
+            `
+            CREATE TABLE IF NOT EXISTS bookshelf (
+                user_id INTEGER NOT NULL,
+                book_isbn TEXT NOT NULL,
+
+                PRIMARY KEY (user_id, book_isbn),
+
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY (book_isbn) REFERENCES books(isbn) ON DELETE CASCADE 
+            );
+            `
+            , []
+        );
+        console.log("Created bookshelf table ");
+    } catch (err) {
+        console.log("Issue when creating bookshelf table ", err);
+    }
+
     // 5.) chapters
     try {
         await run_query(
@@ -213,6 +234,8 @@ export async function drop_database() : Promise<void> {
         await drop_table(TABLE_TYPE.CHAPTERS);
         await drop_table(TABLE_TYPE.SECTIONS);
         await drop_table(TABLE_TYPE.PROGRESS_LOGS);
+        await drop_table(TABLE_TYPE.BOOKSHELF);
+        await drop_table(TABLE_TYPE.AUTHORS);
         console.log("Database dropped");
     } catch (err) {
         console.log("Issue dropping the database ", err);

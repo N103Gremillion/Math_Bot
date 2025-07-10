@@ -13,7 +13,6 @@ export type BookInfo = {
 export async function insert_books_table(
   isbn : string, 
   title : string, 
-  author : string, 
   total_pages : number, 
   cover_id : number | undefined)
   : Promise<boolean> {
@@ -21,10 +20,10 @@ export async function insert_books_table(
   try {
     await run_query(
       `
-      INSERT OR IGNORE INTO books(isbn, title, author, number_of_pages, cover_id)
-      VALUES(?, ?, ?, ?, ?);
+      INSERT OR IGNORE INTO books(isbn, title, number_of_pages, cover_id) 
+      VALUES(?, ?, ?, ?);
       `,
-      [isbn, title, author, total_pages, cover_id]
+      [isbn, title, total_pages, cover_id]
     );
     return true;
   } catch (err) {

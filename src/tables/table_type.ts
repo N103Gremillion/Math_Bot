@@ -8,12 +8,14 @@ export enum TABLE_TYPE {
   CHAPTERS,
   SECTIONS,
   PROGRESS_LOGS,
+  BOOKSHELF,
   INVALID
 }
 
 const table_strings : Record<TABLE_TYPE, string> = {
   [TABLE_TYPE.USERS]: "users",
   [TABLE_TYPE.READING]: "reading",
+  [TABLE_TYPE.BOOKSHELF] : "bookshelf",
   [TABLE_TYPE.BOOKS]: "books",
   [TABLE_TYPE.AUTHORS]: "authors",
   [TABLE_TYPE.CHAPTERS]: "chapters",

@@ -3,6 +3,7 @@ import { COMMAND_TYPE, Command } from "../command_types";
 import { wrap_str_in_code_block } from "../../utils/util";
 import { BookInfo, insert_books_table } from "../../tables/books";
 import { BookField } from "./BookField";
+import { insert_authors_table } from "../../tables/authors";
 
 
 
@@ -24,12 +25,10 @@ export async function execute_register_book (cmd : ChatInputCommandInteraction) 
   // get isbn from response
   const isbn : string = cmd.options.getString(BookField.ISBN)!;
 
-  const book_info : BookInfo | null = await fetch_book_by_ISBN(isbn);
+  const book_info : BookInfo | null = await fetch_book_by_ISBN(isbn); 
 
-  console.log(book_info);
-  
   if (book_info === null || book_info === undefined) {
-    cmd.reply(
+    await cmd.reply(
       wrap_str_in_code_block(
         `Issue fetching book with ISBN: ${isbn}.
 Either this books info is not available or the isbn is invalid.`
@@ -38,24 +37,43 @@ Either this books info is not available or the isbn is invalid.`
     return;
   }
 
-  if (!book_info!.title || !book_info!.authors || !book_info!.number_of_pages){
-    cmd.reply(
+  if (!book_info!.title || !book_info!.authors || !book_info!.number_of_pages){ 
+    await cmd.reply(
       wrap_str_in_code_block(
         `Issue fetching book with ISBN: ${isbn}.
 Could not fetch vital infor like title, author, and page count.`
       )
     );
+    return;
   }
 
   // try and add the book to books table
-  const book_registered : boolean = await insert_books_table(isbn, book_info.title, book_info.authors, book_info.number_of_pages, book_info.cover_id);
+  const book_registered : boolean = await insert_books_table(isbn, book_info.title, book_info.number_of_pages, book_info.cover_id);
+  // try and add author info to authors table
+  const authors_registered : boolean = await insert_authors_table(isbn, book_info.authors);
   let resulting_response : string = "";
-  
-  if (book_registered) {  
+  let authors_string : string = "";
+
+
+  if (authors_registered) {
+    const n : number = book_info.authors.length;
+    for (let i = 0; i < n; i++) {
+      const author : string | undefined = book_info.authors[i];
+      if(!author || author === "Unknown Author" || author === "Unknown Authors") continue;
+      authors_string += author
+      if (i !== n - 1) authors_string += ", ";
+    }
+  } 
+
+  if (authors_string == "") {
+    authors_string = "Unknown";
+  }
+
+  if (book_registered ) {  
     resulting_response =
 `=================== Insertion successful for =======================
 Book Title: ${book_info.title}
-Book Author: ${book_info.author}
+Book Authors: ${authors_string}
 Page Count: ${book_info.number_of_pages}`;
   } else {
     resulting_response = 
@@ -74,7 +92,7 @@ async function fetch_book_by_ISBN(isbn : string) : Promise<BookInfo | null> {
     });
 
     if (!response.ok) {
-      console.error(`HTTP error! Status: ${response.status}`);
+      console.error(`HTTP error! Status: ${response.status}`); 
       return null;
     }
     
