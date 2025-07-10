@@ -1,4 +1,4 @@
-import { BookField } from "../commands/books/BookField";
+import { fetch_authors_with_isbn } from "./authors";
 import { get_rows, run_query } from "./table_type";
 
 export type BookInfo = {
@@ -50,6 +50,28 @@ export async function remove_book_from_database(isbn : string) : Promise<boolean
 }
 
 // fetches -----------------------------------
+export async function fetch_book_and_author_info(isbn : string) : Promise<BookInfo | null> {
+  try {
+    const rows : BookInfo[] = await get_rows(
+      `
+      SELECT title, number_of_pages, cover_id, total_chapters
+      FROM books 
+      WHERE isbn = ?;
+      `,
+      [isbn]
+    );
+    if (!rows || rows.length === 0 || !rows[0]) {
+      return null;
+    }
+    const book : BookInfo = rows[0];
+    book.authors  = await fetch_authors_with_isbn(isbn);
+    return book;
+  } catch (err) {
+    console.log(`Issue fetching author and book info for ISBN: ${isbn}`, err);
+    return null;
+  }
+}
+
 export async function fetch_book_info(isbn : string) : Promise<BookInfo | null> {
   try {
     const rows : BookInfo[] = await get_rows(
@@ -70,17 +92,42 @@ export async function fetch_book_info(isbn : string) : Promise<BookInfo | null> 
   }
 }
 
-export async function fetch_books_info() : Promise<BookInfo[]> {
+export async function fetch_books_info(): Promise<BookInfo[]> {
   try {
-    const rows : BookInfo[] = await get_rows(
+    const books: BookInfo[] = await get_rows(
       `
-      SELECT isbn, title, author, number_of_pages, cover_id
+      SELECT title, total_chapters
       FROM books;
       `
     );
-    return rows;
+    
+    return books;
   } catch (err) {
-    console.log(err);
+    console.log("Issue fetching books and authors info", err);
+    return [];
+  }
+}
+
+export async function fetch_books_and_authors_info() : Promise<BookInfo[]> {
+  try {
+    // first get the books general info
+    const books : BookInfo[] = await get_rows(
+      `
+      SELECT isbn, title, number_of_pages, cover_id
+      FROM books;
+      `
+    );
+    // attach authors info to the books
+    await Promise.all(
+      books.map(async (book) => {
+        if (book.isbn) {
+          book.authors = await fetch_authors_with_isbn(book.isbn);
+        }
+      })
+    );
+    return books;
+  } catch (err) {
+    console.log("Issue fetching books and authors info ", err);
     return [];
   }
 }

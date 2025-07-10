@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction } from "discord.js";
 import { COMMAND_TYPE, Command } from "../command_types";
-import { wrap_str_in_code_block } from "../../utils/util";
+import { get_book_info_str, wrap_str_in_code_block } from "../../utils/util";
 import { BookInfo, insert_books_table } from "../../tables/books";
 import { BookField } from "./BookField";
 import { insert_authors_table } from "../../tables/authors";
@@ -50,31 +50,14 @@ Could not fetch vital infor like title, author, and page count.`
   // try and add the book to books table
   const book_registered : boolean = await insert_books_table(isbn, book_info.title, book_info.number_of_pages, book_info.cover_id);
   // try and add author info to authors table
-  const authors_registered : boolean = await insert_authors_table(isbn, book_info.authors);
-  let resulting_response : string = "";
-  let authors_string : string = "";
+  await insert_authors_table(isbn, book_info.authors);
+  let resulting_response : string = get_book_info_str(book_info);
 
-
-  if (authors_registered) {
-    const n : number = book_info.authors.length;
-    for (let i = 0; i < n; i++) {
-      const author : string | undefined = book_info.authors[i];
-      if(!author || author === "Unknown Author" || author === "Unknown Authors") continue;
-      authors_string += author
-      if (i !== n - 1) authors_string += ", ";
-    }
-  } 
-
-  if (authors_string == "") {
-    authors_string = "Unknown";
-  }
 
   if (book_registered ) {  
     resulting_response =
 `=================== Insertion successful for =======================
-Book Title: ${book_info.title}
-Book Authors: ${authors_string}
-Page Count: ${book_info.number_of_pages}`;
+${resulting_response}`;
   } else {
     resulting_response = 
 `=================== Insertion failed for =======================

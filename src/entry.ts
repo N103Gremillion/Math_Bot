@@ -46,13 +46,13 @@ async function main () : Promise<void> {
     // await drop_database();
     await create_tables();  
     bot_g = init_client();  
-    await view_database(); 
+    await view_database();   
 } 
    
 main() 
-    .then(() => {
+    .then(() => { 
     })
-    .catch ((error) => {
+    .catch ((error) => {  
         console.log(error);
     })
     .finally(() => {  

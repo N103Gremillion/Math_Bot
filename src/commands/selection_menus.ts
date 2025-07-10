@@ -1,9 +1,9 @@
 import { ActionRowBuilder, ChatInputCommandInteraction, MessageFlags, StringSelectMenuBuilder, StringSelectMenuInteraction } from "discord.js";
-import { BookInfo, fetch_books_info } from "../tables/books";
+import { BookInfo, fetch_books_and_authors_info } from "../tables/books";
 import { get_chapter_info } from "./chapters/register_chapter";
 import { show_book_info } from "./books/view_book_info";
 import { show_chapters_in_book } from "./chapters/view_chapters";
-import { wrap_str_in_code_block } from "../utils/util";
+import { get_authors_str, wrap_str_in_code_block } from "../utils/util";
 import { ChapterInfo, fetch_chapters_in_book } from "../tables/chapters";
 import { get_section_info } from "./sections/register_section";
 import { finish_executing_remove_book } from "./books/remove_book";
@@ -127,7 +127,7 @@ async function select_chapter_menu(
 
 export async function select_book_menu(cmd : ChatInputCommandInteraction) : Promise<void> {
   // get currently regisetered books [title : string, author : string]
-  const books: BookInfo[] = await fetch_books_info();
+  const books: BookInfo[] = await fetch_books_and_authors_info();
 
   if (books.length == 0) {
     await cmd.reply(
@@ -144,7 +144,7 @@ export async function select_book_menu(cmd : ChatInputCommandInteraction) : Prom
   .setPlaceholder('Choose a book')
   .addOptions(
     books.map(book => ({
-    label: `${book.title} by ${book.author}`,
+    label: `${book.title} by ${get_authors_str(book.authors)}`,
     value: `${book.isbn}`
   })));
   
