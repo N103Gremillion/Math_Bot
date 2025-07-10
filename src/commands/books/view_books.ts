@@ -27,7 +27,8 @@ export async function execute_view_books (cmd : ChatInputCommandInteraction) : P
   let response = `📚 Books (${books_fetched.length}):\n\n`;
 
   for (let i = 0; i < books_fetched.length; i++) {
-    const b : BookInfo = books_fetched[i];
+    const b : BookInfo | undefined = books_fetched[i];
+    if (!b) continue;
     response += `${i + 1}.) ${b.title} | Pages: ${b.number_of_pages ?? "?"} | Authors: ${get_authors_str(b.authors)}\n`;
   }
 
