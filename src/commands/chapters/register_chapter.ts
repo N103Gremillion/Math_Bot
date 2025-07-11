@@ -13,7 +13,7 @@ export async function execute_register_chapter(cmd : ChatInputCommandInteraction
 }
 
 export async function handle_chapter_info_modal_submission(
-  book_id : number, 
+  book_isbn : string, 
   chapter_name : string, 
   chapter_number_str : string, 
   total_sections_str : string,
@@ -154,7 +154,7 @@ Invalid book_id.`
     return;
   }
 
-  const insert_successful : boolean = await insert_chapters_table(book_id, chapter_name, chapter_number, total_sections, start_page, end_page);
+  const insert_successful : boolean = await insert_chapters_table(book_isbn, chapter_name, chapter_number, total_sections, start_page, end_page);
 
   if (!insert_successful) {
     await interaction.reply(
@@ -180,10 +180,10 @@ End page: ${end_page}`)
 
 }
 
-export async function get_chapter_info(interaction : StringSelectMenuInteraction, book_ID : string) : Promise<void> {
-
+export async function get_chapter_info(interaction : StringSelectMenuInteraction, book_ISBN : string) : Promise<void> {
+  
   const modal = new ModalBuilder()
-  .setCustomId(`${ModalType.ChapterInput}|${book_ID}`)
+  .setCustomId(`${ModalType.ChapterInput}|${book_ISBN}`)
   .setTitle("Enter Chapter Details")
   .addComponents(
     // get components

@@ -32,6 +32,24 @@ export async function insert_books_table(
   }
 }
 
+// add total chapters info to a book
+export async function add_total_chapters_to_book(isbn : string , total_chapters : number) : Promise<boolean> {
+  try {
+    await run_query(
+      `
+      UPDATE books
+      SET total_chapters = ?
+      WHERE isbn = ?;
+      `,
+      [total_chapters, isbn]
+    );
+    return true;
+  } catch (err) {
+    console.log("Issue attaching total chapters to book.", err);
+    return false; 
+  }
+}
+
 // removals ----------------------------------
 export async function remove_book_from_database(isbn : string) : Promise<boolean> {
   try {

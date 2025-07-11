@@ -1,7 +1,7 @@
 export enum ChapterField {
-  BookId = "book_id",
-  ChapterNumber = "chapter_number",
+  BookISNB = "book_isbn",
   ChapterName = "chapter_name",
+  ChapterNumber = "chapter_number",
   Sections = "sections",
   StartPage = "start_page",
   EndPage = "end_page",

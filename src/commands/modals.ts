@@ -3,10 +3,13 @@ import { ChapterField } from "./chapters/ChapterField";
 import { handle_chapter_info_modal_submission } from "./chapters/register_chapter";
 import { SectionField } from "./sections/SectionField";
 import { handle_section_info_modal_submission } from "./sections/register_section";
+import { BookField } from "./books/BookField";
+import { handle_total_chapters_modal_submission } from "./books/register_total_chapters";
 
 export enum ModalType {
   ChapterInput = "chapter_input_modal",
   SectionInput = "section_input_modal",
+  TotalChaptersInput = "total_chapters_input_modal"
 }
 
 export async function handleModalSubmit(interaction : ModalSubmitInteraction) : Promise<void> {
@@ -19,7 +22,7 @@ export async function handleModalSubmit(interaction : ModalSubmitInteraction) : 
   }
 
   const event_type : string = submission_info[0];
-  const book_ID : number = parseInt(submission_info[1], 10);
+  const book_ISBN : string = submission_info[1];
 
   if (event_type === ModalType.ChapterInput) {
     // pull out the info from the modal
@@ -28,8 +31,13 @@ export async function handleModalSubmit(interaction : ModalSubmitInteraction) : 
     const total_sections :string = interaction.fields.getTextInputValue(ChapterField.Sections);
     const start_page : string = interaction.fields.getTextInputValue(ChapterField.StartPage);
     const end_page : string = interaction.fields.getTextInputValue(ChapterField.EndPage);
-    await handle_chapter_info_modal_submission(book_ID, chapter_name, chapter_number, total_sections, start_page, end_page, interaction);
-  }
+    await handle_chapter_info_modal_submission(book_ISBN, chapter_name, chapter_number, total_sections, start_page, end_page, interaction);
+  } 
+  else if (event_type === ModalType.TotalChaptersInput) {
+    // pull of total chapters
+    const total_chapters_str : string = interaction.fields.getTextInputValue(BookField.TotalChapters);
+    await handle_total_chapters_modal_submission(book_ISBN, total_chapters_str, interaction);
+  } 
   else if (event_type === ModalType.SectionInput) {
     if (submission_info.length < 3 || submission_info[2] === undefined) {
       await interaction.reply({ content: "Missing necessary data in modal.", ephemeral: true });
