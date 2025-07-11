@@ -42,7 +42,7 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
       await get_total_chapters(interaction, book_ISBN);
     }
     else if (command_type === "view_chapters") {
-      await show_chapters_in_book(interaction, book_ID_num);
+      await show_chapters_in_book(interaction, book_ISBN);
     }
     else if (command_type === "register_section") {
       await select_chapter_menu(interaction, book_ID_num, command_type);

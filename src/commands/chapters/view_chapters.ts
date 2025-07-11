@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, StringSelectMenuInteraction } from "discor
 import { Command, COMMAND_TYPE } from "../command_types";
 import { select_book_menu } from "../selection_menus";
 import { ChapterInfo, fetch_chapters_in_book } from "../../tables/chapters";
-import { fetch_total_chapters } from '../../tables/books';
+import { BookInfo, fetch_book_and_author_info, fetch_total_chapters } from '../../tables/books';
 import { wrap_str_in_code_block } from '../../utils/util';
 
 
@@ -12,10 +12,16 @@ export async function execute_view_chapters(cmd : ChatInputCommandInteraction) :
 
 export async function show_chapters_in_book(
   interaction: StringSelectMenuInteraction,
-  book_ID: number
+  book_isbn: string
 ): Promise<void> {
-  const chapters: ChapterInfo[] = await fetch_chapters_in_book(book_ID);
-  const total_chapters: number = await fetch_total_chapters(book_ID);
+  const book : BookInfo | null = await fetch_book_and_author_info(book_isbn);
+
+  if (!book) {
+    await interaction.reply(wrap_str_in_code_block(`Issue fetching book info with ISBN: ${book_isbn}`));
+  }
+
+  const chapters: ChapterInfo[] = await fetch_chapters_in_book(book_isbn);
+  const total_chapters: number = await fetch_total_chapters(book_isbn);
   let response_string = '';
   let chapters_index = 0;
 
@@ -60,7 +66,10 @@ export async function show_chapters_in_book(
     response_string += cur_chapter_info;
   }
 
-  await interaction.reply(wrap_str_in_code_block(response_string));
+  await interaction.reply(
+    wrap_str_in_code_block(response_string)
+  );
+    
 }
 
 

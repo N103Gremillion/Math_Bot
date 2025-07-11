@@ -115,16 +115,16 @@ export async function fetch_total_sections_in_chapter(book_id : number, chapter_
   }
 } 
 
-export async function fetch_chapters_in_book(book_ID : number) : Promise<ChapterInfo[]> {
+export async function fetch_chapters_in_book(book_isbn : string) : Promise<ChapterInfo[]> {
   try {
     const rows : ChapterInfo[] = await get_rows(
       `
       SELECT chapter_name, chapter_number, sections, start_page, end_page
       FROM chapters 
-      WHERE book_id = ?
+      WHERE book_isbn = ?
       ORDER BY chapter_number;
       `,
-      [book_ID]
+      [book_isbn]
     );
     return rows;
   } catch (err) {

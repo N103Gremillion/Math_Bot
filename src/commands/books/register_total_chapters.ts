@@ -94,7 +94,7 @@ export async function get_total_chapters(interaction : StringSelectMenuInteracti
 export const register_total_chapters_command : Command = {
   command : "register_total_chapters",
   command_type : COMMAND_TYPE.REGISTER_TOTAL_CHAPTERS,
-  description : "adds total chapter information a selected book",
+  description : "adds total chapter information to a selected book.",
   action : execute_register_total_chapters,
   requires_params : false
 }
