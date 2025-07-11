@@ -50,6 +50,6 @@ export async function handleModalSubmit(interaction : ModalSubmitInteraction) : 
     const start_page : string = interaction.fields.getTextInputValue(SectionField.StartPage);
     const end_page : string = interaction.fields.getTextInputValue(SectionField.EndPage);
     const total_questions : string = interaction.fields.getTextInputValue(SectionField.Questions);
-    await handle_section_info_modal_submission(book_ID, chapter_number, section_number, section_name, start_page, end_page, total_questions, interaction);
+    await handle_section_info_modal_submission(book_ISBN, chapter_number, section_number, section_name, start_page, end_page, total_questions, interaction);
   }
 }

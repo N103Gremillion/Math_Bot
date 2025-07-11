@@ -12,7 +12,7 @@ export async function execute_register_section(cmd : ChatInputCommandInteraction
 }
 
 export async function handle_section_info_modal_submission(
-  book_id : number, 
+  book_isbn : string, 
   chapter_number : number, 
   section_number_str : string, 
   section_name : string,
@@ -76,7 +76,7 @@ export async function handle_section_info_modal_submission(
     return;
   }
 
-  const total_sections_in_chapter : number = await fetch_total_sections_in_chapter(book_id, chapter_number);
+  const total_sections_in_chapter : number = await fetch_total_sections_in_chapter(book_isbn, chapter_number);
 
   // check for valid section info
   if (total_sections_in_chapter === -1) {
@@ -105,8 +105,8 @@ export async function handle_section_info_modal_submission(
   }
 
   // query page information
-  const chapter_start_page : number = await fetch_chapter_start_page(book_id, chapter_number);
-  const chapter_end_page : number = await fetch_chapter_end_page(book_id, chapter_number);
+  const chapter_start_page : number = await fetch_chapter_start_page(book_isbn, chapter_number);
+  const chapter_end_page : number = await fetch_chapter_end_page(book_isbn, chapter_number);
 
   if (start_page > end_page) {
     await interaction.reply(
@@ -155,26 +155,41 @@ chapter_start: ${chapter_start_page}, chapter_end: ${chapter_end_page}`
     return;
   }
 
-  const insert_successful : boolean = await insert_sections_table(book_id, chapter_number, section_number, section_name, start_page, end_page, total_questions);
+  const insert_successful : boolean = await insert_sections_table(book_isbn, chapter_number, section_number, section_name, start_page, end_page, total_questions);
 
   if (!insert_successful) {
     await interaction.reply(
       wrap_str_in_code_block(
-        `Insertion issue.`
+        `=========== Insertion issue for==============
+Book ISBN: ${book_isbn}
+Chapter Number: ${chapter_number}
+Section Number: ${section_number}
+Section Name: ${section_name}
+Start Page: ${start_page}
+End Page: ${end_page}
+Total Questions: ${total_questions}`
       )
     );
   } else {
     await interaction.reply(
-      wrap_str_in_code_block(`Insertion successful.`)
+      wrap_str_in_code_block(`============= Insertion successful for =============
+Book ISBN: ${book_isbn}
+Chapter Number: ${chapter_number}
+Section Number: ${section_number}
+Section Name: ${section_name}
+Start Page: ${start_page}
+End Page: ${end_page}
+Total Questions: ${total_questions}`  
+      )
     );
   }
 
 }
 
-export async function get_section_info(interaction : StringSelectMenuInteraction, book_ID : number, chapter_number : number) : Promise<void> {
- 
+export async function get_section_info(interaction : StringSelectMenuInteraction, book_isbn: string, chapter_number : number) : Promise<void> {
+  
   const modal = new ModalBuilder()
-  .setCustomId(`${ModalType.SectionInput}|${book_ID}|${chapter_number}`)
+  .setCustomId(`${ModalType.SectionInput}|${book_isbn}|${chapter_number}`)
   .setTitle("Enter Section Details")
   .addComponents(
     // get components

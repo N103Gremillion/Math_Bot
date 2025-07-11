@@ -1,5 +1,5 @@
 export enum SectionField {
-  BookId = "book_id",
+  BookISBN = "book_isbn",
   ChapterNumber = "chapter_number",
   SectionNumber = "section_number",
   SectionName = "section_name",

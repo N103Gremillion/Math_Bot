@@ -45,7 +45,7 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
       await show_chapters_in_book(interaction, book_ISBN);
     }
     else if (command_type === "register_section") {
-      await select_chapter_menu(interaction, book_ID_num, command_type);
+      await select_chapter_menu(interaction, book_ISBN, command_type);
     }
     else if (command_type === "remove_book") {
       await finish_executing_remove_book(interaction, book_ISBN);
@@ -69,23 +69,25 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
     }
     
     // pull off the book ID and the chapter number
-    const [book_Id_string, chapter_number_string] : string[] | undefined = interaction.values[0].split(":");
+    const [book_ISBN, chapter_number_string] : string[] | undefined = interaction.values[0].split(":");
 
-    const book_ID = Number(book_Id_string);
     const chapter_number = Number(chapter_number_string);
 
     // null check for the id
-    if (book_ID === undefined || chapter_number === undefined){
+    if (!book_ISBN || !chapter_number ){
       await interaction.reply({
         content: "bookId or chapter_number is undefined",
       });
       return;
-    } else if (isNaN(book_ID) || isNaN(chapter_number)) {
-
+    } else if (isNaN(chapter_number)) {
+      await interaction.reply({
+        content: "chapter_number is not a number",
+      });
+      return;
     }
 
     if (command_type === "register_section") {
-      await get_section_info(interaction, book_ID, chapter_number);
+      await get_section_info(interaction, book_ISBN, chapter_number);
     }
     else {
       await interaction.reply({
@@ -103,12 +105,12 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
 
 async function select_chapter_menu(
   interaction : ChatInputCommandInteraction | StringSelectMenuInteraction, 
-  book_ID : number,
+  book_isbn : string,
   command_type : string
 ) : Promise<void> {
   
   // get currently regisetered books [title : string, author : string]
-  const chapters: ChapterInfo[] = await fetch_chapters_in_book(book_ID);
+  const chapters: ChapterInfo[] = await fetch_chapters_in_book(book_isbn);
 
   // Create dropdown menu
   const select_menu : StringSelectMenuBuilder = new StringSelectMenuBuilder()
@@ -117,16 +119,23 @@ async function select_chapter_menu(
   .addOptions(
     chapters.map(chapter => ({
     label: `Chapter ${chapter.chapter_number}: ${chapter.chapter_name}`,
-    value: `${book_ID}:${chapter.chapter_number}`
+    value: `${book_isbn}:${chapter.chapter_number}`
   })));
   
   const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select_menu);
 
-  await interaction.reply({
-    content: `Please select the chapter `,
-    components: [row],
-    flags: MessageFlags.Ephemeral
-  })
+  if (interaction.isStringSelectMenu()) {
+    await interaction.update({
+      content: `Please select the chapter`,
+      components: [row]
+    });
+  } else {
+    await interaction.reply({
+      content: `Please select the chapter`,
+      components: [row],
+      ephemeral: true
+    });
+  }
 }
 
 export async function select_book_menu(cmd : ChatInputCommandInteraction) : Promise<void> {

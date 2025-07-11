@@ -36,15 +36,19 @@ export async function insert_chapters_table(
     }
 }
 
-export async  function fetch_chapter_start_page(book_id : number, chapter_number : number) : Promise<number> {
+export async  function fetch_chapter_start_page(
+  book_isbn : string, 
+  chapter_number : number
+) : Promise<number> {
+
   try {
     const start_page_list : ChapterInfo[] = await get_rows(
       `
       SELECT start_page 
       FROM chapters
-      WHERE book_id = ? AND chapter_number = ?;
+      WHERE book_isbn = ? AND chapter_number = ?;
       `,
-      [book_id, chapter_number]
+      [book_isbn, chapter_number]
     );
     
     if (start_page_list === undefined || start_page_list.length != 1 || start_page_list[0] === undefined || start_page_list[0].start_page === undefined){
@@ -60,15 +64,18 @@ export async  function fetch_chapter_start_page(book_id : number, chapter_number
   }
 }
 
-export async  function fetch_chapter_end_page(book_id : number, chapter_number : number) : Promise<number> {
+export async  function fetch_chapter_end_page(
+  book_isbn : string, 
+  chapter_number : number
+) : Promise<number> {
   try {
     const start_page_list : ChapterInfo[] = await get_rows(
       `
       SELECT end_page 
       FROM chapters
-      WHERE book_id = ? AND chapter_number = ?;
+      WHERE book_isbn = ? AND chapter_number = ?;
       `,
-      [book_id, chapter_number]
+      [book_isbn, chapter_number]
     );
     
     if (start_page_list === undefined || start_page_list.length != 1 || start_page_list[0] === undefined || start_page_list[0].end_page === undefined){
@@ -84,15 +91,19 @@ export async  function fetch_chapter_end_page(book_id : number, chapter_number :
   }
 }
 
-export async function fetch_total_sections_in_chapter(book_id : number, chapter_number : number) : Promise<number> {
+export async function fetch_total_sections_in_chapter(
+  book_isbn : string, 
+  chapter_number : number) 
+  : Promise<number> {
+
   try {
     const total_sections_list : ChapterInfo[] = await get_rows(
       `
       SELECT sections 
       FROM chapters
-      WHERE book_id = ? AND chapter_number = ?;
+      WHERE book_isbn = ? AND chapter_number = ?;
       `,
-      [book_id, chapter_number]
+      [book_isbn, chapter_number]
     );
 
     if (!total_sections_list || total_sections_list.length !== 1) {
@@ -102,7 +113,7 @@ export async function fetch_total_sections_in_chapter(book_id : number, chapter_
 
     const sectionCount : ChapterInfo | undefined = total_sections_list[0];
     
-    if (sectionCount === undefined || sectionCount.sections === undefined) {
+    if (!sectionCount || !sectionCount.sections) {
       console.log("Invalid or duplicate results when fetching total sections in chapter");
       return -1;
     }
