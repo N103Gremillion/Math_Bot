@@ -21,6 +21,7 @@ export async function handle_chapter_info_modal_submission(
   end_page_str : string,
   interaction : ModalSubmitInteraction
 ) : Promise<void> {
+
   // handle checking for valid input 
   const chapter_number : number = Number(chapter_number_str);
   const start_page : number = Number(start_page_str);
@@ -76,14 +77,14 @@ export async function handle_chapter_info_modal_submission(
   }
 
   // query the total chapters
-  const total_book_chapters : number = await fetch_total_chapters(book_id);
+  const total_book_chapters : number = await fetch_total_chapters(book_isbn);
 
   // check for invalid chapter number values
   if (total_book_chapters === -1) {
     await interaction.reply(
       wrap_str_in_code_block(
-      `Issue fetching from books table.
-Invalid book_id.`
+      `Register total chapters in book before entering chapter information.
+Book ISBN: ${book_isbn}`
       )
     );
     return;
@@ -105,8 +106,8 @@ Invalid book_id.`
     return;
   }
 
-  // query page information
-  const page_count : number = await fetch_page_count(book_id);
+  // query page information 
+  const page_count : number = await fetch_page_count(book_isbn);
   
   if (page_count === -1) {
     await interaction.reply(
@@ -166,7 +167,7 @@ Total sections: ${total_sections}
 Start page: ${start_page}
 End page: ${end_page}`
       )
-    );
+    ); 
   } else {
     await interaction.reply(
       wrap_str_in_code_block(`=================== Insertion successful for =======================
@@ -181,7 +182,7 @@ End page: ${end_page}`)
 }
 
 export async function get_chapter_info(interaction : StringSelectMenuInteraction, book_ISBN : string) : Promise<void> {
-  
+
   const modal = new ModalBuilder()
   .setCustomId(`${ModalType.ChapterInput}|${book_ISBN}`)
   .setTitle("Enter Chapter Details")

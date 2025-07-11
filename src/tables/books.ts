@@ -150,21 +150,20 @@ export async function fetch_books_and_authors_info() : Promise<BookInfo[]> {
   }
 }
 
-export async function fetch_total_chapters(book_id : number) : Promise<number> {
+export async function fetch_total_chapters(isbn : string) : Promise<number> {
   try {
     const res = await get_rows(
       `
-      SELECT chapters 
+      SELECT total_chapters 
       FROM books 
-      WHERE id = ?; 
+      WHERE isbn = ?; 
       `,
-      [book_id]
+      [isbn]
     );
-
-    if (res.length === 0 || res[0].chapters == null) {
+    if (res.length === 0 || res[0].total_chapters == null) {
       return -1;
     }
-    return res[0].chapters;
+    return res[0].total_chapters;
 
   } catch (err) {
     console.log(err);
@@ -172,22 +171,22 @@ export async function fetch_total_chapters(book_id : number) : Promise<number> {
   }
 }
 
-export async function fetch_page_count(book_id : number) : Promise<number> {
+export async function fetch_page_count(book_isbn : string) : Promise<number> {
   try {
     const res = await get_rows(
       `
-      SELECT page_count 
+      SELECT number_of_pages 
       FROM books 
-      WHERE id = ?;
+      WHERE isbn = ?;
       `,
-      [book_id]
+      [book_isbn]
     );
 
-    if (res.length === 0 || res[0].page_count == null) {
+    if (res.length === 0 || res[0].number_of_pages == null) {
       return -1;
     }
     
-    return res[0].page_count;
+    return res[0].number_of_pages;
 
   } catch (err) {
     console.log(err);

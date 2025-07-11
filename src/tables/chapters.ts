@@ -1,7 +1,7 @@
 import { get_rows, run_query } from "./table_type";
 
 export type ChapterInfo = {
-  book_id? : number,
+  book_isbn? : number,
   chapter_name? : string,
   chapter_number? : number,
   sections? : number,
@@ -10,7 +10,7 @@ export type ChapterInfo = {
 }
 
 export async function insert_chapters_table(
-  book_id : number, 
+  book_isbn : string, 
   chapter_name : string,  
   chapter_number : number,  
   total_sections : number,
@@ -19,15 +19,15 @@ export async function insert_chapters_table(
     try {
       await run_query( 
         `
-        INSERT OR REPLACE INTO chapters(book_id, chapter_name, chapter_number, sections, start_page, end_page)
+        INSERT OR REPLACE INTO chapters(book_isbn, chapter_name, chapter_number, sections, start_page, end_page)
         VALUES(?, ?, ?, ?, ?, ?)
-        ON CONFLICT(book_id, chapter_number) DO UPDATE SET
+        ON CONFLICT(book_isbn, chapter_number) DO UPDATE SET
         chapter_name = excluded.chapter_name,
         sections = excluded.sections,
         start_page = excluded.start_page,
         end_page = excluded.end_page;
         `,
-        [book_id, chapter_name, chapter_number, total_sections, start_page, end_page]
+        [book_isbn, chapter_name, chapter_number, total_sections, start_page, end_page]
       );
       return true;
     } catch (err) {
