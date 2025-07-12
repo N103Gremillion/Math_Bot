@@ -109,7 +109,7 @@ export async function fetch_book_info(isbn : string) : Promise<BookInfo | null> 
   try {
     const rows : BookInfo[] = await get_rows(
       `
-      SELECT title, author, number_of_pages, cover_id, total_chapters
+      SELECT title, number_of_pages, cover_id, total_chapters
       FROM books 
       WHERE isbn = ?;
       `,

@@ -1,8 +1,8 @@
 import { ChatInputCommandInteraction, StringSelectMenuInteraction } from "discord.js";
 import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING } from "../command_types";
 import { select_book_menu } from "../selection_menus";
-import { wrap_str_in_code_block } from "../../utils/util";
-import { BookInfo, fetch_book_info, remove_book_from_database } from "../../tables/books";
+import { get_authors_str, wrap_str_in_code_block } from "../../utils/util";
+import { BookInfo, fetch_book_and_author_info, fetch_book_info, remove_book_from_database } from "../../tables/books";
 
 export async function execute_remove_book(cmd : ChatInputCommandInteraction) : Promise<void> {
   await select_book_menu(cmd);
@@ -10,7 +10,7 @@ export async function execute_remove_book(cmd : ChatInputCommandInteraction) : P
 
 export async function finish_executing_remove_book(interaction : StringSelectMenuInteraction, isbn : string) : Promise<void> {
   // try to remove the book
-  const book_info : BookInfo | null = await fetch_book_info(isbn); 
+  const book_info : BookInfo | null = await (fetch_book_and_author_info(isbn))!; 
 
   if (book_info === null) {
     interaction.reply(
@@ -30,21 +30,19 @@ This is likely do to an invalid bookID.`
       wrap_str_in_code_block(
         `====================== Successful removal for ===========================
 Title: ${book_info.title}
-Edition: ${book_info.author}
-Author: ${book_info.author}
-Pages: ${book_info.page_count}
-Total Chapters: ${book_info.total_chapters}`
+Author: ${get_authors_str(book_info.authors) ?? "Unknown"}
+Pages: ${book_info.number_of_pages ?? "Unknown"}
+Total Chapters: ${book_info.total_chapters ?? "Unknown"}` 
       )
     );
   } else {
     interaction.reply(
       wrap_str_in_code_block(
-        `Issue trying to remove book from database.
+        `================== Issue removing book from database for =====================
 Title: ${book_info.title}
-Edition: ${book_info.author}
-Author: ${book_info.author}
-Pages: ${book_info.page_count}
-Total Chapters: ${book_info.total_chapters}`
+Author: ${get_authors_str(book_info.authors) ?? "Unknown"}
+Pages: ${book_info.number_of_pages ?? "Unknown"}
+Total Chapters: ${book_info.total_chapters ?? "Unknown"}`
       )
     )
   }
