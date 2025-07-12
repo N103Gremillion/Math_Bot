@@ -1,4 +1,5 @@
 import { fetch_authors_with_isbn } from "./authors";
+import { BookshelfInfo } from "./bookshelf";
 import { get_rows, run_query } from "./table_type";
 
 export type BookInfo = {
@@ -83,11 +84,31 @@ export async function remove_book_from_database(isbn : string) : Promise<boolean
 }
 
 // fetches -----------------------------------
+export async function fetch_books_with_isbns(books_isbns : BookshelfInfo[]) : Promise<BookInfo[]>{
+  try {
+    const res : BookInfo[] = [];
+
+    for (const book of books_isbns) {
+
+      const book_isbn : string | undefined = book?.book_isbn;
+      if (!book_isbn) continue;
+
+      const book_info : BookInfo | null = await fetch_book_and_author_info(book_isbn);
+      if (book_info) res.push(book_info);
+    }
+
+    return res;
+  } catch (err) {
+    console.log(`Issue fetching books with isbns ${books_isbns}`, err);
+    return [];
+  }
+}
+
 export async function fetch_book_and_author_info(isbn : string) : Promise<BookInfo | null> {
   try {
     const rows : BookInfo[] = await get_rows(
       `
-      SELECT title, number_of_pages, cover_id, total_chapters
+      SELECT isbn, title, number_of_pages, cover_id, total_chapters
       FROM books 
       WHERE isbn = ?;
       `,

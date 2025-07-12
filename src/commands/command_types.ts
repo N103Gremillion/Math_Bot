@@ -16,6 +16,7 @@ export enum COMMAND_TYPE_STRING {
   HELP = "help",
   REGISTER_TOTAL_CHAPTERS = "register_total_chapters",
   ADD_TO_BOOKSHELF = "add_to_bookshelf",
+  REMOVE_FROM_BOOKSHELF = "remove_from_bookshelf",
 } 
 
 export enum COMMAND_TYPE {
@@ -34,6 +35,7 @@ export enum COMMAND_TYPE {
   HELP,
   REGISTER_TOTAL_CHAPTERS,
   ADD_TO_BOOKSHELF,
+  REMOVE_FROM_BOOKSHELF,
 }
 
 export type Command = {

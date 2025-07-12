@@ -1,19 +1,23 @@
 import { ActionRowBuilder, ChatInputCommandInteraction, MessageFlags, StringSelectMenuBuilder, StringSelectMenuInteraction } from "discord.js";
-import { BookInfo, fetch_books_and_authors_info } from "../tables/books";
+import { BookInfo, fetch_books_and_authors_info, fetch_books_with_isbns } from "../tables/books";
 import { get_chapter_info } from "./chapters/register_chapter";
 import { show_book_info } from "./books/view_book_info";
 import { show_chapters_in_book } from "./chapters/view_chapters";
-import { get_authors_str, wrap_str_in_code_block } from "../utils/util";
+import { get_authors_str, get_user_id_from_interaction, wrap_str_in_code_block } from "../utils/util";
 import { ChapterInfo, fetch_chapters_in_book } from "../tables/chapters";
 import { get_section_info } from "./sections/register_section";
 import { finish_executing_remove_book } from "./books/remove_book";
 import { get_total_chapters } from "./books/register_total_chapters";
 import { COMMAND_TYPE_STRING } from "./command_types";
 import { finish_executing_add_to_bookshelf } from "./bookshelf/add_to_bookshelf";
+import { finish_executing_remove_from_bookshelf } from "./bookshelf/remove_from_bookshelf";
+import { BookshelfInfo, fetch_bookshelf_isbns, fetch_total_books_in_bookshelf } from "../tables/bookshelf";
+import { fetch_user_id } from "../tables/users";
 
 export enum SelectionMenuType {
   SelectBook = "select_book",
-  SelectChapter = "select_chapter"
+  SelectChapter = "select_chapter",
+  SelectFromBookshelf = "select_from_bookshelf",
 }
 
 export async function handle_menu_select(interaction : StringSelectMenuInteraction) : Promise<void> {
@@ -23,7 +27,7 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
 
   if (type === SelectionMenuType.SelectBook) {
 
-    // pull off the ID of the book
+    // pull off the ISBN of the book
     const book_ISBN : string | undefined = interaction.values[0];
 
     // null check for the id
@@ -100,6 +104,21 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
       });
     }
   }
+  else if (type === SelectionMenuType.SelectFromBookshelf) {
+
+    // pull off the ISBN of the book
+    const book_ISBN : string | undefined = interaction.values[0];
+
+    if (!book_ISBN) {
+      interaction.reply(wrap_str_in_code_block("Could not pull of book_ISBN from sleection for select_from_bookshelf menu."));
+      return;
+    }
+
+    if (command_type === COMMAND_TYPE_STRING.REMOVE_FROM_BOOKSHELF) {
+      await finish_executing_remove_from_bookshelf(interaction, book_ISBN);
+    }
+
+  }
   else {
     await interaction.reply({
       content: `Unhandled interaction type: ${type}`,
@@ -173,4 +192,36 @@ export async function select_book_menu(cmd : ChatInputCommandInteraction) : Prom
     components: [row],
     flags: MessageFlags.Ephemeral
   })
+}
+
+export async function select_bookshelf_menu(cmd : ChatInputCommandInteraction) : Promise<void> {
+  const user_id : number = await get_user_id_from_interaction(cmd);
+  const books : BookshelfInfo[] = await fetch_bookshelf_isbns(user_id);
+  const books_info : BookInfo[] = await fetch_books_with_isbns(books); 
+
+  if (books.length === 0 || books_info.length === 0) {
+    cmd.reply(
+      wrap_str_in_code_block(
+        `No books are registered in your bookshelf.`
+      )
+    );
+  }
+
+  // Create dropdown menu for bookshelf
+  const select_menu : StringSelectMenuBuilder = new StringSelectMenuBuilder()
+  .setCustomId(`${SelectionMenuType.SelectFromBookshelf}|${cmd.commandName}`)
+  .setPlaceholder('Choose a book')
+  .addOptions(
+    books_info.map(book => ({
+    label: `${book.title} by ${get_authors_str(book.authors)}`,
+    value: `${book.isbn}`
+  })));
+  
+  const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select_menu);
+
+  await cmd.reply({
+    content: `Please select the book `,
+    components: [row]
+  })
+
 }

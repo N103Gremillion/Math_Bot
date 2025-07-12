@@ -22,6 +22,7 @@ import { clear } from "console";
 import { help_command } from "./commands/misc/help";
 import { register_total_chapters_command } from "./commands/books/register_total_chapters";
 import { add_to_bookshelf_command } from "./commands/bookshelf/add_to_bookshelf";
+import { remove_from_bookshelf_command } from "./commands/bookshelf/remove_from_bookshelf";
 
 
 // setup list of all commands
@@ -39,7 +40,8 @@ export const commands_g: Command[] = [
     register_section_command,
     help_command,
     register_total_chapters_command,
-    add_to_bookshelf_command
+    add_to_bookshelf_command,
+    remove_from_bookshelf_command
 ];
 
 // initalize globals 

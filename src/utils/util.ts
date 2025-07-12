@@ -1,4 +1,12 @@
+import { ChatInputCommandInteraction, StringSelectMenuInteraction } from "discord.js";
 import { BookInfo } from "../tables/books"
+import { fetch_user_id } from "../tables/users";
+
+export async function get_user_id_from_interaction(cmd : ChatInputCommandInteraction | StringSelectMenuInteraction) : Promise<number> {
+    const user_name : string  = cmd.user.username;
+    const user_id : number = await fetch_user_id(user_name);
+    return user_id;
+}
 
 export function wrap_str_in_code_block(str: string): string {
     return `\`\`\`\n${str}\n\`\`\``

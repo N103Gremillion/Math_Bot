@@ -60,3 +60,41 @@ export async function is_book_in_bookshelf(user_id : number, book_isbn : string)
     return false;
   }
 }
+
+export async function fetch_bookshelf_isbns(user_id : number) : Promise<BookshelfInfo[]> {
+  try {
+    const books : BookshelfInfo[] = await get_rows(
+      `
+      SELECT book_isbn
+      FROM bookshelf
+      WHERE user_id = ?;
+      `,
+      [user_id]
+    );
+    return books;
+  } catch (err) {
+    console.log(`issue fetching isbn's in bookshelf for user_id: ${user_id}`, err);
+    return [];
+  }
+}
+
+export async function remove_book_from_bookshelf(
+  book_isbn : string, 
+  user_id : number
+) : Promise<boolean> {
+  try {
+    await run_query(
+      `
+      DELETE 
+      FROM bookshelf
+      WHERE book_isbn = ? AND user_id = ?;
+      `,
+      [book_isbn, user_id]
+    );
+    return true;
+  } catch (err) {
+    console.log(`Issue removing book from bookshelf.
+user_id: ${user_id}, book_isbn: ${book_isbn}.`, err);
+    return false;
+  }
+}
