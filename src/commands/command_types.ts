@@ -1,5 +1,23 @@
 import { ChatInputCommandInteraction } from "discord.js";
 
+export enum COMMAND_TYPE_STRING {
+  INVALID = "invalid",
+  PING = "ping",
+  LS = "ls",
+  REGISTER_USER = "register_user",
+  REMOVE_USER = "remove_user",
+  REGISTER_BOOK = "register_book",
+  REMOVE_BOOK = "remove_book",
+  VIEW_BOOKS = "view_books",
+  VIEW_BOOK_INFO = "view_book",
+  REGISTER_CHAPTER = "register_chapter",
+  VIEW_CHAPTERS = "view_chapters",
+  REGISTER_SECTION = "register_section",
+  HELP = "help",
+  REGISTER_TOTAL_CHAPTERS = "register_total_chapters",
+  ADD_TO_BOOKSHELF = "add_to_bookshelf",
+} 
+
 export enum COMMAND_TYPE {
   INVALID,
   PING,
@@ -14,7 +32,8 @@ export enum COMMAND_TYPE {
   VIEW_CHAPTERS,
   REGISTER_SECTION,
   HELP,
-  REGISTER_TOTAL_CHAPTERS
+  REGISTER_TOTAL_CHAPTERS,
+  ADD_TO_BOOKSHELF,
 }
 
 export type Command = {

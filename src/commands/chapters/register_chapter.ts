@@ -1,5 +1,5 @@
 import { ModalSubmitInteraction, StringSelectMenuInteraction } from 'discord.js';
-import { Command, COMMAND_TYPE } from './../command_types';
+import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING } from './../command_types';
 import { ActionRowBuilder, ChatInputCommandInteraction, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { select_book_menu } from '../selection_menus';
 import { ModalType } from '../modals';
@@ -229,7 +229,7 @@ export async function get_chapter_info(interaction : StringSelectMenuInteraction
 }
 
 export const register_chapter_command : Command = {
-  command : "register_chapter",
+  command : COMMAND_TYPE_STRING.REGISTER_CHAPTER,
   command_type : COMMAND_TYPE.REGISTER_CHAPTER,
   description : "register a chapter in one of the books in the database",
   action : execute_register_chapter,

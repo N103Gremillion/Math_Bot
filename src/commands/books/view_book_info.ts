@@ -1,6 +1,6 @@
 import { BookInfo, fetch_book_and_author_info } from './../../tables/books';
 import { ChatInputCommandInteraction, EmbedBuilder, StringSelectMenuInteraction } from "discord.js";
-import { Command, COMMAND_TYPE } from "../command_types";
+import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING } from "../command_types";
 import { select_book_menu } from "../selection_menus";
 import { get_authors_str, get_chapter_info_str, wrap_str_in_code_block } from '../../utils/util';
 
@@ -36,7 +36,7 @@ Chapter Count : ${get_chapter_info_str(book_info.total_chapters)}`
 }
 
 export const view_book_info_command : Command =  {
-  command: "view_book",
+  command: COMMAND_TYPE_STRING.VIEW_BOOK_INFO,
   command_type: COMMAND_TYPE.VIEW_BOOK_INFO,
   description: `view info about a specific book`,
   action: execute_view_book_info,

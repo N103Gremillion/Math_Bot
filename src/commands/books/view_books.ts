@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction } from "discord.js";
-import { COMMAND_TYPE, Command } from "../command_types";
+import { COMMAND_TYPE, COMMAND_TYPE_STRING, Command } from "../command_types";
 import { get_authors_str, wrap_str_in_code_block } from "../../utils/util";
 import { BookInfo, fetch_books_and_authors_info, fetch_books_info } from "../../tables/books";
 
@@ -36,7 +36,7 @@ export async function execute_view_books (cmd : ChatInputCommandInteraction) : P
 } 
 
 export const view_books_command : Command = {
-  command: "view_books",
+  command: COMMAND_TYPE_STRING.VIEW_BOOKS,
   command_type: COMMAND_TYPE.VIEW_BOOKS,
   description: "View all the registered books",
   action: execute_view_books,

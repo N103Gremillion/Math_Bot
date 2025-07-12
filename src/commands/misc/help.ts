@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction } from "discord.js";
-import { Command, COMMAND_TYPE } from "../command_types";
+import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING } from "../command_types";
 import { wrap_str_in_code_block } from "../../utils/util";
 
 const help_str: string = 
@@ -26,7 +26,7 @@ export async function execute_help(cmd : ChatInputCommandInteraction) : Promise<
 }
 
 export const help_command : Command = {
-  command : "help",
+  command : COMMAND_TYPE_STRING.HELP,
   command_type : COMMAND_TYPE.HELP,
   description : "tells information about how to use this bot effectively",
   action : execute_help,

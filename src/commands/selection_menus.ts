@@ -8,6 +8,7 @@ import { ChapterInfo, fetch_chapters_in_book } from "../tables/chapters";
 import { get_section_info } from "./sections/register_section";
 import { finish_executing_remove_book } from "./books/remove_book";
 import { get_total_chapters } from "./books/register_total_chapters";
+import { COMMAND_TYPE_STRING } from "./command_types";
 
 export enum SelectionMenuType {
   SelectBook = "select_book",
@@ -32,22 +33,22 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
       return;
     }
 
-    if (command_type === "register_chapter") {
+    if (command_type === COMMAND_TYPE_STRING.REGISTER_CHAPTER) {
       await get_chapter_info(interaction, book_ISBN);
     } 
-    else if (command_type === "view_book") {
+    else if (command_type === COMMAND_TYPE_STRING.VIEW_BOOK_INFO) {
       await show_book_info(interaction, book_ISBN); 
     }
-    else if (command_type === "register_total_chapters") {
+    else if (command_type === COMMAND_TYPE_STRING.REGISTER_TOTAL_CHAPTERS) {
       await get_total_chapters(interaction, book_ISBN);
     }
-    else if (command_type === "view_chapters") {
+    else if (command_type === COMMAND_TYPE_STRING.VIEW_CHAPTERS) {
       await show_chapters_in_book(interaction, book_ISBN);
     }
-    else if (command_type === "register_section") {
+    else if (command_type === COMMAND_TYPE_STRING.REGISTER_SECTION) {
       await select_chapter_menu(interaction, book_ISBN, command_type);
     }
-    else if (command_type === "remove_book") {
+    else if (command_type === COMMAND_TYPE_STRING.REMOVE_BOOK) {
       await finish_executing_remove_book(interaction, book_ISBN);
     }
     else {
@@ -86,7 +87,7 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
       return;
     }
 
-    if (command_type === "register_section") {
+    if (command_type === COMMAND_TYPE_STRING.REGISTER_SECTION) {
       await get_section_info(interaction, book_ISBN, chapter_number);
     }
     else {

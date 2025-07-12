@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, StringSelectMenuInteraction } from "discord.js";
-import { Command, COMMAND_TYPE } from "../command_types";
+import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING } from "../command_types";
 import { select_book_menu } from "../selection_menus";
 import { wrap_str_in_code_block } from "../../utils/util";
 import { BookInfo, fetch_book_info, remove_book_from_database } from "../../tables/books";
@@ -51,7 +51,7 @@ Total Chapters: ${book_info.total_chapters}`
 }
 
 export const remove_book_command : Command = {
-  command : "remove_book",
+  command : COMMAND_TYPE_STRING.REMOVE_BOOK,
   command_type : COMMAND_TYPE.REMOVE_BOOK,
   description : "remove a book from the database",
   action : execute_remove_book,

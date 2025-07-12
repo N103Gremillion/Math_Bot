@@ -1,6 +1,6 @@
 import { add_total_chapters_to_book, BookInfo, fetch_book_and_author_info } from './../../tables/books';
 import { ActionRowBuilder, ChatInputCommandInteraction, ModalBuilder, ModalSubmitInteraction, StringSelectMenuInteraction, TextInputBuilder, TextInputStyle } from "discord.js";
-import { Command, COMMAND_TYPE } from "../command_types";
+import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING } from "../command_types";
 import { select_book_menu } from "../selection_menus";
 import { ModalType } from "../modals";
 import { BookField } from "./BookField";
@@ -92,7 +92,7 @@ export async function get_total_chapters(interaction : StringSelectMenuInteracti
 }
 
 export const register_total_chapters_command : Command = {
-  command : "register_total_chapters",
+  command : COMMAND_TYPE_STRING.REGISTER_TOTAL_CHAPTERS,
   command_type : COMMAND_TYPE.REGISTER_TOTAL_CHAPTERS,
   description : "adds total chapter information to a selected book.",
   action : execute_register_total_chapters,

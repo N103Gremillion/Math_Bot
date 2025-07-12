@@ -21,6 +21,7 @@ import { remove_book_command } from "./commands/books/remove_book";
 import { clear } from "console";
 import { help_command } from "./commands/misc/help";
 import { register_total_chapters_command } from "./commands/books/register_total_chapters";
+import { add_to_bookshelf_command } from "./commands/bookshelf/add_to_bookshelf";
 
 
 // setup list of all commands
@@ -37,7 +38,8 @@ export const commands_g: Command[] = [
     view_chapters_command,
     register_section_command,
     help_command,
-    register_total_chapters_command
+    register_total_chapters_command,
+    add_to_bookshelf_command
 ];
 
 // initalize globals 
