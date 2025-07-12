@@ -35,6 +35,20 @@ export async function insert_books_table(
 // add total chapters info to a book
 export async function add_total_chapters_to_book(isbn : string , total_chapters : number) : Promise<boolean> {
   try {
+    // Check if any existing chapter exceeds the proposed total_chapters
+    const rows = await get_rows(
+      `
+      SELECT chapter_number FROM chapters
+      WHERE book_isbn = ? AND chapter_number > ?;
+      `,
+      [isbn, total_chapters]
+    );
+
+    if (rows.length > 0) {
+      console.log(`Cannot reduce total_chapters to ${total_chapters}. Chapters exist beyond that.`);
+      return false;
+    }
+
     await run_query(
       `
       UPDATE books
@@ -43,6 +57,7 @@ export async function add_total_chapters_to_book(isbn : string , total_chapters 
       `,
       [total_chapters, isbn]
     );
+    
     return true;
   } catch (err) {
     console.log("Issue attaching total chapters to book.", err);
