@@ -9,6 +9,7 @@ import { get_section_info } from "./sections/register_section";
 import { finish_executing_remove_book } from "./books/remove_book";
 import { get_total_chapters } from "./books/register_total_chapters";
 import { COMMAND_TYPE_STRING } from "./command_types";
+import { finish_executing_add_to_bookshelf } from "./bookshelf/add_to_bookshelf";
 
 export enum SelectionMenuType {
   SelectBook = "select_book",
@@ -50,6 +51,9 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
     }
     else if (command_type === COMMAND_TYPE_STRING.REMOVE_BOOK) {
       await finish_executing_remove_book(interaction, book_ISBN);
+    }
+    else if (command_type === COMMAND_TYPE_STRING.ADD_TO_BOOKSHELF) {
+      await finish_executing_add_to_bookshelf(interaction, book_ISBN);
     }
     else {
       await interaction.reply({

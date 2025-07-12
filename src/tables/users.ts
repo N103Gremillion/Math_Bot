@@ -1,5 +1,10 @@
 import { get_rows, run_query } from "./table_type";
 
+export type UserInfo = {
+  id? : number,
+  user_name? : string
+}
+
 export async function check_user_registered(user_name : string) : Promise<boolean> {
   try {
     const result : any[] = await get_rows(
@@ -47,5 +52,24 @@ export async function remove_from_users_table(user_name : string) : Promise<bool
   }
 }
 
+export async function fetch_user_id(user_name : string) : Promise<number> {
+  try {
+    const user_ids : UserInfo[] = await get_rows(
+      `
+      SELECT id 
+      FROM users
+      WHERE user_name = ?;
+      `
+      ,[user_name]
+    );
+    if (!user_ids || user_ids.length === 0 || !user_ids[0] || !user_ids[0].id) {
+      return -1;
+    }
+    return user_ids[0].id;
+  } catch (err) {
+    console.log(`Issue fetching user_id for user_name: {user_name}`, err);
+    return -1;
+  }
+}
 
 
