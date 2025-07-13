@@ -22,6 +22,7 @@ export async function finish_executing_add_to_bookshelf(cmd : StringSelectMenuIn
         `User: ${user_name} has not been registered.`
       )
     );
+    return;
   }
 
   // check total books in bookshelf
@@ -37,7 +38,8 @@ Max is ${MAX_BOOKS_IN_BOOKSHELF}.
 use /remove_from_bookshelf to free up a slot.
 use /drop_bookshelf to completely empty your bookshelf.`
       )
-    );
+    ); 
+    return;
   }
 
   // dont add the book if it is already in the bookshelf
@@ -49,6 +51,7 @@ use /drop_bookshelf to completely empty your bookshelf.`
 `This book is already registered.`
       )
     );
+    return;
   } 
 
   // try and add to bookshelf

@@ -20,21 +20,21 @@ export async function fetch_total_books_in_bookshelf(user_id: number): Promise<n
       return -1;
     }
     return total[0].count;
-  } catch (err) {
+  } catch (err) { 
     console.log(`Error fetching total books for user_id: ${user_id}`, err);
     return -1;
-  }
+  } 
 }
 
-export async function insert_into_bookshelf(user_id : number, book_isbn : string) : Promise<boolean> {
+export async function insert_into_bookshelf(user_id : number, book_isbn : string) : Promise<boolean> { 
   try {
     await run_query(
       `
-      INSERT INTO bookshelf (user_id, book_isbn)
-      VALUES (?, ?);
+      INSERT OR IGNORE INTO bookshelf (user_id, book_isbn)
+      VALUES (?, ?); 
       `
-      ,[user_id, book_isbn]
-    );
+      ,[user_id, book_isbn] 
+    ); 
     return true;
   } catch (err){
     console.log("Issue inserting into bookshelf.", err)
@@ -95,6 +95,22 @@ export async function remove_book_from_bookshelf(
   } catch (err) {
     console.log(`Issue removing book from bookshelf.
 user_id: ${user_id}, book_isbn: ${book_isbn}.`, err);
+    return false;
+  }
+}
+
+export async function clear_bookshelf(user_id : number) : Promise<boolean> {
+  try {
+    await run_query(
+      `
+      DELETE FROM bookshelf 
+      WHERE user_id = ?;
+      `,
+      [user_id]
+    );
+    return true;
+  } catch (err){
+    console.log(`Issue clearing bookshelf for user_id: ${user_id}.`, err);
     return false;
   }
 }

@@ -137,7 +137,7 @@ export async function create_tables() : Promise<void> {
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
                 FOREIGN KEY (book_isbn) REFERENCES books(isbn) ON DELETE CASCADE 
             );
-            `
+            ` 
             , []
         );
         console.log("Created bookshelf table ");
