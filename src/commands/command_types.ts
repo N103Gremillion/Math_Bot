@@ -18,6 +18,7 @@ export enum COMMAND_TYPE_STRING {
   ADD_TO_BOOKSHELF = "add_to_bookshelf",
   REMOVE_FROM_BOOKSHELF = "remove_from_bookshelf",
   DROP_BOOKSHELF = "drop_bookshelf",
+  VIEW_BOOKSHELF = "view_bookshelf",
 } 
 
 export enum COMMAND_TYPE {
@@ -37,7 +38,8 @@ export enum COMMAND_TYPE {
   REGISTER_TOTAL_CHAPTERS,
   ADD_TO_BOOKSHELF,
   REMOVE_FROM_BOOKSHELF,
-  DROP_BOOKSHELF
+  DROP_BOOKSHELF,
+  VIEW_BOOKSHELF,
 }
 
 export type Command = {

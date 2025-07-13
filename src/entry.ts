@@ -24,6 +24,7 @@ import { register_total_chapters_command } from "./commands/books/register_total
 import { add_to_bookshelf_command } from "./commands/bookshelf/add_to_bookshelf";
 import { remove_from_bookshelf_command } from "./commands/bookshelf/remove_from_bookshelf";
 import { drop_bookshelf_command } from "./commands/bookshelf/drop_bookshelf";
+import { view_bookshelf_command } from "./commands/bookshelf/view_bookshelf";
 
 
 // setup list of all commands
@@ -43,7 +44,8 @@ export const commands_g: Command[] = [
     register_total_chapters_command,
     add_to_bookshelf_command,
     remove_from_bookshelf_command,
-    drop_bookshelf_command
+    drop_bookshelf_command,
+    view_bookshelf_command
 ];
 
 // initalize globals 

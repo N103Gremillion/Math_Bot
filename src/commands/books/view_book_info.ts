@@ -1,8 +1,33 @@
 import { BookInfo, fetch_book_and_author_info } from './../../tables/books';
-import { ChatInputCommandInteraction, EmbedBuilder, StringSelectMenuInteraction } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder, StringSelectMenuInteraction, UserBannerFormat } from "discord.js";
 import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING } from "../command_types";
 import { select_book_menu } from "../selection_menus";
 import { get_authors_str, get_chapter_info_str, wrap_str_in_code_block } from '../../utils/util';
+import { get_book_embed } from '../embeds';
+
+export function get_cover_url_small(cover_id : number | undefined) : string {
+  if (!cover_id) {
+    return ""
+  }
+
+  return `https://covers.openlibrary.org/b/id/${cover_id}-S.jpg`;
+}
+
+export function get_cover_url_medium(cover_id : number | undefined) : string {
+  if (!cover_id) {
+    return ""
+  }
+
+  return `https://covers.openlibrary.org/b/id/${cover_id}-M.jpg`;
+}
+
+export function get_cover_url_large(cover_id : number | undefined) : string {
+  if (!cover_id) {
+    return ""
+  }
+
+  return `https://covers.openlibrary.org/b/id/${cover_id}-L.jpg`;
+}
 
 export async function execute_view_book_info(cmd : ChatInputCommandInteraction) : Promise<void> {
   await select_book_menu(cmd);
@@ -24,14 +49,7 @@ export async function show_book_info(interaction: StringSelectMenuInteraction, i
     return;
   }
   // fetch the cover image using the cover_id
-  const response : EmbedBuilder = new EmbedBuilder() 
-    .setTitle(book_info.title)
-    .setAuthor({name : get_authors_str(book_info.authors)})
-    .setImage(`https://covers.openlibrary.org/b/id/${book_info.cover_id}-M.jpg`)
-    .setFooter({text : `Page Count : ${book_info.number_of_pages}
-Chapter Count : ${get_chapter_info_str(book_info.total_chapters)}`
-    });
-  
+  const response : EmbedBuilder = get_book_embed(book_info);
   await interaction.reply({ embeds : [response] });
 }
 
