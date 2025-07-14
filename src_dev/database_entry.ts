@@ -129,8 +129,9 @@ export async function create_tables() : Promise<void> {
         await run_query(
             `
             CREATE TABLE IF NOT EXISTS bookshelf (
-                user_id INTEGER NOT NULL,
-                book_isbn TEXT NOT NULL,
+                user_id    INTEGER NOT NULL,
+                book_isbn  TEXT    NOT NULL,
+                is_reading BOOLEAN DEFAULT FALSE,
 
                 PRIMARY KEY (user_id, book_isbn),
 

@@ -1,7 +1,8 @@
 import { EmbedBuilder } from "discord.js";
-import { BookInfo } from "../tables/books";
+import { BookInfo, fetch_books_with_isbns } from "../tables/books";
 import { get_authors_str, get_chapter_info_str } from "../utils/util";
 import { get_cover_url_medium, get_cover_url_small } from "./books/view_book_info";
+import { BookshelfInfo } from "../tables/bookshelf";
 
 export function get_book_embed(book : BookInfo) : EmbedBuilder {
 
@@ -16,19 +17,24 @@ Chapter Count : ${get_chapter_info_str(book.total_chapters)}`
   return embed;
 }
 
-export function get_book_embeds(books : BookInfo[]) : EmbedBuilder[] {
+export async function get_book_embeds(bookshelf_state : BookshelfInfo[]) : Promise<EmbedBuilder[]> {
+  const books : BookInfo[] = await fetch_books_with_isbns(bookshelf_state);
   const n : number = books.length;
   const res : EmbedBuilder[] = [];
 
   for (let i = 0; i < n; i += 1) {
     const book : BookInfo | undefined = books[i];
-    if (!book) continue;
+    const entry = bookshelf_state[i];
+    if (!book || !entry) continue;
+
+    const status_symbol = entry.is_reading ? "🟢" : "🟡";
+    const status_text = entry.is_reading ? "Reading" : "Not Reading";
 
     const embed : EmbedBuilder = new EmbedBuilder()
-      .setTitle(book.title)
+      .setTitle(`${status_symbol} ${book.title}`)
       .setAuthor({name : get_authors_str(book.authors)})
       .setFooter({
-        text : `Page Count: ${book.total_chapters}
+        text : `${status_text} • Page Count: ${book.total_chapters}
 Chapter Count: ${get_chapter_info_str(book.total_chapters)}`  
       });
     

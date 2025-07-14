@@ -3,6 +3,7 @@ import { get_rows, run_query } from "./table_type";
 export type BookshelfInfo = {
   user_id : number;
   book_isbn : string;
+  is_reading? : boolean;
 }
 
 export async function fetch_total_books_in_bookshelf(user_id: number): Promise<number> {
@@ -61,7 +62,7 @@ export async function is_book_in_bookshelf(user_id : number, book_isbn : string)
   }
 }
 
-export async function fetch_bookshelf_isbns(user_id : number) : Promise<BookshelfInfo[]> {
+export async function fetch_bookshelf_state(user_id : number) : Promise<BookshelfInfo[]> {
   try {
     const books : BookshelfInfo[] = await get_rows(
       `

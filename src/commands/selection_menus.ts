@@ -11,7 +11,7 @@ import { get_total_chapters } from "./books/register_total_chapters";
 import { COMMAND_TYPE_STRING } from "./command_types";
 import { finish_executing_add_to_bookshelf } from "./bookshelf/add_to_bookshelf";
 import { finish_executing_remove_from_bookshelf } from "./bookshelf/remove_from_bookshelf";
-import { BookshelfInfo, fetch_bookshelf_isbns, fetch_total_books_in_bookshelf } from "../tables/bookshelf";
+import { BookshelfInfo, fetch_bookshelf_state, fetch_total_books_in_bookshelf } from "../tables/bookshelf";
 import { fetch_user_id } from "../tables/users";
 
 export enum SelectionMenuType {
@@ -196,7 +196,7 @@ export async function select_book_menu(cmd : ChatInputCommandInteraction) : Prom
 
 export async function select_bookshelf_menu(cmd : ChatInputCommandInteraction) : Promise<void> {
   const user_id : number = await get_user_id_from_interaction(cmd);
-  const books : BookshelfInfo[] = await fetch_bookshelf_isbns(user_id);
+  const books : BookshelfInfo[] = await fetch_bookshelf_state(user_id);
   const books_info : BookInfo[] = await fetch_books_with_isbns(books); 
 
   if (books.length === 0 || books_info.length === 0) {
