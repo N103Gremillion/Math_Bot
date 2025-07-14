@@ -35,7 +35,7 @@ export async function finish_executing_add_to_bookshelf(cmd : StringSelectMenuIn
       wrap_str_in_code_block(
         `You have already registered the max number of books.
 Max is ${MAX_BOOKS_IN_BOOKSHELF}.
-use /remove_from_bookshelf to free up a slot.
+use /remove_from_bookshelf to free up a slot. 
 use /drop_bookshelf to completely empty your bookshelf.`
       )
     ); 

@@ -40,7 +40,7 @@ Total Chapters: ${chapter_count_str}`;
 export function get_chapter_info_str(total_chapters : number | undefined | null) : string {
     return total_chapters !== undefined && total_chapters !== null
         ? total_chapters.toString()
-        : "Not Registered";
+        : "Unknown";
 }
 
 export function get_authors_str(authors : string[]) : string {
