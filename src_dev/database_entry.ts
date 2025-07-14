@@ -132,6 +132,7 @@ export async function create_tables() : Promise<void> {
                 user_id    INTEGER NOT NULL,
                 book_isbn  TEXT    NOT NULL,
                 is_reading BOOLEAN DEFAULT FALSE,
+                cur_page INTEGER DEFAULT 1,
 
                 PRIMARY KEY (user_id, book_isbn),
 

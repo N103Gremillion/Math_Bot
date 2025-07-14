@@ -19,6 +19,7 @@ export enum COMMAND_TYPE_STRING {
   REMOVE_FROM_BOOKSHELF = "remove_from_bookshelf",
   DROP_BOOKSHELF = "drop_bookshelf",
   VIEW_BOOKSHELF = "view_bookshelf",
+  START_READING = "start_reading",
 } 
 
 export enum COMMAND_TYPE {
@@ -40,6 +41,7 @@ export enum COMMAND_TYPE {
   REMOVE_FROM_BOOKSHELF,
   DROP_BOOKSHELF,
   VIEW_BOOKSHELF,
+  START_READING,
 }
 
 export type Command = {

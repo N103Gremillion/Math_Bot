@@ -27,13 +27,16 @@ export async function get_book_embeds(bookshelf_state : BookshelfInfo[]) : Promi
     const entry = bookshelf_state[i];
     if (!book || !entry) continue;
 
-    const status_symbol = entry.is_reading ? "🟢" : "🟡";
+    const status_symbol = entry.is_reading ? "🟢 Reading" : "🟡 Pending";
+
 
     const embed : EmbedBuilder = new EmbedBuilder()
-      .setTitle(`${status_symbol} ${book.title}`)
-      .setAuthor({name : get_authors_str(book.authors)})
+      .setTitle(`${book.title}`)
+      .setAuthor({name : `${status_symbol}
+${get_authors_str(book.authors)}`})
       .setFooter({
-        text : `Page Count: ${book.number_of_pages}
+        text : `Current Page: ${entry.cur_page}
+Page Count: ${book.number_of_pages}
 Chapter Count: ${get_chapter_info_str(book.total_chapters)}`  
       });
     

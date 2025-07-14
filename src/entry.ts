@@ -18,13 +18,13 @@ import { view_book_info_command } from "./commands/books/view_book_info";
 import { view_chapters_command } from "./commands/chapters/view_chapters";
 import { register_section_command } from "./commands/sections/register_section";
 import { remove_book_command } from "./commands/books/remove_book";
-import { clear } from "console";
 import { help_command } from "./commands/misc/help";
 import { register_total_chapters_command } from "./commands/books/register_total_chapters";
 import { add_to_bookshelf_command } from "./commands/bookshelf/add_to_bookshelf";
 import { remove_from_bookshelf_command } from "./commands/bookshelf/remove_from_bookshelf";
 import { drop_bookshelf_command } from "./commands/bookshelf/drop_bookshelf";
 import { view_bookshelf_command } from "./commands/bookshelf/view_bookshelf";
+import { start_reading_command } from "./commands/bookshelf/start_reading";
 
 
 // setup list of all commands
@@ -45,7 +45,8 @@ export const commands_g: Command[] = [
     add_to_bookshelf_command,
     remove_from_bookshelf_command,
     drop_bookshelf_command,
-    view_bookshelf_command
+    view_bookshelf_command,
+    start_reading_command
 ];
 
 // initalize globals 

@@ -4,6 +4,7 @@ export type BookshelfInfo = {
   user_id : number;
   book_isbn : string;
   is_reading? : boolean;
+  cur_page? : number;
 }
 
 export async function fetch_total_books_in_bookshelf(user_id: number): Promise<number> {
@@ -66,7 +67,7 @@ export async function fetch_bookshelf_state(user_id : number) : Promise<Bookshel
   try {
     const books : BookshelfInfo[] = await get_rows(
       `
-      SELECT book_isbn
+      SELECT book_isbn, is_reading, cur_page
       FROM bookshelf
       WHERE user_id = ?;
       `,
@@ -115,3 +116,44 @@ export async function clear_bookshelf(user_id : number) : Promise<boolean> {
     return false;
   }
 }
+
+export async function update_cur_page(
+  user_id : number, 
+  book_isbn : string,
+  cur_page : number
+) : Promise<boolean> {
+  try {
+    await run_query(
+      `
+      UPDATE bookshelf
+      SET cur_page = ?
+      WHERE user_id = ? AND book_isbn = ?;
+      `
+      ,[cur_page, user_id, book_isbn]
+    );
+    return true;
+  } catch(err) {
+    console.log("Issue updating cur_page in bookshelf.", err);
+    return false;
+  }
+} 
+
+export async function update_reading_state(
+  user_id : number, 
+  book_isbn : string
+) : Promise<boolean> {
+  try {
+    await run_query(
+      `
+      UPDATE bookshelf
+      SET is_reading = TRUE
+      WHERE user_id = ? AND book_isbn = ?;
+      `
+      ,[user_id, book_isbn]
+    );
+    return true;
+  } catch(err) {
+    console.log("Issue updating reading state in bookshelf.", err);
+    return false;
+  }
+} 

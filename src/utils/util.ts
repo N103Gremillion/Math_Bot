@@ -1,16 +1,10 @@
-import { ChatInputCommandInteraction, StringSelectMenuInteraction } from "discord.js";
+import { ChatInputCommandInteraction, ModalSubmitInteraction, StringSelectMenuInteraction } from "discord.js";
 import { BookInfo } from "../tables/books"
 import { fetch_user_id } from "../tables/users";
 
-export async function reply(cmd : ChatInputCommandInteraction | StringSelectMenuInteraction, reply_str : string) {
-    await cmd.reply(
-        wrap_str_in_code_block(
-            reply_str
-        )
-    );
-}
-
-export async function get_user_id_from_interaction(cmd : ChatInputCommandInteraction | StringSelectMenuInteraction) : Promise<number> {
+export async function get_user_id_from_interaction(
+    cmd : ChatInputCommandInteraction | StringSelectMenuInteraction | ModalSubmitInteraction
+) : Promise<number> {
     const user_name : string  = cmd.user.username;
     const user_id : number = await fetch_user_id(user_name);
     return user_id;

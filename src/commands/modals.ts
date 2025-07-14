@@ -5,11 +5,14 @@ import { SectionField } from "./sections/SectionField";
 import { handle_section_info_modal_submission } from "./sections/register_section";
 import { BookField } from "./books/BookField";
 import { handle_total_chapters_modal_submission } from "./books/register_total_chapters";
+import { BookshelfField } from "./bookshelf/BookshelfField";
+import { handle_start_page_modal_submission } from "./bookshelf/start_reading";
 
 export enum ModalType {
   ChapterInput = "chapter_input_modal",
   SectionInput = "section_input_modal",
-  TotalChaptersInput = "total_chapters_input_modal"
+  TotalChaptersInput = "total_chapters_input_modal",
+  StartingPageInput = "starting_page_input_modal"
 }
 
 export async function handleModalSubmit(interaction : ModalSubmitInteraction) : Promise<void> {
@@ -51,5 +54,13 @@ export async function handleModalSubmit(interaction : ModalSubmitInteraction) : 
     const end_page : string = interaction.fields.getTextInputValue(SectionField.EndPage);
     const total_questions : string = interaction.fields.getTextInputValue(SectionField.Questions);
     await handle_section_info_modal_submission(book_ISBN, chapter_number, section_number, section_name, start_page, end_page, total_questions, interaction);
+  }
+  else if (event_type === ModalType.StartingPageInput) {
+    const start_page_str : string = interaction.fields.getTextInputValue(BookshelfField.CurPage);
+    const start_page : number = parseInt(start_page_str, 10);
+    await handle_start_page_modal_submission(book_ISBN, start_page, interaction);
+  }
+  else {
+    await interaction.reply({ content: "Event type not available for this modal", ephemeral: true });
   }
 }

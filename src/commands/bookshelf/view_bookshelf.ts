@@ -1,8 +1,7 @@
 import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
-import { get_user_id_from_interaction, reply} from "../../utils/util";
+import { get_user_id_from_interaction, wrap_str_in_code_block } from "../../utils/util";
 import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING } from "../command_types";
 import { BookshelfInfo, fetch_bookshelf_state } from "../../tables/bookshelf";
-import { BookInfo, fetch_books_with_isbns } from "../../tables/books";
 import { get_book_embeds } from "../embeds";
 
 export async function execute_view_bookshelf(cmd : ChatInputCommandInteraction) : Promise<void> {
@@ -10,8 +9,10 @@ export async function execute_view_bookshelf(cmd : ChatInputCommandInteraction) 
   const bookshelf_state : BookshelfInfo[] = await fetch_bookshelf_state(user_id);
 
   if (bookshelf_state.length === 0) {
-    await reply (cmd, 
+    await cmd.reply (
+      wrap_str_in_code_block( 
       `No books currently in bookshelf.`
+      )
     );
     return;
   }

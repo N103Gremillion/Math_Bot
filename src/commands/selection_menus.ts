@@ -11,8 +11,8 @@ import { get_total_chapters } from "./books/register_total_chapters";
 import { COMMAND_TYPE_STRING } from "./command_types";
 import { finish_executing_add_to_bookshelf } from "./bookshelf/add_to_bookshelf";
 import { finish_executing_remove_from_bookshelf } from "./bookshelf/remove_from_bookshelf";
-import { BookshelfInfo, fetch_bookshelf_state, fetch_total_books_in_bookshelf } from "../tables/bookshelf";
-import { fetch_user_id } from "../tables/users";
+import { BookshelfInfo, fetch_bookshelf_state } from "../tables/bookshelf";
+import { get_start_reading_page } from "./bookshelf/start_reading";
 
 export enum SelectionMenuType {
   SelectBook = "select_book",
@@ -26,47 +26,45 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
   const [type, command_type] = interaction.customId.split("|");
 
   if (type === SelectionMenuType.SelectBook) {
-
-    // pull off the ISBN of the book
-    const book_ISBN : string | undefined = interaction.values[0];
-
-    // null check for the id
-    if (book_ISBN === undefined){
-      await interaction.reply({
-        content: "Something went wrong — no book was selected. Please try again.",
-      });
-      return;
-    }
-
-    if (command_type === COMMAND_TYPE_STRING.REGISTER_CHAPTER) {
-      await get_chapter_info(interaction, book_ISBN);
-    } 
-    else if (command_type === COMMAND_TYPE_STRING.VIEW_BOOK_INFO) {
-      await show_book_info(interaction, book_ISBN); 
-    }
-    else if (command_type === COMMAND_TYPE_STRING.REGISTER_TOTAL_CHAPTERS) {
-      await get_total_chapters(interaction, book_ISBN);
-    }
-    else if (command_type === COMMAND_TYPE_STRING.VIEW_CHAPTERS) {
-      await show_chapters_in_book(interaction, book_ISBN);
-    }
-    else if (command_type === COMMAND_TYPE_STRING.REGISTER_SECTION) {
-      await select_chapter_menu(interaction, book_ISBN, command_type);
-    }
-    else if (command_type === COMMAND_TYPE_STRING.REMOVE_BOOK) {
-      await finish_executing_remove_book(interaction, book_ISBN);
-    }
-    else if (command_type === COMMAND_TYPE_STRING.ADD_TO_BOOKSHELF) {
-      await finish_executing_add_to_bookshelf(interaction, book_ISBN);
-    }
-    else {
-      await interaction.reply({
-        content : `Unknown command: ${command_type}`
-      });
-    }
-
+    await handle_select_book_submission(interaction, command_type);
   } 
   else if (type === SelectionMenuType.SelectChapter) {
+    await handle_select_chapter_submission(interaction, command_type);
+  }
+  else if (type === SelectionMenuType.SelectFromBookshelf) {
+    await handle_select_bookshelf_submission(interaction, command_type);
+  }
+  else {
+    await interaction.reply({
+      content: `Unhandled interaction type: ${type}`,
+      ephemeral: true,
+    });
+  }
+}
+
+async function  handle_select_bookshelf_submission(
+  interaction : StringSelectMenuInteraction, 
+  command_type : string | undefined
+) : Promise<void> {
+  // pull off the ISBN of the book
+  const book_ISBN : string | undefined = interaction.values[0];
+
+  if (!book_ISBN) {
+    interaction.reply(wrap_str_in_code_block("Could not pull of book_ISBN from sleection for select_from_bookshelf menu."));
+    return;
+  }
+
+  if (command_type === COMMAND_TYPE_STRING.REMOVE_FROM_BOOKSHELF) {
+    await finish_executing_remove_from_bookshelf(interaction, book_ISBN);
+  } else if (command_type === COMMAND_TYPE_STRING.START_READING) {
+    await get_start_reading_page(interaction, book_ISBN);
+  }
+}
+
+async function  handle_select_chapter_submission(
+  interaction : StringSelectMenuInteraction, 
+  command_type : string | undefined
+) : Promise<void> {
 
     if (interaction.values === undefined || interaction.values[0] === undefined){
       await interaction.reply(
@@ -103,26 +101,47 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
         content : `Unknown command: ${command_type}`
       });
     }
+}
+
+async function handle_select_book_submission(
+  interaction : StringSelectMenuInteraction, 
+  command_type : string | undefined
+) : Promise<void> {
+  // pull off the ISBN of the book
+  const book_ISBN : string | undefined = interaction.values[0];
+
+  // null check for the id
+  if (book_ISBN === undefined){
+    await interaction.reply({
+      content: "Something went wrong — no book was selected. Please try again.",
+    });
+    return;
   }
-  else if (type === SelectionMenuType.SelectFromBookshelf) {
 
-    // pull off the ISBN of the book
-    const book_ISBN : string | undefined = interaction.values[0];
-
-    if (!book_ISBN) {
-      interaction.reply(wrap_str_in_code_block("Could not pull of book_ISBN from sleection for select_from_bookshelf menu."));
-      return;
-    }
-
-    if (command_type === COMMAND_TYPE_STRING.REMOVE_FROM_BOOKSHELF) {
-      await finish_executing_remove_from_bookshelf(interaction, book_ISBN);
-    }
-
+  if (command_type === COMMAND_TYPE_STRING.REGISTER_CHAPTER) {
+    await get_chapter_info(interaction, book_ISBN);
+  } 
+  else if (command_type === COMMAND_TYPE_STRING.VIEW_BOOK_INFO) {
+    await show_book_info(interaction, book_ISBN); 
+  }
+  else if (command_type === COMMAND_TYPE_STRING.REGISTER_TOTAL_CHAPTERS) {
+    await get_total_chapters(interaction, book_ISBN);
+  }
+  else if (command_type === COMMAND_TYPE_STRING.VIEW_CHAPTERS) {
+    await show_chapters_in_book(interaction, book_ISBN);
+  }
+  else if (command_type === COMMAND_TYPE_STRING.REGISTER_SECTION) {
+    await select_chapter_menu(interaction, book_ISBN, command_type);
+  }
+  else if (command_type === COMMAND_TYPE_STRING.REMOVE_BOOK) {
+    await finish_executing_remove_book(interaction, book_ISBN);
+  }
+  else if (command_type === COMMAND_TYPE_STRING.ADD_TO_BOOKSHELF) {
+    await finish_executing_add_to_bookshelf(interaction, book_ISBN);
   }
   else {
     await interaction.reply({
-      content: `Unhandled interaction type: ${type}`,
-      ephemeral: true,
+      content : `Unknown command: ${command_type}`
     });
   }
 }
@@ -205,6 +224,7 @@ export async function select_bookshelf_menu(cmd : ChatInputCommandInteraction) :
         `No books are registered in your bookshelf.`
       )
     );
+    return;
   }
 
   // Create dropdown menu for bookshelf
