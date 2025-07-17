@@ -1,18 +1,80 @@
 import { fetch_book_by_ISBN } from "../src/commands/books/register_book";
 import { insert_authors_table } from "../src/tables/authors";
-import { BookInfo, fetch_books_info, fetch_page_count, fetch_total_chapters, insert_books_table } from "../src/tables/books";
+import { add_total_chapters_to_book, BookInfo, fetch_book_and_author_info, fetch_books_info, fetch_page_count, fetch_total_chapters, insert_books_table } from "../src/tables/books";
 import { ChapterInfo, insert_chapters_table } from "../src/tables/chapters";
 import { insert_sections_table } from "../src/tables/sections";
+import { get_book_info_str } from "../src/utils/util";
 
 const MODERN_OPERATING_SYSTEMS_ISBN : string = "978-0133591620";
 const HOW_TO_PROVE_IT_ISBN : string = "978‑1‑108‑42418‑9";
 
 // insert specific books
 export async function insert_Modern_Operating_Systems() : Promise<void> {
+  
   // first add to genearl book info
   await manually_register_book(MODERN_OPERATING_SYSTEMS_ISBN);
 
+  // register total chapters
+  await manually_register_total_chapters(MODERN_OPERATING_SYSTEMS_ISBN, 13);
+
   // insert chapter info
+  const chapters : ChapterInfo[] = [
+    {
+      book_isbn : MODERN_OPERATING_SYSTEMS_ISBN, chapter_name : "INTRODUCTION", chapter_number : 1, 
+      sections : 12, start_page : 3, end_page : 84
+    }, // chapter 1
+    {
+      book_isbn : MODERN_OPERATING_SYSTEMS_ISBN, chapter_name : "PROCESSES AND THREADS", chapter_number : 2, 
+      sections : 7, start_page : 85, end_page : 181
+    }, // chapter 2
+    {
+      book_isbn : MODERN_OPERATING_SYSTEMS_ISBN, chapter_name : "MEMORY MANAGEMENT", chapter_number : 3, 
+      sections : 9, start_page : 182, end_page : 264
+    }, // chapter 3
+    {
+      book_isbn : MODERN_OPERATING_SYSTEMS_ISBN, chapter_name : "FILE SYSTEMS", chapter_number : 4, 
+      sections : 7, start_page : 265, end_page : 336
+    }, // chapter 4
+    {
+      book_isbn : MODERN_OPERATING_SYSTEMS_ISBN, chapter_name : "INPUT/OUTPUT", chapter_number : 5, 
+      sections : 10, start_page : 337, end_page : 435
+    }, // chapter 5
+    {
+      book_isbn : MODERN_OPERATING_SYSTEMS_ISBN, chapter_name : "DEADLOCKS", chapter_number : 6, 
+      sections : 9, start_page : 436, end_page : 472
+    }, // chapter 6
+    {
+      book_isbn : MODERN_OPERATING_SYSTEMS_ISBN, chapter_name : "VIRTUALIZATION AND THE CLOUD", chapter_number : 7, 
+      sections : 13, start_page : 473, end_page : 519
+    }, // chapter 7
+    {
+      book_isbn : MODERN_OPERATING_SYSTEMS_ISBN, chapter_name : "MULTIPLE PROCESSOR SYSTEMS", chapter_number : 8, 
+      sections : 5, start_page : 520, end_page : 594
+    }, // chapter 8
+    {
+      book_isbn : MODERN_OPERATING_SYSTEMS_ISBN, chapter_name : "SECURITY", chapter_number : 9, 
+      sections : 12, start_page : 595, end_page : 713
+    }, // chapter 9
+    {
+      book_isbn : MODERN_OPERATING_SYSTEMS_ISBN, chapter_name : "CASE STUDY 1: UNIX, LINUX, AND ANDROID", chapter_number : 10, 
+      sections : 9, start_page : 714, end_page : 856
+    }, // chapter 10
+    {
+      book_isbn : MODERN_OPERATING_SYSTEMS_ISBN, chapter_name : "CASE STUDY 2: WINDOWS 8", chapter_number : 11, 
+      sections : 11, start_page : 857, end_page : 981
+    }, // chapter 11
+    {
+      book_isbn : MODERN_OPERATING_SYSTEMS_ISBN, chapter_name : "OPERATING SYSTEM DESIGN", chapter_number : 12, 
+      sections : 7, start_page : 982, end_page : 1030
+    }, // chapter 12
+    {
+      book_isbn : MODERN_OPERATING_SYSTEMS_ISBN, chapter_name : "READING LIST AND BIBLIOGRAPHY", chapter_number : 13, 
+      sections : 2, start_page : 1031, end_page : 1041
+    }, // chapter 13
+  ];
+  await manually_register_chapters(chapters);
+
+  // INSERT section info
 }
 
 export async function insert_How_To_Prove_It() : Promise<void> {
@@ -110,6 +172,12 @@ export async function manually_register_book (isbn : string) : Promise<void> {
   }
 } 
 
+export async function manually_register_chapters(chapters : ChapterInfo[]) : Promise<void> {
+  for (let i = 0; i < chapters.length; i++) {
+    await manually_register_chapter(chapters[i]!);
+  }
+}
+
 export async function manually_register_chapter (
   chapter_info : ChapterInfo
 ) : Promise<void> {
@@ -198,6 +266,47 @@ Chapter number: ${chapter_number}
 Total sections: ${total_sections}
 Start page: ${start_page}
 End page: ${end_page}`
+    );
+  }
+
+}
+
+export async function manually_register_total_chapters(
+  book_ISBN : string, 
+  total_chapters : number, 
+) : Promise<void> {
+  
+  if (total_chapters <= 0) {
+    console.log(
+      `Total Chapters must be greater than 0.
+Invalid input for Total Chapters: ${total_chapters}`
+    );
+    return;
+  }
+
+  if (!Number.isInteger(total_chapters)) {
+    console.log(
+      `Total Chapters must be a whole number.
+Invalid input for Total Chapters: ${total_chapters}`
+    );
+    return;
+  }
+
+  // try to add the info to the database
+  const registration_successful : boolean = await add_total_chapters_to_book(book_ISBN, total_chapters);
+  const book : BookInfo = (await fetch_book_and_author_info(book_ISBN))!;
+  const book_str : string = get_book_info_str(book);
+
+  if (registration_successful) {
+    console.log(
+      `============== Successful insert for total chapters ====================
+${book_str}`
+    );
+  } else {
+    console.log(
+      `============== Issue inserting total chapters ====================
+Book ISBN: ${book_ISBN}.
+Total Chapters: ${total_chapters}`
     );
   }
 
