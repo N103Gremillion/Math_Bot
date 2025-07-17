@@ -1,5 +1,5 @@
-import { ActionRowBuilder, ChatInputCommandInteraction, MessageFlags, StringSelectMenuBuilder, StringSelectMenuInteraction } from "discord.js";
-import { BookInfo, fetch_books_and_authors_info, fetch_books_with_isbns } from "../tables/books";
+import { ActionRowBuilder, ChatInputCommandInteraction, MessageActionRowComponent, MessageFlags, StringSelectMenuBuilder, StringSelectMenuInteraction } from "discord.js";
+import { BookInfo, fetch_book_count, fetch_books_and_authors_info, fetch_books_with_isbns } from "../tables/books";
 import { get_chapter_info } from "./chapters/register_chapter";
 import { show_book_info } from "./books/view_book_info";
 import { show_chapters_in_book } from "./chapters/view_chapters";
@@ -8,16 +8,18 @@ import { ChapterInfo, fetch_chapters_in_book } from "../tables/chapters";
 import { get_section_info } from "./sections/register_section";
 import { finish_executing_remove_book } from "./books/remove_book";
 import { get_total_chapters } from "./books/register_total_chapters";
-import { COMMAND_TYPE_STRING } from "./command_types";
+import { COMMAND_TYPE, COMMAND_TYPE_STRING } from "./command_types";
 import { finish_executing_add_to_bookshelf } from "./bookshelf/add_to_bookshelf";
 import { finish_executing_remove_from_bookshelf } from "./bookshelf/remove_from_bookshelf";
 import { BookshelfInfo, fetch_bookshelf_state } from "../tables/bookshelf";
 import { get_start_reading_page } from "./bookshelf/start_reading";
+import { BOOKS_PER_PAGE, finish_executing_view_books } from "./books/view_books";
 
 export enum SelectionMenuType {
   SelectBook = "select_book",
   SelectChapter = "select_chapter",
   SelectFromBookshelf = "select_from_bookshelf",
+  SelectPageOfBooks = "select_page_of_books"
 }
 
 export async function handle_menu_select(interaction : StringSelectMenuInteraction) : Promise<void> {
@@ -34,12 +36,42 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
   else if (type === SelectionMenuType.SelectFromBookshelf) {
     await handle_select_bookshelf_submission(interaction, command_type);
   }
+  else if (type === SelectionMenuType.SelectPageOfBooks) {
+    await handle_select_page_of_books(interaction);
+  }
   else {
     await interaction.reply({
       content: `Unhandled interaction type: ${type}`,
       ephemeral: true,
     });
   }
+}
+
+async function handle_select_page_of_books(interaction : StringSelectMenuInteraction) {
+  // pull of the value they submitted
+  const page_number_str : string | undefined = interaction.values[0];
+   
+  if (!page_number_str) {
+    interaction.reply (
+      wrap_str_in_code_block(
+        `Selected page was undefined.`
+      )
+    );
+    return;
+  }
+
+  const page_num : number = +page_number_str;
+
+  if (!page_num) {
+    interaction.reply(
+      wrap_str_in_code_block(
+        `Page number selected is not a valid number.`
+      )
+    );
+    return;
+  }
+
+  await finish_executing_view_books(interaction, page_num);
 }
 
 async function  handle_select_bookshelf_submission(
@@ -179,6 +211,45 @@ async function select_chapter_menu(
       ephemeral: true
     });
   }
+}
+
+export async function select_page_of_books(cmd : ChatInputCommandInteraction) : Promise<void> {
+  const total_books : number = await fetch_book_count();
+  
+  if (total_books === -1) {
+    cmd.reply(
+      wrap_str_in_code_block(
+        `Issue fetching the number of books from database.`
+      )
+    );
+  } else if (total_books === 0) {
+    cmd.reply(
+      wrap_str_in_code_block(
+        `No books are currently registered.`
+      )
+    );
+  }
+
+  const total_pages : number = Math.ceil(total_books / BOOKS_PER_PAGE)
+  const options : {label : string, value : string}[] = [];
+
+  for (let i = 0; i < total_pages; i++) {
+    options.push({
+      label : `Page ${i + 1}`,
+      value : `${i + 1}`
+    });
+  }
+
+  const selection_menu : StringSelectMenuBuilder = new StringSelectMenuBuilder()
+    .setCustomId(`${SelectionMenuType.SelectPageOfBooks}|${cmd.commandName}`)
+    .setPlaceholder(`Select Page, each page has up to ${BOOKS_PER_PAGE} books.`)
+    .addOptions(
+      options
+    );
+  
+  const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(selection_menu);
+
+  await cmd.reply({content : "What page would you like to see?", components: [row]});
 }
 
 export async function select_book_menu(cmd : ChatInputCommandInteraction) : Promise<void> {

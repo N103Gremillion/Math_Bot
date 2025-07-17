@@ -162,6 +162,35 @@ export async function fetch_books_info(): Promise<BookInfo[]> {
   }
 }
 
+export async function fetch_books_and_authors_on_page(page_num : number, BOOKS_PER_PAGE : number) : Promise<BookInfo[]> {
+  try {
+    const offset : number = (page_num - 1) * BOOKS_PER_PAGE;
+
+    // first get the books general in the index range
+    const books : BookInfo[] = await get_rows(
+      `
+      SELECT isbn, title, number_of_pages, cover_id
+      FROM books
+      LIMIT ? OFFSET ?;
+      `,
+      [BOOKS_PER_PAGE, offset]
+    );
+
+    // attach authors info to the books
+    await Promise.all(
+      books.map(async (book) => {
+        if (book.isbn) {
+          book.authors = await fetch_authors_with_isbn(book.isbn);
+        }
+      })
+    );
+    return books;
+  } catch (err) {
+    console.log(`Issue fetching books on page ${page_num}`);
+    return [];
+  }
+}
+
 export async function fetch_books_and_authors_info() : Promise<BookInfo[]> {
   try {
     // first get the books general info
@@ -226,6 +255,28 @@ export async function fetch_page_count(book_isbn : string) : Promise<number> {
 
   } catch (err) {
     console.log(err);
+    return -1;
+  }
+}
+
+export async function fetch_book_count() : Promise<number> {
+  try {
+    const total = await get_rows(
+      `
+      SELECT COUNT (*) AS count
+      FROM books;
+      `,
+      []
+    );
+
+    if (!total || total.length === 0 || !total[0]){
+      console.log("Issue fetching book count ");
+      return -1;
+    }
+    return total[0].count;
+
+  } catch (err) {
+    console.log("Issue fetching book count ", err);
     return -1;
   }
 }
