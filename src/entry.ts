@@ -25,7 +25,7 @@ import { remove_from_bookshelf_command } from "./commands/bookshelf/remove_from_
 import { drop_bookshelf_command } from "./commands/bookshelf/drop_bookshelf";
 import { view_bookshelf_command } from "./commands/bookshelf/view_bookshelf";
 import { start_reading_command } from "./commands/bookshelf/start_reading";
-import { insert_random_books } from "../src_dev/specific_data";
+import { insert_Modern_Operating_Systems, insert_random_books } from "../src_dev/specific_data";
 
 
 // setup list of all commands
@@ -58,6 +58,7 @@ async function main () : Promise<void> {
     database_g = await init_database();
     // await run_query("PRAGMA foreign_keys = ON;");
     // await drop_database();
+    await insert_Modern_Operating_Systems();
     await create_tables();
     bot_g = init_client();  
     await view_database();   

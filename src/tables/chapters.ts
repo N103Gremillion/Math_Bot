@@ -1,7 +1,7 @@
 import { get_rows, run_query } from "./table_type";
 
 export type ChapterInfo = {
-  book_isbn? : number,
+  book_isbn? : string,
   chapter_name? : string,
   chapter_number? : number,
   sections? : number,

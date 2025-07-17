@@ -1,7 +1,7 @@
 import { fetch_book_by_ISBN } from "../src/commands/books/register_book";
 import { insert_authors_table } from "../src/tables/authors";
-import { BookInfo, fetch_books_info, insert_books_table } from "../src/tables/books";
-import { insert_chapters_table } from "../src/tables/chapters";
+import { BookInfo, fetch_books_info, fetch_page_count, fetch_total_chapters, insert_books_table } from "../src/tables/books";
+import { ChapterInfo, insert_chapters_table } from "../src/tables/chapters";
 import { insert_sections_table } from "../src/tables/sections";
 
 const MODERN_OPERATING_SYSTEMS_ISBN : string = "978-0133591620";
@@ -11,6 +11,8 @@ const HOW_TO_PROVE_IT_ISBN : string = "978‑1‑108‑42418‑9";
 export async function insert_Modern_Operating_Systems() : Promise<void> {
   // first add to genearl book info
   await manually_register_book(MODERN_OPERATING_SYSTEMS_ISBN);
+
+  // insert chapter info
 }
 
 export async function insert_How_To_Prove_It() : Promise<void> {
@@ -108,3 +110,95 @@ export async function manually_register_book (isbn : string) : Promise<void> {
   }
 } 
 
+export async function manually_register_chapter (
+  chapter_info : ChapterInfo
+) : Promise<void> {
+
+  // handle checking for valid input 
+  const book_isbn : string = chapter_info.book_isbn!;
+  const chapter_name : string = chapter_info.chapter_name!;
+  const chapter_number : number = chapter_info.chapter_number!;
+  const total_sections : number = chapter_info.sections!;
+  const start_page : number = chapter_info.start_page!;
+  const end_page : number = chapter_info.end_page!;
+
+
+  // check if sections make sense
+  if (total_sections <= 0) {
+    console.log(`Total sections is to small it must be > 0.`);
+    return;
+  } else if (total_sections > 10000) {
+    console.log(`Total sections is to large it must be < 10000.`);
+    return;
+  }
+
+  // query the total chapters
+  const total_book_chapters : number = await fetch_total_chapters(book_isbn);
+
+  // check for invalid chapter number values
+  if (total_book_chapters === -1) {
+    console.log(
+    `Register total chapters in book before entering chapter information.
+Book ISBN: ${book_isbn}`
+    );
+    return;
+  }
+  else if (chapter_number < 1) {
+    console.log(`Chapter number is to small it must be > 0`);
+    return; 
+  }
+  else if (chapter_number > total_book_chapters) {
+    console.log(`Chapter number is to large this book has a max of ${total_book_chapters} chapters.`);
+    return;
+  }
+
+  // query page information 
+  const page_count : number = await fetch_page_count(book_isbn);
+  
+  if (page_count === -1) {
+    console.log(
+    `Issue fetching from books table.
+Invalid book_id.`
+    );
+    return; 
+  }
+  else if (start_page < 0) {
+    console.log(`Start page can not be less than 0`);
+    return; 
+  } else if (end_page < 0) {
+    console.log(`End page can not be less than 0`);
+    return; 
+  } else if (start_page > page_count) {
+    console.log(`Start page can not be greater than total pages in book, this book has a total of ${page_count} pages.`);
+    return; 
+  } else if (end_page > page_count) {
+    console.log(`End page can not be greater than total pages in book, this book has a total of ${page_count} pages.`);
+    return;
+  } else if (end_page < start_page) {
+    console.log(`End page cannot be greater then end page. Input(start_page : ${start_page}, end_page : ${end_page})`);
+    return;
+  }
+
+  const insert_successful : boolean = await insert_chapters_table(book_isbn, chapter_name, chapter_number, total_sections, start_page, end_page);
+
+  if (!insert_successful) {
+    console.log(
+    `====================== Insertion issue for =======================
+Chapter name: ${chapter_name}
+Chapter number: ${chapter_number}
+Total sections: ${total_sections}
+Start page: ${start_page}
+End page: ${end_page}`
+    ); 
+  } else {
+    console.log(
+    `=================== Insertion successful for =======================
+Chapter name: ${chapter_name}
+Chapter number: ${chapter_number}
+Total sections: ${total_sections}
+Start page: ${start_page}
+End page: ${end_page}`
+    );
+  }
+
+}
