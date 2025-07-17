@@ -80,6 +80,46 @@ export async function insert_Modern_Operating_Systems() : Promise<void> {
 export async function insert_How_To_Prove_It() : Promise<void> {
   // first add to general book info
   await manually_register_book(HOW_TO_PROVE_IT_ISBN);
+
+  // register total chapters
+  await manually_register_total_chapters(HOW_TO_PROVE_IT_ISBN, 8);
+
+  // register all chapter info
+  const chapters : ChapterInfo[] = [
+    {
+      book_isbn : HOW_TO_PROVE_IT_ISBN, chapter_name : "Sentential Logic", chapter_number : 1, 
+      sections : 5, start_page : 1, end_page : 58
+    }, // chapter 1
+    {
+      book_isbn : HOW_TO_PROVE_IT_ISBN, chapter_name : "Quantification Logic", chapter_number : 2, 
+      sections : 3, start_page : 59, end_page : 97
+    }, // chapter 2
+    {
+      book_isbn : HOW_TO_PROVE_IT_ISBN, chapter_name : "Proofs", chapter_number : 3, 
+      sections : 7, start_page : 98, end_page : 193
+    }, // chapter 3
+    {
+      book_isbn : HOW_TO_PROVE_IT_ISBN, chapter_name : "Relations", chapter_number : 4, 
+      sections : 5, start_page : 194, end_page : 260
+    }, // chapter 4
+    {
+      book_isbn : HOW_TO_PROVE_IT_ISBN, chapter_name : "Functions", chapter_number : 5, 
+      sections : 5, start_page : 261, end_page : 313
+    }, // chapter 5
+    {
+      book_isbn : HOW_TO_PROVE_IT_ISBN, chapter_name : "Mathematical Induction", chapter_number : 6, 
+      sections : 5, start_page : 314, end_page : 373
+    }, // chapter 6
+    {
+      book_isbn : HOW_TO_PROVE_IT_ISBN, chapter_name : "Number Theory", chapter_number : 7, 
+      sections : 5, start_page : 374, end_page : 390
+    }, // chapter 7
+    {
+      book_isbn : HOW_TO_PROVE_IT_ISBN, chapter_name : "Infinite Sets", chapter_number : 8, 
+      sections : 5, start_page : 391, end_page : 400
+    }, // chapter 8
+  ];
+  await manually_register_chapters(chapters);
 }
 
 // fill books with a bunch of random books
