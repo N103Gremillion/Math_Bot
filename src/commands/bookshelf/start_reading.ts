@@ -5,7 +5,7 @@ import { ModalType } from "../modals";
 import { BookshelfField } from "./BookshelfField";
 import { get_user_id_from_interaction, wrap_str_in_code_block } from "../../utils/util";
 import { fetch_page_count } from "../../tables/books";
-import { update_cur_page, update_reading_state } from "../../tables/bookshelf";
+import { BookshelfInfo, fetch_bookshelf_state, fetch_is_reading_book_state, update_cur_page, update_reading_state } from "../../tables/bookshelf";
 
 export async function execute_start_reading(cmd : ChatInputCommandInteraction) : Promise<void> {
   await select_bookshelf_menu(cmd);
@@ -16,6 +16,15 @@ export async function handle_start_page_modal_submission(
   start_page : number, 
   interaction : ModalSubmitInteraction
 ) : Promise<void> {
+
+  // check if you are alreading reading this book
+  const user_id : number = await get_user_id_from_interaction(interaction);
+  const book_state : boolean = await fetch_is_reading_book_state(user_id, book_ISBN);
+
+  if (book_state) {
+    interaction.reply(wrap_str_in_code_block("You are alreading reading this book."));
+    return;
+  }
 
   // check for valid input
   if (!Number.isInteger(start_page)) {
@@ -54,14 +63,13 @@ Total pages: ${total_pages_in_book}`
     return;
   }
 
-  const user_id : number = await get_user_id_from_interaction(interaction);
   const successful_update : boolean = await update_cur_page(user_id, book_ISBN, start_page);
   const successful_update2 : boolean = await update_reading_state(user_id, book_ISBN);
 
   if (successful_update && successful_update2) {
     interaction.reply(
       wrap_str_in_code_block(
-        `Successfully start page of book.`
+        `Successfully start reading.`
       )
     );
   } else {

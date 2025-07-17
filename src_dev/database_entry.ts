@@ -213,9 +213,10 @@ export async function create_tables() : Promise<void> {
                 start_page INTEGER,
                 end_page INTEGER,
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-
+                
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-                FOREIGN KEY (book_isbn) REFERENCES books(isbn) ON DELETE CASCADE
+                FOREIGN KEY (book_isbn) REFERENCES books(isbn) ON DELETE CASCADE,
+                UNIQUE(user_id, book_isbn, timestamp)
             );
             `, 
             []

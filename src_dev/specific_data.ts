@@ -4,6 +4,20 @@ import { BookInfo, fetch_books_info, insert_books_table } from "../src/tables/bo
 import { insert_chapters_table } from "../src/tables/chapters";
 import { insert_sections_table } from "../src/tables/sections";
 
+const MODERN_OPERATING_SYSTEMS_ISBN : string = "978-0133591620";
+const HOW_TO_PROVE_IT_ISBN : string = "978‑1‑108‑42418‑9";
+
+// insert specific books
+export async function insert_Modern_Operating_Systems() : Promise<void> {
+  // first add to genearl book info
+  await manually_register_book(MODERN_OPERATING_SYSTEMS_ISBN);
+}
+
+export async function insert_How_To_Prove_It() : Promise<void> {
+  // first add to general book info
+  await manually_register_book(HOW_TO_PROVE_IT_ISBN);
+}
+
 // fill books with a bunch of random books
 export async function insert_random_books(): Promise<void> {
   const isbns: string[] = [
@@ -66,10 +80,6 @@ export async function insert_random_books(): Promise<void> {
       console.error(`Failed to register ISBN ${isbn}:`, err);
     }
   }
-}
-
-export async function insert_How_To_Prove_It() : Promise<void> {
-  
 }
 
 export async function manually_register_book (isbn : string) : Promise<void> {

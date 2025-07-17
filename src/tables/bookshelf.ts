@@ -63,6 +63,30 @@ export async function is_book_in_bookshelf(user_id : number, book_isbn : string)
   }
 }
 
+export async function fetch_is_reading_book_state(user_id : number, book_isbn : string) : Promise<boolean> {
+  try {
+    const books : BookshelfInfo[] = await get_rows(
+      `
+      SELECT is_reading
+      FROM bookshelf
+      WHERE user_id = ? AND book_isbn = ?;
+      `,
+      [user_id, book_isbn]
+    );
+
+    if (!books || books.length === 0 || !books[0] || !books[0].is_reading) {
+      console.log(`No book matches this isbn : ${book_isbn}, user_id : ${user_id}.
+When fetching is_reading state.`);
+      return false;
+    }
+    return Boolean(books[0]?.is_reading);
+  } catch (err) {
+    console.log(`Issue fetching for isbn : ${book_isbn}, user_id : ${user_id}.
+When fetching is_reading state.`, err);
+    return false;
+  }
+}
+
 export async function fetch_bookshelf_state(user_id : number) : Promise<BookshelfInfo[]> {
   try {
     const books : BookshelfInfo[] = await get_rows(
