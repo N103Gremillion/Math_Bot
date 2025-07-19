@@ -49,7 +49,7 @@ export async function finish_executing_view_books(interaction : StringSelectMenu
 export const view_books_command : Command = {
   command: COMMAND_TYPE_STRING.VIEW_BOOKS,
   command_type: COMMAND_TYPE.VIEW_BOOKS,
-  description: "View all the registered books",
+  description: "View a page of registered books",
   action: execute_view_books,
   requires_params : false
 }

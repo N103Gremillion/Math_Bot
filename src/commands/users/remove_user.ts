@@ -41,7 +41,7 @@ export async function execute_remove_user(cmd : ChatInputCommandInteraction) : P
 export const remove_user_command: Command = {
   command_type: COMMAND_TYPE.REMOVE_USER,
   command: COMMAND_TYPE_STRING.REMOVE_USER,
-  description: "Removes a user to the database",
+  description: "Removes a user from the database",
   action: execute_remove_user,
   requires_params : false
 }

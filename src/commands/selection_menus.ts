@@ -11,15 +11,17 @@ import { get_total_chapters } from "./books/register_total_chapters";
 import { COMMAND_TYPE, COMMAND_TYPE_STRING } from "./command_types";
 import { finish_executing_add_to_bookshelf } from "./bookshelf/add_to_bookshelf";
 import { finish_executing_remove_from_bookshelf } from "./bookshelf/remove_from_bookshelf";
-import { BookshelfInfo, fetch_bookshelf_state } from "../tables/bookshelf";
+import { BookshelfInfo, fetch_books_users_reading, fetch_bookshelf_state } from "../tables/bookshelf";
 import { get_start_reading_page } from "./bookshelf/start_reading";
 import { BOOKS_PER_PAGE, finish_executing_view_books } from "./books/view_books";
+import { get_pages_read_in_book } from "./progress_logs/log_progress";
 
 export enum SelectionMenuType {
   SelectBook = "select_book",
   SelectChapter = "select_chapter",
   SelectFromBookshelf = "select_from_bookshelf",
-  SelectPageOfBooks = "select_page_of_books"
+  SelectPageOfBooks = "select_page_of_books",
+  SelectBookUsersReading = "select_book_users_reading"
 }
 
 export async function handle_menu_select(interaction : StringSelectMenuInteraction) : Promise<void> {
@@ -39,11 +41,41 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
   else if (type === SelectionMenuType.SelectPageOfBooks) {
     await handle_select_page_of_books(interaction);
   }
+  else if (type === SelectionMenuType.SelectBookUsersReading) {
+    await handle_select_book_users_reading(interaction,command_type);
+  }
   else {
     await interaction.reply({
       content: `Unhandled interaction type: ${type}`,
       ephemeral: true,
     });
+  }
+}
+
+async function handle_select_book_users_reading(
+  interaction : StringSelectMenuInteraction, 
+  command_type : string | undefined
+) : Promise<void> {
+  const book_isbn : string | undefined = interaction.values[0];
+
+  if (!book_isbn) {
+    await interaction.reply(
+      wrap_str_in_code_block(
+        `Could not extract isbn from the book selection interaction.`
+      )
+    );
+    return;
+  }
+
+  if (command_type === COMMAND_TYPE_STRING.LOG_PROGRESS) {
+    await get_pages_read_in_book(interaction, book_isbn);
+  }
+  else {
+    await interaction.reply(
+      wrap_str_in_code_block(
+        `Unhandled command type for this interaction.`
+      )
+    );
   }
 }
 
@@ -178,10 +210,43 @@ async function handle_select_book_submission(
   }
 }
 
+export async function select_book_users_reading(cmd : ChatInputCommandInteraction) : Promise<void> {
+  // get the books that the user is currently reading
+  const user_id : number = await get_user_id_from_interaction(cmd);
+  const books_reading_isbns : BookshelfInfo[] = await fetch_books_users_reading(user_id);
+  const books_reading_info : BookInfo[] = await fetch_books_with_isbns(books_reading_isbns);
+
+  if (books_reading_info.length === 0) {
+    cmd.reply(
+      wrap_str_in_code_block(
+        `You currnetly have no books registerd as reading.`
+      )
+    );
+    return;
+  }
+
+  const menu : StringSelectMenuBuilder = new StringSelectMenuBuilder()
+    .setCustomId(`${SelectionMenuType.SelectBookUsersReading}|${cmd.commandName}`)
+    .setPlaceholder("Which book are you logging for?")
+    .addOptions(
+      books_reading_info.map(book => ({
+      label: `${book.title} by ${get_authors_str(book.authors)}`,
+      value: `${book.isbn}`
+    })));
+  
+  const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(menu);
+
+  await cmd.reply({
+    content: `Which book are you logging for? `,
+    components: [row],
+    flags: MessageFlags.Ephemeral
+  })
+}
+
 async function select_chapter_menu(
   interaction : ChatInputCommandInteraction | StringSelectMenuInteraction, 
   book_isbn : string,
-  command_type : string
+  command_type : string 
 ) : Promise<void> {
   
   // get currently regisetered books [title : string, author : string]

@@ -7,12 +7,14 @@ import { BookField } from "./books/BookField";
 import { handle_total_chapters_modal_submission } from "./books/register_total_chapters";
 import { BookshelfField } from "./bookshelf/BookshelfField";
 import { handle_start_page_modal_submission } from "./bookshelf/start_reading";
+import { handle_logging_page_input_submission } from "./progress_logs/log_progress";
 
 export enum ModalType {
   ChapterInput = "chapter_input_modal",
   SectionInput = "section_input_modal",
   TotalChaptersInput = "total_chapters_input_modal",
-  StartingPageInput = "starting_page_input_modal"
+  StartingPageInput = "starting_page_input_modal",
+  LoggingPageInput = "logging_page_input_modal",
 }
 
 export async function handleModalSubmit(interaction : ModalSubmitInteraction) : Promise<void> {
@@ -59,6 +61,10 @@ export async function handleModalSubmit(interaction : ModalSubmitInteraction) : 
     const start_page_str : string = interaction.fields.getTextInputValue(BookshelfField.CurPage);
     const start_page : number = parseInt(start_page_str, 10);
     await handle_start_page_modal_submission(book_ISBN, start_page, interaction);
+  }
+  else if (event_type === ModalType.LoggingPageInput) {
+    const pages_read_str : string = interaction.fields.getTextInputValue("pages_read");
+    await handle_logging_page_input_submission(book_ISBN, pages_read_str, interaction);
   }
   else {
     await interaction.reply({ content: "Event type not available for this modal", ephemeral: true });

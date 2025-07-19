@@ -1,10 +1,65 @@
 import { get_rows, run_query } from "./table_type";
 
+export enum BookStatusStr {
+  Pending = 'pending',
+  Reading = 'reading',
+  Completed = 'completed',
+}
+
+export type BookStatus = `pending` | 'reading' | 'completed';
+
 export type BookshelfInfo = {
   user_id : number;
   book_isbn : string;
-  is_reading? : boolean;
+  status? : BookStatus;
   cur_page? : number;
+}
+
+export async function fetch_cur_page_in_book(
+  user_id : number,
+  book_isbn : string 
+) : Promise<number> {
+  try {
+    const rows : BookshelfInfo[] = await get_rows(
+      `
+      SELECT cur_page 
+      FROM bookshelf
+      WHERE user_id = ? AND book_isbn = ?;
+      `, 
+      [user_id, book_isbn]
+    );
+    if (!rows || rows.length === 0 || !rows[0] || !rows[0].cur_page) {
+      console.log(`no match for cur_page for:
+user_id : ${user_id}, book_isbn : ${book_isbn}`);
+      return -1;
+    }
+    return rows[0].cur_page;
+  } catch (err) {
+    console.log(`Issue fetching cur page for:
+user_id : ${user_id}, book_isbn : ${book_isbn}`)
+    return -1;
+  }
+}
+
+export async function fetch_books_users_reading(user_id : number) : Promise<BookshelfInfo[]> {
+  try {
+    const books : BookshelfInfo[] = await get_rows(
+      `
+      SELECT book_isbn
+      FROM bookshelf
+      WHERE user_id = ? AND status = ?;
+      `, 
+      [user_id, BookStatusStr.Reading]
+    );
+    if (!books) {
+      console.log("books are undefined");
+      return [];
+    }
+    return books;
+  } catch (err){
+    console.log("Issue fetching books user is reading.", err);
+    return [];
+  }
 }
 
 export async function fetch_total_books_in_bookshelf(user_id: number): Promise<number> {
@@ -63,27 +118,27 @@ export async function is_book_in_bookshelf(user_id : number, book_isbn : string)
   }
 }
 
-export async function fetch_is_reading_book_state(user_id : number, book_isbn : string) : Promise<boolean> {
+export async function fetch_book_status(user_id : number, book_isbn : string) : Promise<BookStatus> {
   try {
     const books : BookshelfInfo[] = await get_rows(
       `
-      SELECT is_reading
+      SELECT status
       FROM bookshelf
       WHERE user_id = ? AND book_isbn = ?;
       `,
       [user_id, book_isbn]
     );
 
-    if (!books || books.length === 0 || !books[0] || !books[0].is_reading) {
+    if (!books || books.length === 0 || !books[0] || !books[0].status) {
       console.log(`No book matches this isbn : ${book_isbn}, user_id : ${user_id}.
 When fetching is_reading state.`);
-      return false;
+      return BookStatusStr.Pending;
     }
-    return Boolean(books[0]?.is_reading);
+    return books[0]?.status;
   } catch (err) {
     console.log(`Issue fetching for isbn : ${book_isbn}, user_id : ${user_id}.
 When fetching is_reading state.`, err);
-    return false;
+    return BookStatusStr.Pending;
   }
 }
 
@@ -91,7 +146,7 @@ export async function fetch_bookshelf_state(user_id : number) : Promise<Bookshel
   try {
     const books : BookshelfInfo[] = await get_rows(
       `
-      SELECT book_isbn, is_reading, cur_page
+      SELECT book_isbn, status, cur_page
       FROM bookshelf
       WHERE user_id = ?;
       `,
@@ -162,18 +217,19 @@ export async function update_cur_page(
   }
 } 
 
-export async function update_reading_state(
+export async function update_book_status(
   user_id : number, 
-  book_isbn : string
+  book_isbn : string,
+  status : BookStatus
 ) : Promise<boolean> {
   try {
     await run_query(
       `
       UPDATE bookshelf
-      SET is_reading = TRUE
+      SET status = ?
       WHERE user_id = ? AND book_isbn = ?;
       `
-      ,[user_id, book_isbn]
+      ,[status, user_id, book_isbn]
     );
     return true;
   } catch(err) {

@@ -1,3 +1,4 @@
+import { BookStatus, BookStatusStr } from './../tables/bookshelf';
 import { EmbedBuilder } from "discord.js";
 import { BookInfo, fetch_books_with_isbns } from "../tables/books";
 import { get_authors_str, get_chapter_info_str } from "../utils/util";
@@ -24,10 +25,10 @@ export async function get_book_embeds(bookshelf_state : BookshelfInfo[]) : Promi
 
   for (let i = 0; i < n; i += 1) {
     const book : BookInfo | undefined = books[i];
-    const entry = bookshelf_state[i];
+    const entry : BookshelfInfo | undefined = bookshelf_state[i];
     if (!book || !entry) continue;
 
-    const status_symbol = entry.is_reading ? "🟢 Reading" : "🟡 Pending";
+    const status_symbol = get_satus_symbol(entry.status);
 
 
     const embed : EmbedBuilder = new EmbedBuilder()
@@ -47,4 +48,18 @@ Chapter Count: ${get_chapter_info_str(book.total_chapters)}`
     res.push(embed);
   }
   return res;
+}
+
+function get_satus_symbol(status : BookStatus | undefined) : string {
+  const pending : string = "🟡 Pending";
+  const reading : string = "🟢 Reading";
+  const complete : string = "✅ Completed";
+  if (!status || status === BookStatusStr.Pending) {
+    return pending;
+  } 
+  else if (status === BookStatusStr.Reading) {
+    return reading;
+  } else {
+    return complete;
+  }
 }

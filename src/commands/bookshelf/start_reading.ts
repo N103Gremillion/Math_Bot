@@ -5,7 +5,7 @@ import { ModalType } from "../modals";
 import { BookshelfField } from "./BookshelfField";
 import { get_user_id_from_interaction, wrap_str_in_code_block } from "../../utils/util";
 import { fetch_page_count } from "../../tables/books";
-import { BookshelfInfo, fetch_bookshelf_state, fetch_is_reading_book_state, update_cur_page, update_reading_state } from "../../tables/bookshelf";
+import { BookshelfInfo, BookStatus, BookStatusStr, fetch_book_status, fetch_bookshelf_state, update_book_status, update_cur_page } from "../../tables/bookshelf";
 
 export async function execute_start_reading(cmd : ChatInputCommandInteraction) : Promise<void> {
   await select_bookshelf_menu(cmd);
@@ -19,10 +19,15 @@ export async function handle_start_page_modal_submission(
 
   // check if you are alreading reading this book
   const user_id : number = await get_user_id_from_interaction(interaction);
-  const book_state : boolean = await fetch_is_reading_book_state(user_id, book_ISBN);
+  const book_state : BookStatus = await fetch_book_status(user_id, book_ISBN);
 
-  if (book_state) {
+  if (book_state === BookStatusStr.Reading) {
     interaction.reply(wrap_str_in_code_block("You are alreading reading this book."));
+    return;
+  }
+
+  if (book_state === BookStatusStr.Completed) {
+    interaction.reply(wrap_str_in_code_block("You are alreading completed this book."));
     return;
   }
 
@@ -64,7 +69,7 @@ Total pages: ${total_pages_in_book}`
   }
 
   const successful_update : boolean = await update_cur_page(user_id, book_ISBN, start_page);
-  const successful_update2 : boolean = await update_reading_state(user_id, book_ISBN);
+  const successful_update2 : boolean = await update_book_status(user_id, book_ISBN, BookStatusStr.Reading);
 
   if (successful_update && successful_update2) {
     interaction.reply(

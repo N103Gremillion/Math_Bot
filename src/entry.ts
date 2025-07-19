@@ -26,6 +26,7 @@ import { drop_bookshelf_command } from "./commands/bookshelf/drop_bookshelf";
 import { view_bookshelf_command } from "./commands/bookshelf/view_bookshelf";
 import { start_reading_command } from "./commands/bookshelf/start_reading";
 import { insert_How_To_Prove_It, insert_Modern_Operating_Systems, insert_random_books } from "../src_dev/specific_data";
+import { log_progress_command } from "./commands/progress_logs/log_progress";
 
 
 // setup list of all commands
@@ -47,7 +48,8 @@ export const commands_g: Command[] = [
     remove_from_bookshelf_command,
     drop_bookshelf_command,
     view_bookshelf_command,
-    start_reading_command
+    start_reading_command,
+    log_progress_command,
 ];
 
 // initalize globals 
