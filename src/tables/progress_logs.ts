@@ -17,10 +17,13 @@ export async function log_book_progress(
 ) : Promise<boolean> {
   try {
     await run_query(
-      ``
+      `
+      INSERT INTO progress_logs (user_id, book_isbn, start_page, end_page)
+      VALUES (?, ?, ?, ?);
+      ` 
       , [user_id, book_isbn, start_page, end_page]
     );
-    return true;
+    return true; 
   } catch (err) {
     console.log(`Issue logging progress for:
 user_id : ${user_id}, book_isbn : ${book_isbn}, start_page : ${start_page}, end_page : ${end_page}.`)

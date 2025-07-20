@@ -5,6 +5,7 @@ import { get_user_id_from_interaction, wrap_str_in_code_block } from "../../util
 import { ModalType } from "../modals";
 import { BookStatusStr, fetch_cur_page_in_book, update_book_status, update_cur_page } from "../../tables/bookshelf";
 import { fetch_page_count } from "../../tables/books";
+import { log_book_progress } from "../../tables/progress_logs";
 
 export async function execute_log_progress(cmd : ChatInputCommandInteraction) : Promise<void> {
   await select_book_users_reading(cmd);
@@ -60,7 +61,22 @@ export async function handle_logging_page_input_submission(
   }
 
   // add the log update the to log_progress table
-  const logs_updated : boolean = await log_book_progress();
+  const logs_updated : boolean = await log_book_progress(user_id, book_ISBN, start_page, end_page);
+
+  if (logs_updated) {
+    interaction.reply(
+      wrap_str_in_code_block(
+        `Successfully logged progress.`
+      )
+    );
+  } else {
+    interaction.reply(
+      wrap_str_in_code_block(
+        `Issue updating proggess logs.`
+      )
+    );
+  }
+
 }
 
 export async function get_pages_read_in_book(interaction : StringSelectMenuInteraction, book_isbn : string) {
