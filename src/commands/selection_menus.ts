@@ -15,13 +15,16 @@ import { BookshelfInfo, fetch_books_users_reading, fetch_bookshelf_state } from 
 import { get_start_reading_page } from "./bookshelf/start_reading";
 import { BOOKS_PER_PAGE, finish_executing_view_books } from "./books/view_books";
 import { get_pages_read_in_book } from "./progress_logs/log_progress";
+import { continue_executing_view_logs, LOGS_PER_PAGE } from "./progress_logs/view_logs";
+import { fetch_logs_count_for_book } from "../tables/progress_logs";
 
 export enum SelectionMenuType {
   SelectBook = "select_book",
   SelectChapter = "select_chapter",
   SelectFromBookshelf = "select_from_bookshelf",
   SelectPageOfBooks = "select_page_of_books",
-  SelectBookUsersReading = "select_book_users_reading"
+  SelectBookUsersReading = "select_book_users_reading",
+  SelectPageOfBooksLogs = "select_page_of_books_logs"
 }
 
 export async function handle_menu_select(interaction : StringSelectMenuInteraction) : Promise<void> {
@@ -42,13 +45,65 @@ export async function handle_menu_select(interaction : StringSelectMenuInteracti
     await handle_select_page_of_books(interaction);
   }
   else if (type === SelectionMenuType.SelectBookUsersReading) {
-    await handle_select_book_users_reading(interaction,command_type);
+    await handle_select_book_users_reading(interaction, command_type);
+  }
+  else if (type === SelectionMenuType.SelectPageOfBooksLogs) {
+    const [type, command_type, book_isbn] = interaction.customId.split("|");
+    await handle_select_page_of_books_logs(interaction, command_type, book_isbn);
   }
   else {
     await interaction.reply({
       content: `Unhandled interaction type: ${type}`,
       ephemeral: true,
     });
+  }
+}
+
+async function handle_select_page_of_books_logs(
+  interaction : StringSelectMenuInteraction, 
+  command_type : string | undefined,
+  book_isbn : string |undefined
+) : Promise<void> {
+  const page_str : string | undefined = interaction.values[0];
+
+  if (!page_str) {
+    await interaction.reply(
+      wrap_str_in_code_block(
+        `Could not pull of the page string from page_of_books_logs selection.`
+      )
+    )
+    return;
+  }
+
+  if (!book_isbn) {
+    await interaction.reply(
+      wrap_str_in_code_block(
+        `Could not pull of the book_isbn from page_of_books_logs selection.`
+      )
+    )
+    return;
+  }
+
+  const page : number = +page_str;
+
+  if (!Number.isInteger(page)) {
+    await interaction.reply(
+      wrap_str_in_code_block(
+        `Page string was not an interger for page_of_books_logs selection.`
+      )
+    )
+    return;
+  }
+
+  if (command_type === COMMAND_TYPE_STRING.VIEW_LOGS) {
+    await continue_executing_view_logs(page, book_isbn, interaction);
+  } else {
+    await interaction.reply(
+      wrap_str_in_code_block(
+        `Unsupported command type for page_of_books_logs selection.`
+      )
+    )
+    return;
   }
 }
 
@@ -69,6 +124,9 @@ async function handle_select_book_users_reading(
 
   if (command_type === COMMAND_TYPE_STRING.LOG_PROGRESS) {
     await get_pages_read_in_book(interaction, book_isbn);
+  }
+  else if (command_type === COMMAND_TYPE_STRING.VIEW_LOGS) {
+    await select_page_of_books_logs(interaction, command_type,  book_isbn);
   }
   else {
     await interaction.reply(
@@ -210,6 +268,38 @@ async function handle_select_book_submission(
   }
 }
 
+export async function select_page_of_books_logs(
+  interaction : StringSelectMenuInteraction, 
+  command_type : string,
+  book_isbn : string
+) : Promise<void> {
+
+  // get the total number of logs for this book
+  const user_id : number = await get_user_id_from_interaction(interaction);
+  const logs_count : number = await fetch_logs_count_for_book(book_isbn, user_id);
+  const num_of_pages : number = Math.ceil(logs_count / LOGS_PER_PAGE);
+  const options : {label : string, value : string}[] = [];
+
+  for (let i = 0; i < num_of_pages; i++) {
+    options.push({
+      label : `Page ${i + 1}`,
+      value : `${i + 1}`
+    })
+  }
+
+  const menu : StringSelectMenuBuilder = new StringSelectMenuBuilder()
+    .setCustomId(`${SelectionMenuType.SelectPageOfBooksLogs}|${command_type}|${book_isbn}`)
+    .setPlaceholder("Select page of logs. (newest to oldest)")
+    .addOptions(options);
+  
+  const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(menu);
+
+  await interaction.update({
+    content: `Which book are you logging for? `,
+    components: [row],
+  })
+}
+
 export async function select_book_users_reading(cmd : ChatInputCommandInteraction) : Promise<void> {
   // get the books that the user is currently reading
   const user_id : number = await get_user_id_from_interaction(cmd);
@@ -239,8 +329,7 @@ export async function select_book_users_reading(cmd : ChatInputCommandInteractio
   await cmd.reply({
     content: `Which book are you logging for? `,
     components: [row],
-    flags: MessageFlags.Ephemeral
-  })
+  }) 
 }
 
 async function select_chapter_menu(

@@ -21,6 +21,7 @@ export enum COMMAND_TYPE_STRING {
   VIEW_BOOKSHELF = "view_bookshelf",
   START_READING = "start_reading",
   LOG_PROGRESS = "log_progress",
+  VIEW_LOGS = "view_logs",
 } 
 
 export enum COMMAND_TYPE {
@@ -44,6 +45,7 @@ export enum COMMAND_TYPE {
   VIEW_BOOKSHELF,
   START_READING,
   LOG_PROGRESS,
+  VIEW_LOGS,
 }
 
 export type Command = {
