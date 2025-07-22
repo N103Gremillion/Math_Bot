@@ -73,14 +73,15 @@ export async function drop_table(table_type: TABLE_TYPE): Promise<void> {
 
 export async function view_table(table_type : TABLE_TYPE) : Promise<void> {
   
-  const table_string : string = "\n" + get_table_string(table_type);
-  const query_string : string = "SELECT * FROM " + table_string + ";";
+  const table_string : string = get_table_string(table_type);
+  const query_string : string = `SELECT * FROM ${table_string};`;
   
   if (table_string === "invalid"){
-    return 
+    return;
   }
 
   try {
+    console.log(`query string ${query_string}`);
     const rows = await get_rows(query_string);
     console.log(table_string);
     console.table(rows);

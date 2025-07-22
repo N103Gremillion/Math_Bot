@@ -9,7 +9,7 @@
     "build": "tsup src/entry.ts --minify",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
-    "db:seed": "tsx src_dev/entry.ts"
+    "db:seed": "tsx src_dev/database_entry.ts"
   },
   "keywords": [],
   "author": "",

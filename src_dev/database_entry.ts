@@ -264,6 +264,7 @@ export async function view_database() : Promise<void> {
         if (table === TABLE_TYPE.INVALID) {
             continue;
         }
+        console.log(`table string ${table}`);
         await view_table(table); 
     }
 }
