@@ -6,7 +6,7 @@ import { get_authors_str } from "../utils/util";
 import { get_slope_of_logs } from "./stats";
 
 const MAX_GRAPH_HEIGHT : number = 15;
-const MAX_POINTS_PER_GRAPH : number = 45;
+const MAX_POINTS_PER_GRAPH : number = 37;
 
 export const LINE_COLORS = {
   BLACK: asciichart.black,
@@ -43,7 +43,7 @@ export async function get_book_progress_chart(user_name : string, book: BookInfo
 
 
   const projected : number[] = get_projected_array(slope, projected_num_of_days, total_pages);
-  const actual_progress : number[] = get_actual_progress_scaled(logs, projected_num_of_days, logs[logs.length - 1]?.end_page!, book.number_of_pages);
+  const actual_progress : number[] = get_actual_progress_scaled(logs, logs[logs.length - 1]?.end_page!, book.number_of_pages);
   
   const projected_color : string = LINE_COLORS.BLUE; 
   const acutal_color : string = LINE_COLORS.RED;
@@ -62,12 +62,34 @@ export async function get_book_progress_chart(user_name : string, book: BookInfo
 
   let res = "```ansi\n" + chart + "\n";
 
-  // Add day index labels below chart
-  // const xAxisLabels = cumulativeProgress
-  //   .map((_, i) => (i % 5 === 0 ? String(i).padStart(3, ' ') : '   '))
-  //   .join('');
-  // res += xAxisLabels + "\n";
+  // contruct the x_axis ###########################
+  const total_labels : number = 5;
+  let cur_time : number = 0;
+  const step : number = projected_num_of_days / total_labels;
+  const inital_gap : string  = "            ";
+  const gap_between_labels : string = "    ";
+  const gap_between_ticks : string = "       ";
 
+  // row with or -
+  res += `${inital_gap}`
+  res += "-------------------------------------------\n";
+
+  // row with | on it
+  res += `${inital_gap}`
+  for (let i = 0; i <= total_labels; i++) {
+    res += `|${gap_between_ticks}`
+  }
+  res += "\n";
+
+  // row with times on it
+  res += `${inital_gap}`
+  for (let i = 0; i <= total_labels; i++) {
+    res += `${cur_time.toFixed(2)}${gap_between_labels}`;
+    cur_time += step;
+    cur_time = round_to_2_decimals(cur_time);
+  }
+  
+  res += `\n`
 
   res += `${acutal_color}●${LINE_COLORS.RESET} Actual Progress`;
   res += `${projected_color}●${LINE_COLORS.RESET} Projected Progress`;
@@ -153,3 +175,6 @@ function get_actual_progress_scaled(
   return res;
 }
 
+function round_to_2_decimals(num: number): number {
+  return Math.round(num * 100) / 100;
+}
