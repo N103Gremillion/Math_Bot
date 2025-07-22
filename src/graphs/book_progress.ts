@@ -1,8 +1,6 @@
 import * as asciichart from "asciichart";
 import { BookInfo } from "../tables/books";
 import { ProgressLogsInfo } from "../tables/progress_logs";
-import { differenceInCalendarDays, max, startOfDay } from 'date-fns';
-import { get_authors_str } from "../utils/util";
 import { get_slope_of_logs } from "./stats";
 
 const MAX_GRAPH_HEIGHT : number = 15;

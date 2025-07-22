@@ -8,7 +8,7 @@ import { ChapterInfo, fetch_chapters_in_book } from "../tables/chapters";
 import { get_section_info } from "./sections/register_section";
 import { finish_executing_remove_book } from "./books/remove_book";
 import { get_total_chapters } from "./books/register_total_chapters";
-import { COMMAND_TYPE, COMMAND_TYPE_STRING } from "./command_types";
+import { CommandType, CommandStringType } from "./command_types";
 import { finish_executing_add_to_bookshelf } from "./bookshelf/add_to_bookshelf";
 import { finish_executing_remove_from_bookshelf } from "./bookshelf/remove_from_bookshelf";
 import { BookshelfInfo, fetch_books_users_reading, fetch_bookshelf_state } from "../tables/bookshelf";
@@ -96,7 +96,7 @@ async function handle_select_page_of_books_logs(
     return;
   }
 
-  if (command_type === COMMAND_TYPE_STRING.VIEW_LOGS) {
+  if (command_type === CommandStringType.VIEW_LOGS) {
     await continue_executing_view_logs(page, book_isbn, interaction);
   } else {
     await interaction.reply(
@@ -123,13 +123,13 @@ async function handle_select_book_users_reading(
     return;
   }
 
-  if (command_type === COMMAND_TYPE_STRING.LOG_PROGRESS) {
+  if (command_type === CommandStringType.LOG_PROGRESS) {
     await get_pages_read_in_book(interaction, book_isbn);
   }
-  else if (command_type === COMMAND_TYPE_STRING.VIEW_LOGS) {
+  else if (command_type === CommandStringType.VIEW_LOGS) {
     await select_page_of_books_logs(interaction, command_type,  book_isbn);
   }
-  else if (command_type === COMMAND_TYPE_STRING.VIEW_PROGRESS_GRAPH) {
+  else if (command_type === CommandStringType.VIEW_PROGRESS_GRAPH) {
     await continue_executing_view_progress_graph(interaction, book_isbn);
   }
   else {
@@ -180,9 +180,9 @@ async function  handle_select_bookshelf_submission(
     return;
   }
 
-  if (command_type === COMMAND_TYPE_STRING.REMOVE_FROM_BOOKSHELF) {
+  if (command_type === CommandStringType.REMOVE_FROM_BOOKSHELF) {
     await finish_executing_remove_from_bookshelf(interaction, book_ISBN);
-  } else if (command_type === COMMAND_TYPE_STRING.START_READING) {
+  } else if (command_type === CommandStringType.START_READING) {
     await get_start_reading_page(interaction, book_ISBN);
   }
 }
@@ -219,7 +219,7 @@ async function  handle_select_chapter_submission(
       return;
     }
 
-    if (command_type === COMMAND_TYPE_STRING.REGISTER_SECTION) {
+    if (command_type === CommandStringType.REGISTER_SECTION) {
       await get_section_info(interaction, book_ISBN, chapter_number);
     }
     else {
@@ -244,25 +244,25 @@ async function handle_select_book_submission(
     return;
   }
 
-  if (command_type === COMMAND_TYPE_STRING.REGISTER_CHAPTER) {
+  if (command_type === CommandStringType.REGISTER_CHAPTER) {
     await get_chapter_info(interaction, book_ISBN);
   } 
-  else if (command_type === COMMAND_TYPE_STRING.VIEW_BOOK_INFO) {
+  else if (command_type === CommandStringType.VIEW_BOOK_INFO) {
     await show_book_info(interaction, book_ISBN); 
   }
-  else if (command_type === COMMAND_TYPE_STRING.REGISTER_TOTAL_CHAPTERS) {
+  else if (command_type === CommandStringType.REGISTER_TOTAL_CHAPTERS) {
     await get_total_chapters(interaction, book_ISBN);
   }
-  else if (command_type === COMMAND_TYPE_STRING.VIEW_CHAPTERS) {
+  else if (command_type === CommandStringType.VIEW_CHAPTERS) {
     await show_chapters_in_book(interaction, book_ISBN);
   }
-  else if (command_type === COMMAND_TYPE_STRING.REGISTER_SECTION) {
+  else if (command_type === CommandStringType.REGISTER_SECTION) {
     await select_chapter_menu(interaction, book_ISBN, command_type);
   }
-  else if (command_type === COMMAND_TYPE_STRING.REMOVE_BOOK) {
+  else if (command_type === CommandStringType.REMOVE_BOOK) {
     await finish_executing_remove_book(interaction, book_ISBN);
   }
-  else if (command_type === COMMAND_TYPE_STRING.ADD_TO_BOOKSHELF) {
+  else if (command_type === CommandStringType.ADD_TO_BOOKSHELF) {
     await finish_executing_add_to_bookshelf(interaction, book_ISBN);
   }
   else {

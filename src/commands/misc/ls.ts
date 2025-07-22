@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction } from "discord.js";
 import { send_message } from "../../events/message";
 import { wrap_str_in_code_block } from "../../utils/util";
-import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING } from "../command_types";
+import { Command, CommandType, CommandStringType } from "../command_types";
 import { commands_g } from "../../entry";
 
 let commands_string : string = ``;
@@ -22,8 +22,8 @@ export async function execute_ls(cmd : ChatInputCommandInteraction) : Promise<vo
 }
 
 export const ls_command: Command = {
-    command_type: COMMAND_TYPE.LS,
-    command: COMMAND_TYPE_STRING.LS,
+    command_type: CommandType.LS,
+    command: CommandStringType.LS,
     description: "List commands and their descriptions",
     action: execute_ls,
     requires_params : false

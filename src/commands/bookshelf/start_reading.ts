@@ -1,8 +1,8 @@
 import { ActionRowBuilder, ChatInputCommandInteraction, ModalBuilder, ModalSubmitInteraction, StringSelectMenuInteraction, TextInputBuilder, TextInputStyle } from "discord.js";
-import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING } from "../command_types";
+import { Command, CommandType, CommandStringType } from "../command_types";
 import { select_bookshelf_menu } from "../selection_menus";
 import { ModalType } from "../modals";
-import { BookshelfField } from "./BookshelfField";
+import { BookshelfField } from "./bookshelf_field";
 import { get_user_id_from_interaction, wrap_str_in_code_block } from "../../utils/util";
 import { fetch_page_count } from "../../tables/books";
 import { BookshelfInfo, BookStatus, BookStatusStr, fetch_book_status, fetch_bookshelf_state, update_book_status, update_cur_page } from "../../tables/bookshelf";
@@ -108,8 +108,8 @@ export async function get_start_reading_page(
 }
 
 export const start_reading_command : Command = {
-  command: COMMAND_TYPE_STRING.START_READING,
-  command_type: COMMAND_TYPE.START_READING,
+  command: CommandStringType.START_READING,
+  command_type: CommandType.START_READING,
   description: "tag a book as reading so you can being track it's progress.",
   action: execute_start_reading,
   requires_params : false

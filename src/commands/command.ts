@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction } from "discord.js";
-import { COMMAND_TYPE } from "./command_types";
+import { CommandType } from "./command_types";
 import { commands_g } from "../entry";
 
 export async function execute_command(cmd : ChatInputCommandInteraction) : Promise<void> {
@@ -9,7 +9,7 @@ export async function execute_command(cmd : ChatInputCommandInteraction) : Promi
   }
 
   const cmd_contents = cmd.commandName;
-  let command_type = COMMAND_TYPE.INVALID;
+  let command_type = CommandType.INVALID;
 
   for (const command of commands_g) {
     if (cmd_contents === command.command) {
@@ -20,7 +20,7 @@ export async function execute_command(cmd : ChatInputCommandInteraction) : Promi
     }
   }
 
-  if(command_type == COMMAND_TYPE.INVALID) {
+  if(command_type == CommandType.INVALID) {
       console.log("invalid bot command! use `/ls` to view commands.");
       return;
   }

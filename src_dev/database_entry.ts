@@ -225,11 +225,30 @@ export async function create_tables() : Promise<void> {
     } catch (err) {
         console.log("Issue creating progress_logs table ", err);
     } 
+
+    // 8.) user levels
+    try {
+        await run_query(
+            `
+            CREATE TABLE IF NOT EXISTS user_levels (
+                user_id INTEGER NOT NULL,
+                skillpoints INTEGER NOT NULL,
+
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            );
+            `, 
+            []
+        );
+        console.log("Created user_levels table");
+    } catch (err) {
+        console.log("Issue creating user_levels table ", err);
+    } 
 }   
 
 export async function drop_database() : Promise<void> {
     try {
         await drop_table(TABLE_TYPE.USERS);
+        await drop_table(TABLE_TYPE.USER_LEVELS);
         await drop_table(TABLE_TYPE.BOOKS);
         await drop_table(TABLE_TYPE.READING);
         await drop_table(TABLE_TYPE.CHAPTERS);
@@ -264,7 +283,6 @@ export async function view_database() : Promise<void> {
         if (table === TABLE_TYPE.INVALID) {
             continue;
         }
-        console.log(`table string ${table}`);
         await view_table(table); 
     }
 }

@@ -2,14 +2,13 @@ import { init_client } from "./events/setup_bot";
 import { Client } from "discord.js";
 import { Command } from "./commands/command_types";
 
-import { init_database, create_tables, clear_database, view_database, drop_database} from "../src_dev/database_entry";
+import { init_database, create_tables, view_database} from "../src_dev/database_entry";
 import sqlite3 from 'sqlite3';
 
 // commands
 import { ls_command } from "./commands/misc/ls";
 import { ping_command } from "./commands/misc/ping";
 import { register_user_command } from "./commands/users/register_user";
-import { clear_table, run_query, TABLE_TYPE, view_table } from "./tables/table_type";
 import { remove_user_command } from "./commands/users/remove_user";
 import { register_book_command } from "./commands/books/register_book";
 import { register_chapter_command } from "./commands/chapters/register_chapter";
@@ -25,11 +24,10 @@ import { remove_from_bookshelf_command } from "./commands/bookshelf/remove_from_
 import { drop_bookshelf_command } from "./commands/bookshelf/drop_bookshelf";
 import { view_bookshelf_command } from "./commands/bookshelf/view_bookshelf";
 import { start_reading_command } from "./commands/bookshelf/start_reading";
-import { insert_How_To_Prove_It, insert_Modern_Operating_Systems, insert_random_books } from "../src_dev/specific_data";
 import { log_progress_command } from "./commands/progress_logs/log_progress";
 import { view_logs_command } from "./commands/progress_logs/view_logs";
-import { get_book_progress_chart } from "./graphs/book_progress";
-import { veiw_progress_graph_command } from "./commands/progress_logs/view_progress_graph";
+import { view_progress_graph_command } from "./commands/progress_logs/view_progress_graph";
+import { increment_skill_points } from "./commands/user_levels/increment_skill_points";
 
 
 // setup list of all commands
@@ -54,7 +52,8 @@ export const commands_g: Command[] = [
     start_reading_command,
     log_progress_command,
     view_logs_command,
-    veiw_progress_graph_command,
+    view_progress_graph_command,
+    increment_skill_points,
 ];
 
 // initalize globals 

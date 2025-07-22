@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction } from "discord.js";
 import { send_message } from "../../events/message";
 import { wrap_str_in_code_block } from "../../utils/util";
-import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING } from "../command_types";
+import { Command, CommandType, CommandStringType } from "../command_types";
 
 export async function execute_ping (cmd : ChatInputCommandInteraction) : Promise<void> {
   const latency = Date.now() - cmd.createdTimestamp;
@@ -12,8 +12,8 @@ export async function execute_ping (cmd : ChatInputCommandInteraction) : Promise
 }
 
 export const ping_command: Command = {
-    command_type: COMMAND_TYPE.PING,
-    command: COMMAND_TYPE_STRING.PING,
+    command_type: CommandType.PING,
+    command: CommandStringType.PING,
     description: "Ping server and display latency",
     action: execute_ping,
     requires_params : false

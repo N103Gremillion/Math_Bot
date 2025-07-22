@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, StringSelectMenuInteraction } from "discord.js";
-import { COMMAND_TYPE, COMMAND_TYPE_STRING, Command } from "../command_types";
+import { CommandType, CommandStringType, Command } from "../command_types";
 import { get_authors_str, wrap_str_in_code_block } from "../../utils/util";
-import { BookInfo, fetch_books_and_authors_info, fetch_books_and_authors_on_page, fetch_books_info } from "../../tables/books";
+import { BookInfo, fetch_books_and_authors_on_page } from "../../tables/books";
 import { select_page_of_books } from "../selection_menus";
 
 // this is the number of books to fetch per page when viewing books table
@@ -45,10 +45,9 @@ export async function finish_executing_view_books(interaction : StringSelectMenu
   await interaction.editReply(wrap_str_in_code_block(response));
 }
 
-
 export const view_books_command : Command = {
-  command: COMMAND_TYPE_STRING.VIEW_BOOKS,
-  command_type: COMMAND_TYPE.VIEW_BOOKS,
+  command: CommandStringType.VIEW_BOOKS,
+  command_type: CommandType.VIEW_BOOKS,
   description: "View a page of registered books",
   action: execute_view_books,
   requires_params : false

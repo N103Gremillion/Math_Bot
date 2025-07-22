@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction } from "discord.js";
 import { wrap_str_in_code_block } from "../../utils/util";
-import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING } from "../command_types";
+import { Command, CommandType, CommandStringType } from "../command_types";
 import { check_user_registered, insert_users_table } from "../../tables/users";
 
 export async function execute_register_user (cmd : ChatInputCommandInteraction) : Promise<void> {
@@ -8,8 +8,6 @@ export async function execute_register_user (cmd : ChatInputCommandInteraction) 
 
   const pending_response : string = `Trying to register user...\n`;
   await cmd.editReply(wrap_str_in_code_block(pending_response));
-
-  await new Promise(resolve => setTimeout(resolve, 500));
 
   const user_name : string  = cmd.user.username;
 
@@ -39,8 +37,8 @@ export async function execute_register_user (cmd : ChatInputCommandInteraction) 
 }
 
 export const register_user_command: Command = {
-    command_type: COMMAND_TYPE.REIGSTER_USER,
-    command: COMMAND_TYPE_STRING.REGISTER_USER,
+    command_type: CommandType.REIGSTER_USER,
+    command: CommandStringType.REGISTER_USER,
     description: "Adds a user to the database",
     action: execute_register_user,
     requires_params : false

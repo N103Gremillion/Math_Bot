@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ChatInputCommandInteraction, ModalBuilder, ModalSubmitInteraction, StringSelectMenuInteraction, TextInputBuilder, TextInputStyle } from "discord.js";
-import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING } from "../command_types";
+import { Command, CommandType, CommandStringType } from "../command_types";
 import { select_book_menu } from "../selection_menus";
 import { ModalType } from "../modals";
 import { SectionField } from "./SectionField";
@@ -235,8 +235,8 @@ export async function get_section_info(interaction : StringSelectMenuInteraction
 }
 
 export const register_section_command : Command = {
-  command: COMMAND_TYPE_STRING.REGISTER_SECTION,
-  command_type: COMMAND_TYPE.REGISTER_SECTION,
+  command: CommandStringType.REGISTER_SECTION,
+  command_type: CommandType.REGISTER_SECTION,
   description: "register a section in a book to the database",
   action: execute_register_section,
   requires_params : false

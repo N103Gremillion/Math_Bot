@@ -1,11 +1,11 @@
-import { COMMAND_TYPE } from './../commands/command_types';
+import { CommandType } from './../commands/command_types';
 import { Client, GatewayIntentBits, Interaction, ModalSubmitInteraction, SlashCommandBuilder, StringSelectMenuInteraction } from "discord.js";
 import { config } from "../../src_shared/config";
 import { execute_command } from "../commands/command";
 import { commands_g } from "../entry";
 import { Command } from "../commands/command_types";
 import { handle_menu_select } from '../commands/selection_menus';
-import { BookField } from '../commands/books/BookField';
+import { BookField } from '../commands/books/book_field';
 import { handleModalSubmit } from '../commands/modals';
 
 export function init_client() : Client {
@@ -27,6 +27,7 @@ export function init_client() : Client {
     const commands: SlashCommandBuilder[] = [];
 
     commands_g.forEach(cmd => {
+      console.log(`Registering command: ${cmd.command}`);
       if (cmd.requires_params) {
         const slash_command : SlashCommandBuilder = setup_SlashCommand_with_params(cmd);
         commands.push(slash_command);
@@ -71,13 +72,21 @@ function setup_SlashCommand_with_params(cmd: Command): SlashCommandBuilder {
     .setName(cmd.command)
     .setDescription(cmd.description);
 
-  if (cmd.command_type === COMMAND_TYPE.REGISTER_BOOK) {
+  if (cmd.command_type === CommandType.REGISTER_BOOK) {
     builder.addStringOption(option =>
       option
         .setName(BookField.ISBN)
         .setDescription("What is the ISBN of the book you want to register.")
         .setRequired(true)
     );
+  }
+  if(cmd.command_type === CommandType.INCREMENT_SKILL_POINTS) {
+    builder.addIntegerOption(option => 
+      option
+      .setName("increment")
+      .setDescription("How many points to increments by ?")
+      .setRequired(true)
+    )
   }
   return builder;
 }
