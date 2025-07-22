@@ -8,7 +8,7 @@ const MODERN_OPERATING_SYSTEMS_ISBN : string = "978-0133591620";
 const HOW_TO_PROVE_IT_ISBN : string = "978‑1‑108‑42418‑9";
 
 // insert specific books
-export async function insert_Modern_Operating_Systems() : Promise<void> {
+export async function insert_modern_operating_systems() : Promise<void> {
   
   // first add to genearl book info
   await manually_register_book(MODERN_OPERATING_SYSTEMS_ISBN);
@@ -76,7 +76,7 @@ export async function insert_Modern_Operating_Systems() : Promise<void> {
   // INSERT section info
 }
 
-export async function insert_How_To_Prove_It() : Promise<void> {
+export async function insert_how_to_prove_it() : Promise<void> {
   // first add to general book info
   await manually_register_book(HOW_TO_PROVE_IT_ISBN);
 

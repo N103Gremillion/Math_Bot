@@ -65,8 +65,8 @@ async function main () : Promise<void> {
     // await run_query("PRAGMA foreign_keys = ON;");
     // await drop_database();
     await create_tables();
-    // await insert_Modern_Operating_Systems(); 
-    // await insert_How_To_Prove_It();  
+    // await insert_modern_operating_systems(); 
+    // await insert_how_to_prove_it();  
     bot_g = init_client();  
     await view_database();  
 } 
