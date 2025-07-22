@@ -7,7 +7,7 @@ export type ProgressLogsInfo = {
   book_isbn? : string,
   start_page? : number,
   end_page? : number,
-  timestamp? : string
+  timestamp? : string | Date
 }
 
 export async function log_book_progress(
@@ -55,6 +55,29 @@ export async function fetch_logs_count_for_book(
     console.log(`issue fetching logs count for:
 book_isbn : ${book_isbn}, user_id : ${user_id}`);
     return -1;
+  }
+}
+
+export async function fetch_all_book_logs(
+  user_id : number,
+  book_isbn : string
+) : Promise<ProgressLogsInfo[]> {
+  try {
+    const rows : ProgressLogsInfo[] = await get_rows(
+      `
+      SELECT start_page, end_page, timestamp
+      FROM progress_logs
+      WHERE user_id = ? AND book_isbn = ?
+      ORDER BY timestamp ASC;
+      `,
+      [user_id, book_isbn]
+    );
+
+    return rows;
+  } catch (err) {
+    console.log(`Issue feching all logs for:
+user_id : ${user_id}, book_isbn : ${book_isbn}`);
+    return [];
   }
 }
 

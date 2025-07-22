@@ -15,12 +15,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "asciichart": "^1.5.25",
+    "date-fns": "^4.1.0",
     "discord.js": "^14.19.1",
     "dotenv": "^16.5.0",
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.26.0",
+    "@types/asciichart": "^1.5.8",
     "@types/node": "^22.14.1",
     "@typescript-eslint/eslint-plugin": "^8.32.1",
     "@typescript-eslint/parser": "^8.32.1",

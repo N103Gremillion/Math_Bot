@@ -17,6 +17,7 @@ import { BOOKS_PER_PAGE, finish_executing_view_books } from "./books/view_books"
 import { get_pages_read_in_book } from "./progress_logs/log_progress";
 import { continue_executing_view_logs, LOGS_PER_PAGE } from "./progress_logs/view_logs";
 import { fetch_logs_count_for_book } from "../tables/progress_logs";
+import { continue_executing_view_progress_graph } from "./progress_logs/view_progress_graph";
 
 export enum SelectionMenuType {
   SelectBook = "select_book",
@@ -127,6 +128,9 @@ async function handle_select_book_users_reading(
   }
   else if (command_type === COMMAND_TYPE_STRING.VIEW_LOGS) {
     await select_page_of_books_logs(interaction, command_type,  book_isbn);
+  }
+  else if (command_type === COMMAND_TYPE_STRING.VIEW_PROGRESS_GRAPH) {
+    await continue_executing_view_progress_graph(interaction, book_isbn);
   }
   else {
     await interaction.reply(

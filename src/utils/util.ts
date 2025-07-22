@@ -79,7 +79,7 @@ export function get_logs_str(book : BookInfo | null, logs : ProgressLogsInfo[], 
 
         const start : string = log.start_page?.toString() ?? "Unknown";
         const end : string = log.end_page?.toString() ?? "Unkown";
-        const time : string = log.timestamp ?? "Unknown";
+        const time : string | Date = log.timestamp ?? "Unknown";
         logs_str += `Pages: ${start} - ${end} | Time : ${time}\n`;
     }
 

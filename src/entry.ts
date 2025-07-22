@@ -28,6 +28,8 @@ import { start_reading_command } from "./commands/bookshelf/start_reading";
 import { insert_How_To_Prove_It, insert_Modern_Operating_Systems, insert_random_books } from "../src_dev/specific_data";
 import { log_progress_command } from "./commands/progress_logs/log_progress";
 import { view_logs_command } from "./commands/progress_logs/view_logs";
+import { get_book_progress_chart } from "./graphs/book_progress";
+import { veiw_progress_graph_command } from "./commands/progress_logs/view_progress_graph";
 
 
 // setup list of all commands
@@ -51,7 +53,8 @@ export const commands_g: Command[] = [
     view_bookshelf_command,
     start_reading_command,
     log_progress_command,
-    view_logs_command
+    view_logs_command,
+    veiw_progress_graph_command,
 ];
 
 // initalize globals 
@@ -66,7 +69,7 @@ async function main () : Promise<void> {
     // await insert_Modern_Operating_Systems(); 
     // await insert_How_To_Prove_It();  
     bot_g = init_client();  
-    await view_database();   
+    await view_database();  
 } 
    
 main() 
