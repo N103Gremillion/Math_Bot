@@ -1,11 +1,12 @@
 import * as asciichart from "asciichart";
 import { BookInfo } from "../tables/books";
 import { ProgressLogsInfo } from "../tables/progress_logs";
-import { differenceInCalendarDays, startOfDay } from 'date-fns';
+import { differenceInCalendarDays, max, startOfDay } from 'date-fns';
 import { get_authors_str } from "../utils/util";
+import { get_slope_of_logs } from "./stats";
 
-const MAX_GRAPH_HEIGHT : number = 20;
-const MAX_CHARS_PER_LINE : number = 100;
+const MAX_GRAPH_HEIGHT : number = 15;
+const MAX_POINTS_PER_GRAPH : number = 45;
 
 export const LINE_COLORS = {
   BLACK: asciichart.black,
@@ -24,7 +25,8 @@ export const LINE_COLORS = {
   LIGHT_BLUE : asciichart.lightblue,
   LIGHT_MAGENTA : asciichart.lightmagenta,
   LIGHT_CYAN : asciichart.lightcyan,
-  WHITE : asciichart.white
+  WHITE : asciichart.white,
+  RESET : asciichart.reset
 };
 
 
@@ -34,64 +36,120 @@ export async function get_book_progress_chart(user_name : string, book: BookInfo
     return "No progress logs available for this book.";
   }
 
-  const firstDate = new Date(logs[0]!.timestamp!);
-  const lastDate = new Date(logs[logs.length - 1]!.timestamp!);
-  const totalDays =
-    Math.floor(
-      (lastDate.getTime() - firstDate.getTime()) / (1000 * 60 * 60 * 24)
-    ) + 1;
+  // construct the projected array
+  const slope : number = get_slope_of_logs(logs);
+  const total_pages : number = book.number_of_pages;
+  const projected_num_of_days : number = total_pages / slope;
 
-  const dailyProgress = Array(totalDays).fill(0);
 
-  for (const log of logs) {
-    const dayIndex = Math.floor(
-      (new Date(log!.timestamp!).getTime() - firstDate.getTime()) /
-        (1000 * 60 * 60 * 24)
-    );
-    const pagesRead = log!.end_page! - log!.start_page!;
-    if (dayIndex >= 0 && dayIndex < totalDays) {
-      dailyProgress[dayIndex] += pagesRead;
-    }
-  }
-
-  const cumulativeProgress: number[] = [];
-  dailyProgress.reduce((acc, curr, i) => {
-    const total = acc + curr;
-    cumulativeProgress[i] = total;
-    return total;
-  }, 0);
-
-  // Projected progress line (linear growth)
-  const projectedProgress: number[] = [];
-  for (let i = 0; i < totalDays; i++) {
-    projectedProgress.push(
-      Math.floor(((i + 1) * book.number_of_pages) / totalDays)
-    );
+  const projected : number[] = get_projected_array(slope, projected_num_of_days, total_pages);
+  const actual_progress : number[] = get_actual_progress_scaled(logs, projected_num_of_days, logs[logs.length - 1]?.end_page!, book.number_of_pages);
+  
+  const projected_color : string = LINE_COLORS.BLUE; 
+  const acutal_color : string = LINE_COLORS.RED;
+  
+  const config = {
+    height : MAX_GRAPH_HEIGHT,
+    colors : [projected_color, acutal_color],
+    min : 0,
+    max : total_pages
   }
 
   const chart = asciichart.plot(
-    [cumulativeProgress, projectedProgress],
-    {
-      height: MAX_GRAPH_HEIGHT,
-      colors: [LINE_COLORS.MAGENTA, LINE_COLORS.YELLOW],
-      min: 0,
-      max: book.number_of_pages,
-    }
+    [projected, actual_progress],
+    config
   );
 
   let res = "```ansi\n" + chart + "\n";
 
   // Add day index labels below chart
-  const xAxisLabels = cumulativeProgress
-    .map((_, i) => (i % 5 === 0 ? String(i).padStart(3, ' ') : '   '))
-    .join('');
-  res += xAxisLabels + "\n";
+  // const xAxisLabels = cumulativeProgress
+  //   .map((_, i) => (i % 5 === 0 ? String(i).padStart(3, ' ') : '   '))
+  //   .join('');
+  // res += xAxisLabels + "\n";
 
-  // Legend
-  res += `\x1b[35m●\x1b[0m Actual Progress\n`;
-  res += `\x1b[33m●\x1b[0m Projected Progress`;
+
+  res += `${acutal_color}●${LINE_COLORS.RESET} Actual Progress`;
+  res += `${projected_color}●${LINE_COLORS.RESET} Projected Progress`;
   res += "\n```";
 
+  return res;
+}
+
+function get_projected_array(
+  slope: number,  // pages/day
+  x_max: number,  // total days
+  y_max: number   // total pages
+): number[] {
+  const res: number[] = [];
+  const x_gap: number = x_max / MAX_POINTS_PER_GRAPH;
+
+  for (let i = 0; i <= MAX_POINTS_PER_GRAPH; i++) {
+    const x = i * x_gap;
+    let y = slope * x;
+
+    if (y > y_max) y = y_max;
+
+    res.push(y);
+  }
+
+  return res;
+}
+
+function get_actual_progress_scaled(
+  logs: ProgressLogsInfo[],  
+  cur_page : number, 
+  max_page : number): number[] {
+
+  const res : number[] = [0];
+  const total_logs : number = logs.length;
+  const percent_trough_book : number = (cur_page / max_page);
+  const points_available : number = Math.floor(percent_trough_book * MAX_POINTS_PER_GRAPH);
+
+  console.log(percent_trough_book);
+  console.log(points_available);
+
+  // we have to only select specific logs to prevent over use of points on graph and keep it scaled correclty
+  if (total_logs >= points_available) {
+    const step : number = total_logs / (points_available - 1);
+
+    for (let i = 0; i < points_available; i++) {
+      const index = Math.floor(i * step);
+      const log = logs[index];
+      if (!log || !log.end_page) continue;
+      res.push(log.end_page);
+    }
+    // Always include the last log
+    const last_page : number = logs[total_logs - 1]?.end_page!;
+    res.push(last_page ?? res[res.length - 1]);
+  } 
+  // we have to pad the graph with points so it scales correctly
+  else {
+    const first_log_time = new Date(logs[0]!.timestamp!).getTime();
+    const last_log_time = new Date(logs[logs.length - 1]!.timestamp!).getTime();
+    const total_time_range = last_log_time - first_log_time;
+
+    const time_between_points = total_time_range / (points_available - 1);
+
+    let cur_log_index = 0;
+
+    for (let point_index = 0; point_index < points_available; point_index++) {
+      const currentTargetTime = first_log_time + point_index * time_between_points;
+
+      // Move currentLogIndex forward while the next log is still before the target time
+      while (
+        cur_log_index < logs.length - 1 &&
+        new Date(logs[cur_log_index + 1]!.timestamp!).getTime() <= currentTargetTime
+      ) {
+        cur_log_index++;
+      }
+
+      const currentLog = logs[cur_log_index];
+      const currentPage = currentLog?.end_page ?? (res.length > 0 ? res[res.length - 1] : 0);
+
+      res.push(currentPage!);
+    }
+  }
   return res;
 }
 
