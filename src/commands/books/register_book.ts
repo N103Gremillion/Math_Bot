@@ -25,7 +25,7 @@ export async function execute_register_book (cmd : ChatInputCommandInteraction) 
   // get isbn from response
   const isbn : string = cmd.options.getString(BookField.ISBN)!;
 
-  const book_info : BookInfo | null = await fetch_book_by_ISBN(isbn); 
+  const book_info : BookInfo | null = await fetch_book_by_isbn(isbn); 
 
   if (book_info === null || book_info === undefined) {
     await cmd.reply(
@@ -68,7 +68,7 @@ Note: you can view registered books using /view_books.`;
   await cmd.reply(wrap_str_in_code_block(resulting_response));
 } 
 
-export async function fetch_book_by_ISBN(isbn : string) : Promise<BookInfo | null> {
+export async function fetch_book_by_isbn(isbn : string) : Promise<BookInfo | null> {
   try {
     const response : Response = await fetch(`https://openlibrary.org/isbn/${isbn}.json`, {
       headers : HEADER_INFO
