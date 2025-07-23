@@ -64,4 +64,18 @@ A backend-powered bot designed to help you track your reading progress through b
 /view_logs                        # View past progress logs for a specific book  
 /view_progress_graph              # View a graph of current and projected progress  
 /increment_skill_points           # Increment the skill points of a user  
-/view_all_skill_points            # View skill points for all users  
+/view_all_skill_points            # View skill points for all users
+```
+
+## Example Visuals
+- Bookshelf
+<img width="478" height="732" alt="image" src="https://github.com/user-attachments/assets/fa7d1a64-ce0a-4bad-9d8b-4434621c83e5" />
+
+- Progress Graph
+<img width="1068" height="537" alt="image" src="https://github.com/user-attachments/assets/eb3ff136-1034-4245-b562-5e225e4b5318" />
+
+- Book Logs
+- <img width="999" height="123" alt="image" src="https://github.com/user-attachments/assets/5b18548c-a460-471e-aa6a-a45d3575b0fc" />
+
+
+
