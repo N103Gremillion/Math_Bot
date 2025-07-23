@@ -256,6 +256,7 @@ export async function drop_database() : Promise<void> {
         await drop_table(TABLE_TYPE.PROGRESS_LOGS);
         await drop_table(TABLE_TYPE.BOOKSHELF);
         await drop_table(TABLE_TYPE.AUTHORS);
+        await drop_table(TABLE_TYPE.USER_SKILLPOINTS);
         console.log("Database dropped");
     } catch (err) {
         console.log("Issue dropping the database ", err);
@@ -265,11 +266,15 @@ export async function drop_database() : Promise<void> {
 export async function clear_database() : Promise<void> {
     try {
         await clear_table(TABLE_TYPE.USERS);
+        await clear_table(TABLE_TYPE.USER_SKILLPOINTS);
         await clear_table(TABLE_TYPE.BOOKS);
         await clear_table(TABLE_TYPE.READING);
         await clear_table(TABLE_TYPE.CHAPTERS);
         await clear_table(TABLE_TYPE.SECTIONS);
         await clear_table(TABLE_TYPE.PROGRESS_LOGS);
+        await clear_table(TABLE_TYPE.BOOKSHELF);
+        await clear_table(TABLE_TYPE.AUTHORS);
+        await clear_table(TABLE_TYPE.USER_SKILLPOINTS);
         console.log("Database cleared");
     } catch (err) {
         console.log("Issue clearing the database ", err);

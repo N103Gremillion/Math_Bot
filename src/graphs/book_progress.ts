@@ -89,8 +89,9 @@ export async function get_book_progress_chart(user_name : string, book: BookInfo
   
   res += `\n`
 
-  res += `${acutal_color}●${LINE_COLORS.RESET} Actual Progress`;
-  res += `${projected_color}●${LINE_COLORS.RESET} Projected Progress`;
+  res += `${acutal_color}●${LINE_COLORS.RESET} Actual Progress  `;
+  res += `${projected_color}●${LINE_COLORS.RESET} Projected Progress\n`;
+  res += `(x-axis : Days,  y-axis : Pages)`
   res += "\n```";
 
   return res;

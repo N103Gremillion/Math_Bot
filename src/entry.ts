@@ -2,7 +2,7 @@ import { init_client } from "./events/setup_bot";
 import { Client } from "discord.js";
 import { Command } from "./commands/command_types";
 
-import { init_database, create_tables, view_database} from "../src_dev/database_entry";
+import { init_database, create_tables, view_database, clear_database} from "../src_dev/database_entry";
 import sqlite3 from 'sqlite3';
 
 // commands
@@ -29,6 +29,8 @@ import { view_logs_command } from "./commands/progress_logs/view_logs";
 import { view_progress_graph_command } from "./commands/progress_logs/view_progress_graph";
 import { increment_skill_points } from "./commands/user_skillpoints/increment_skill_points";
 import { view_all_skill_points } from "./commands/user_skillpoints/view_all_skill_points";
+import { run_query } from "./tables/table_type";
+import { insert_how_to_prove_it, insert_modern_operating_systems } from "../src_dev/specific_data";
 
 
 // setup list of all commands
@@ -64,8 +66,9 @@ let database_g : sqlite3.Database;
 
 async function main () : Promise<void> {
     database_g = await init_database();
-    // await run_query("PRAGMA foreign_keys = ON;");
-    await create_tables();
+    await run_query("PRAGMA foreign_keys = ON;");
+    // await clear_database();
+    await create_tables(); 
     // await insert_modern_operating_systems(); 
     // await insert_how_to_prove_it();  
     bot_g = init_client();  
