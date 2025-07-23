@@ -1,7 +1,8 @@
 import { ChatInputCommandInteraction } from "discord.js";
 import { wrap_str_in_code_block } from "../../utils/util";
 import { Command, CommandType, CommandStringType } from "../command_types";
-import { check_user_registered, insert_users_table } from "../../tables/users";
+import { check_user_registered, fetch_user_id, insert_users_table, UserInfo } from "../../tables/users";
+import { set_user_skillpoints_query } from "../../tables/user_skillpoints";
 
 export async function execute_register_user (cmd : ChatInputCommandInteraction) : Promise<void> {
   await cmd.deferReply();
@@ -28,6 +29,10 @@ export async function execute_register_user (cmd : ChatInputCommandInteraction) 
   let resulting_response : string = "";
 
   if (user_registered) {
+    // set skillpoints to zero
+    let user_id: number = await fetch_user_id(user_name);
+    await set_user_skillpoints_query(user_id, 0);
+
     resulting_response = `Successfully registered user: ${user_name}\n`;
   } else {
     resulting_response = `Issue registering user user: ${user_name}\n`;
@@ -37,7 +42,7 @@ export async function execute_register_user (cmd : ChatInputCommandInteraction) 
 }
 
 export const register_user_command: Command = {
-    command_type: CommandType.REIGSTER_USER,
+    command_type: CommandType.REGISTER_USER,
     command: CommandStringType.REGISTER_USER,
     description: "Adds a user to the database",
     action: execute_register_user,

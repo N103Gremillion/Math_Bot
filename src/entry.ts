@@ -27,7 +27,8 @@ import { start_reading_command } from "./commands/bookshelf/start_reading";
 import { log_progress_command } from "./commands/progress_logs/log_progress";
 import { view_logs_command } from "./commands/progress_logs/view_logs";
 import { view_progress_graph_command } from "./commands/progress_logs/view_progress_graph";
-import { increment_skill_points } from "./commands/user_levels/increment_skill_points";
+import { increment_skill_points } from "./commands/user_skillpoints/increment_skill_points";
+import { view_all_skill_points } from "./commands/user_skillpoints/view_all_skill_points";
 
 
 // setup list of all commands
@@ -54,6 +55,7 @@ export const commands_g: Command[] = [
     view_logs_command,
     view_progress_graph_command,
     increment_skill_points,
+    view_all_skill_points,
 ];
 
 // initalize globals 
@@ -63,7 +65,6 @@ let database_g : sqlite3.Database;
 async function main () : Promise<void> {
     database_g = await init_database();
     // await run_query("PRAGMA foreign_keys = ON;");
-    // await drop_database();
     await create_tables();
     // await insert_modern_operating_systems(); 
     // await insert_how_to_prove_it();  

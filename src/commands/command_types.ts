@@ -23,14 +23,15 @@ export enum CommandStringType {
   LOG_PROGRESS = "log_progress",
   VIEW_LOGS = "view_logs",
   VIEW_PROGRESS_GRAPH = "view_progress_graph",
-  INCREMENT_SKILL_POINTS = "increment_skill_points"
+  INCREMENT_SKILL_POINTS = "increment_skill_points",
+  VIEW_ALL_SKILLPOINTS = "view_all_skill_points",
 } 
 
 export enum CommandType {
   INVALID,
   PING,
   LS,
-  REIGSTER_USER,
+  REGISTER_USER,
   REMOVE_USER,
   REGISTER_BOOK,
   REMOVE_BOOK,
@@ -49,7 +50,8 @@ export enum CommandType {
   LOG_PROGRESS,
   VIEW_LOGS,
   VIEW_PROGRESS_GRAPH,
-  INCREMENT_SKILL_POINTS
+  INCREMENT_SKILL_POINTS,
+  VIEW_ALL_SKILLPOINTS,
 }
 
 export type Command = {

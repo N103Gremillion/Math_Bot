@@ -226,29 +226,29 @@ export async function create_tables() : Promise<void> {
         console.log("Issue creating progress_logs table ", err);
     } 
 
-    // 8.) user levels
+    // 8.) user skillpoints
     try {
         await run_query(
             `
-            CREATE TABLE IF NOT EXISTS user_levels (
+            CREATE TABLE IF NOT EXISTS user_skillpoints (
                 user_id INTEGER NOT NULL,
-                skillpoints INTEGER NOT NULL,
+                skillpoints INTEGER NOT NULL DEFAULT 0,
 
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             );
             `, 
             []
         );
-        console.log("Created user_levels table");
+        console.log("Created user_skillpoints table");
     } catch (err) {
-        console.log("Issue creating user_levels table ", err);
+        console.log("Issue creating user_skillpoints table ", err);
     } 
 }   
 
 export async function drop_database() : Promise<void> {
     try {
         await drop_table(TABLE_TYPE.USERS);
-        await drop_table(TABLE_TYPE.USER_LEVELS);
+        await drop_table(TABLE_TYPE.USER_SKILLPOINTS);
         await drop_table(TABLE_TYPE.BOOKS);
         await drop_table(TABLE_TYPE.READING);
         await drop_table(TABLE_TYPE.CHAPTERS);

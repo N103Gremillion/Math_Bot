@@ -2,7 +2,7 @@ import { database_g } from "../entry";
 
 export enum TABLE_TYPE {
   USERS, 
-  USER_LEVELS,
+  USER_SKILLPOINTS,
   BOOKS,
   AUTHORS,
   READING,
@@ -15,7 +15,7 @@ export enum TABLE_TYPE {
 
 const table_strings : Record<TABLE_TYPE, string> = {
   [TABLE_TYPE.USERS]: "users",
-  [TABLE_TYPE.USER_LEVELS]: "user_levels",
+  [TABLE_TYPE.USER_SKILLPOINTS]: "user_skillpoints",
   [TABLE_TYPE.READING]: "reading",
   [TABLE_TYPE.BOOKSHELF] : "bookshelf",
   [TABLE_TYPE.BOOKS]: "books",
