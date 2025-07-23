@@ -37,20 +37,31 @@ A backend-powered bot designed to help you track your reading progress through b
 
 ---
 
-## Commands / examples
+## Commands
 
 ```bash
-# Add a book
-add_to_bookshelf "The Hobbit" --total-pages 310
+/command_name                     # Description
 
-# Start reading
-start_reading "The Hobbit"
-
-# Log progress
-log_progress "The Hobbit" --pages-read 20
-
-# View current progress
-view_logs "The Hobbit"
-
-# Visualize progress graphically
-view_progress_graph "The Hobbit"
+/ping                             # Ping server and display latency  
+/ls                               # List commands and their descriptions  
+/register_user                    # Adds a user to the database  
+/remove_user                      # Removes a user from the database  
+/register_book                    # Adds a book to the database  
+/remove_book                      # Removes a book from the database  
+/view_books                       # View a page of registered books  
+/view_book                        # View info about a specific book  
+/register_chapter                 # Register a chapter in one of the books  
+/view_chapters                    # View all chapters in a book  
+/register_section                 # Register a section in a book  
+/help                             # Provides guidance on how to use the bot  
+/register_total_chapters          # Add total chapter info to a selected book  
+/add_to_bookshelf                 # Add a book to your bookshelf  
+/remove_from_bookshelf            # Remove a book from your bookshelf  
+/drop_bookshelf                   # Remove all books from your bookshelf  
+/view_bookshelf                   # View all books in your bookshelf  
+/start_reading                    # Tag a book as "Reading" to begin tracking  
+/log_progress                     # Log progress in a book you are reading  
+/view_logs                        # View past progress logs for a specific book  
+/view_progress_graph              # View a graph of current and projected progress  
+/increment_skill_points           # Increment the skill points of a user  
+/view_all_skill_points            # View skill points for all users  
