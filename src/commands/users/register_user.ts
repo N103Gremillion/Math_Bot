@@ -1,11 +1,12 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { wrap_str_in_code_block } from "../../utils/util";
-import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING, default_command_builder } from "../command_types";
-import { check_user_registered, insert_users_table } from "../../tables/users";
+import { Command, CommandStringType, CommandType, default_command_builder } from "../command_types";
+import { check_user_registered, fetch_user_id, insert_users_table, UserInfo } from "../../tables/users";
+import { set_user_skillpoints_query } from "../../tables/user_skillpoints";
 
 export const register_user_command: Command = {
-    command_type: COMMAND_TYPE.REIGSTER_USER,
-    command: COMMAND_TYPE_STRING.REGISTER_USER,
+    command_type: CommandType.REGISTER_USER,
+    command: CommandStringType.REGISTER_USER,
     description: "Adds a user to the database",
     action: execute_register_user,
     command_builder : register_user_command_builder
@@ -20,8 +21,6 @@ export async function execute_register_user (cmd : ChatInputCommandInteraction) 
 
   const pending_response : string = `Trying to register user...\n`;
   await cmd.editReply(wrap_str_in_code_block(pending_response));
-
-  await new Promise(resolve => setTimeout(resolve, 500));
 
   const user_name : string  = cmd.user.username;
 
@@ -42,6 +41,10 @@ export async function execute_register_user (cmd : ChatInputCommandInteraction) 
   let resulting_response : string = "";
 
   if (user_registered) {
+    // set skillpoints to zero
+    let user_id: number = await fetch_user_id(user_name);
+    await set_user_skillpoints_query(user_id, 0);
+
     resulting_response = `Successfully registered user: ${user_name}\n`;
   } else {
     resulting_response = `Issue registering user user: ${user_name}\n`;
@@ -49,4 +52,6 @@ export async function execute_register_user (cmd : ChatInputCommandInteraction) 
 
   await cmd.editReply(wrap_str_in_code_block(resulting_response));
 }
+
+
 

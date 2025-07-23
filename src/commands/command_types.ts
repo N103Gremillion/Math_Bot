@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
-export enum COMMAND_TYPE_STRING {
+export enum CommandStringType {
   INVALID = "invalid",
   PING = "ping",
   LS = "ls",
@@ -23,13 +23,15 @@ export enum COMMAND_TYPE_STRING {
   LOG_PROGRESS = "log_progress",
   VIEW_LOGS = "view_logs",
   VIEW_PROGRESS_GRAPH = "view_progress_graph",
+  INCREMENT_SKILL_POINTS = "increment_skill_points",
+  VIEW_ALL_SKILLPOINTS = "view_all_skill_points",
 } 
 
-export enum COMMAND_TYPE {
+export enum CommandType {
   INVALID,
   PING,
   LS,
-  REIGSTER_USER,
+  REGISTER_USER,
   REMOVE_USER,
   REGISTER_BOOK,
   REMOVE_BOOK,
@@ -48,13 +50,15 @@ export enum COMMAND_TYPE {
   LOG_PROGRESS,
   VIEW_LOGS,
   VIEW_PROGRESS_GRAPH,
+  INCREMENT_SKILL_POINTS,
+  VIEW_ALL_SKILLPOINTS,
 }
 
 export type Command = {
   // string user must type excluding starting
   command: string;
   // internal enum type of the command
-  command_type: COMMAND_TYPE;
+  command_type: CommandType;
   /**
    * string displayed to user if command used incorrectly
    * or if user types command with help

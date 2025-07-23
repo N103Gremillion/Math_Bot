@@ -1,11 +1,11 @@
 import { ModalSubmitInteraction } from "discord.js";
-import { ChapterField } from "./chapters/ChapterField";
+import { ChapterField } from "./chapters/chapter_field";
 import { handle_chapter_info_modal_submission } from "./chapters/register_chapter";
 import { SectionField } from "./sections/SectionField";
 import { handle_section_info_modal_submission } from "./sections/register_section";
-import { BookField } from "./books/BookField";
+import { BookField } from "./books/book_field";
 import { handle_total_chapters_modal_submission } from "./books/register_total_chapters";
-import { BookshelfField } from "./bookshelf/BookshelfField";
+import { BookshelfField } from "./bookshelf/bookshelf_field";
 import { handle_start_page_modal_submission } from "./bookshelf/start_reading";
 import { handle_logging_page_input_submission } from "./progress_logs/log_progress";
 

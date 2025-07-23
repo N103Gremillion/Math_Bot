@@ -1,9 +1,9 @@
 import { ModalSubmitInteraction, StringSelectMenuInteraction } from 'discord.js';
-import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING } from './../command_types';
+import { Command, CommandType, CommandStringType } from './../command_types';
 import { ActionRowBuilder, ChatInputCommandInteraction, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { select_book_menu } from '../selection_menus';
 import { ModalType } from '../modals';
-import { ChapterField } from './ChapterField';
+import { ChapterField } from './chapter_field';
 import { wrap_str_in_code_block } from '../../utils/util';
 import { fetch_page_count, fetch_total_chapters } from '../../tables/books';
 import { insert_chapters_table } from '../../tables/chapters';
@@ -229,8 +229,8 @@ export async function get_chapter_info(interaction : StringSelectMenuInteraction
 }
 
 export const register_chapter_command : Command = {
-  command : COMMAND_TYPE_STRING.REGISTER_CHAPTER,
-  command_type : COMMAND_TYPE.REGISTER_CHAPTER,
+  command : CommandStringType.REGISTER_CHAPTER,
+  command_type : CommandType.REGISTER_CHAPTER,
   description : "register a chapter in one of the books in the database",
   action : execute_register_chapter,
   requires_params : true

@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, StringSelectMenuInteraction } from "discord.js";
-import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING } from "../command_types";
+import { Command, CommandType, CommandStringType } from "../command_types";
 import { select_book_users_reading } from "../selection_menus";
 import { fetch_page_of_logs, ProgressLogsInfo } from "../../tables/progress_logs";
 import { get_logs_str, get_user_id_from_interaction } from "../../utils/util";
@@ -27,8 +27,8 @@ export async function continue_executing_view_logs(
 }
 
 export const view_logs_command : Command = {
-  command : COMMAND_TYPE_STRING.VIEW_LOGS,
-  command_type : COMMAND_TYPE.VIEW_LOGS,
+  command : CommandStringType.VIEW_LOGS,
+  command_type : CommandType.VIEW_LOGS,
   description : "View a page of your past logs for a certian book.",
   action : execute_view_logs,
   requires_params : false

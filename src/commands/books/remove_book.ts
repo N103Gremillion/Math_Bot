@@ -1,8 +1,8 @@
 import { ChatInputCommandInteraction, StringSelectMenuInteraction } from "discord.js";
-import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING } from "../command_types";
+import { Command, CommandType, CommandStringType } from "../command_types";
 import { select_book_menu } from "../selection_menus";
 import { get_authors_str, wrap_str_in_code_block } from "../../utils/util";
-import { BookInfo, fetch_book_and_author_info, fetch_book_info, remove_book_from_database } from "../../tables/books";
+import { BookInfo, fetch_book_and_author_info, remove_book_from_database } from "../../tables/books";
 
 export async function execute_remove_book(cmd : ChatInputCommandInteraction) : Promise<void> {
   await select_book_menu(cmd);
@@ -49,8 +49,8 @@ Total Chapters: ${book_info.total_chapters ?? "Unknown"}`
 }
 
 export const remove_book_command : Command = {
-  command : COMMAND_TYPE_STRING.REMOVE_BOOK,
-  command_type : COMMAND_TYPE.REMOVE_BOOK,
+  command : CommandStringType.REMOVE_BOOK,
+  command_type : CommandType.REMOVE_BOOK,
   description : "remove a book from the database",
   action : execute_remove_book,
   requires_params : false

@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, StringSelectMenuInteraction } from "discord.js";
-import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING } from "../command_types";
+import { Command, CommandType, CommandStringType } from "../command_types";
 import { get_book_progress_chart } from "../../graphs/book_progress";
 import { get_user_id_from_interaction, wrap_str_in_code_block } from "../../utils/util";
 import { select_book_users_reading } from "../selection_menus";
@@ -33,9 +33,9 @@ book_isbn : ${book_isbn}`
   interaction.reply(graph);
 }
 
-export const veiw_progress_graph_command : Command = {
-  command_type: COMMAND_TYPE.VIEW_PROGRESS_GRAPH,
-  command: COMMAND_TYPE_STRING.VIEW_PROGRESS_GRAPH,
+export const view_progress_graph_command : Command = {
+  command_type: CommandType.VIEW_PROGRESS_GRAPH,
+  command: CommandStringType.VIEW_PROGRESS_GRAPH,
   description: "Shows you a graph of you current progress in a book and the projected progress.",
   action: execute_view_progress_graph,
   requires_params : false

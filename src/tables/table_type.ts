@@ -2,6 +2,7 @@ import { database_g } from "../entry";
 
 export enum TABLE_TYPE {
   USERS, 
+  USER_SKILLPOINTS,
   BOOKS,
   AUTHORS,
   READING,
@@ -14,6 +15,7 @@ export enum TABLE_TYPE {
 
 const table_strings : Record<TABLE_TYPE, string> = {
   [TABLE_TYPE.USERS]: "users",
+  [TABLE_TYPE.USER_SKILLPOINTS]: "user_skillpoints",
   [TABLE_TYPE.READING]: "reading",
   [TABLE_TYPE.BOOKSHELF] : "bookshelf",
   [TABLE_TYPE.BOOKS]: "books",
@@ -35,7 +37,6 @@ function get_table_string(table_type : TABLE_TYPE) : string {
 }
 
 export async function clear_table(table_type : TABLE_TYPE) : Promise<void> {
-
   const table_string : string = get_table_string(table_type);
   const query_string : string = "DELETE FROM " + table_string + ";";
   
@@ -70,14 +71,12 @@ export async function drop_table(table_type: TABLE_TYPE): Promise<void> {
   }
 }
 
-
 export async function view_table(table_type : TABLE_TYPE) : Promise<void> {
-  
-  const table_string : string = "\n" + get_table_string(table_type);
-  const query_string : string = "SELECT * FROM " + table_string + ";";
+  const table_string : string = get_table_string(table_type);
+  const query_string : string = `SELECT * FROM ${table_string};`;
   
   if (table_string === "invalid"){
-    return 
+    return;
   }
 
   try {

@@ -1,15 +1,14 @@
-import { fetch_book_by_ISBN } from "../src/commands/books/register_book";
+import { fetch_book_by_isbn } from "../src/commands/books/register_book";
 import { insert_authors_table } from "../src/tables/authors";
-import { add_total_chapters_to_book, BookInfo, fetch_book_and_author_info, fetch_books_info, fetch_page_count, fetch_total_chapters, insert_books_table } from "../src/tables/books";
+import { add_total_chapters_to_book, BookInfo, fetch_book_and_author_info, fetch_page_count, fetch_total_chapters, insert_books_table } from "../src/tables/books";
 import { ChapterInfo, insert_chapters_table } from "../src/tables/chapters";
-import { insert_sections_table } from "../src/tables/sections";
 import { get_book_info_str } from "../src/utils/util";
 
 const MODERN_OPERATING_SYSTEMS_ISBN : string = "978-0133591620";
 const HOW_TO_PROVE_IT_ISBN : string = "978‑1‑108‑42418‑9";
 
 // insert specific books
-export async function insert_Modern_Operating_Systems() : Promise<void> {
+export async function insert_modern_operating_systems() : Promise<void> {
   
   // first add to genearl book info
   await manually_register_book(MODERN_OPERATING_SYSTEMS_ISBN);
@@ -77,7 +76,7 @@ export async function insert_Modern_Operating_Systems() : Promise<void> {
   // INSERT section info
 }
 
-export async function insert_How_To_Prove_It() : Promise<void> {
+export async function insert_how_to_prove_it() : Promise<void> {
   // first add to general book info
   await manually_register_book(HOW_TO_PROVE_IT_ISBN);
 
@@ -187,8 +186,7 @@ export async function insert_random_books(): Promise<void> {
 }
 
 export async function manually_register_book (isbn : string) : Promise<void> {
-
-  const book_info : BookInfo | null = await fetch_book_by_ISBN(isbn); 
+  const book_info : BookInfo | null = await fetch_book_by_isbn(isbn); 
 
   if (book_info === null || book_info === undefined) {
     console.log("book_info is null.")

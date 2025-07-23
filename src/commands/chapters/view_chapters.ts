@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, StringSelectMenuInteraction } from "discord.js";
-import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING } from "../command_types";
+import { Command, CommandStringType, CommandType } from "../command_types";
 import { select_book_menu } from "../selection_menus";
 import { ChapterInfo, fetch_chapters_in_book } from "../../tables/chapters";
 import { BookInfo, fetch_book_and_author_info, fetch_total_chapters } from '../../tables/books';
@@ -74,8 +74,8 @@ export async function show_chapters_in_book(
 
 
 export const view_chapters_command : Command = {
-  command : COMMAND_TYPE_STRING.VIEW_CHAPTERS,
-  command_type : COMMAND_TYPE.VIEW_CHAPTERS,
+  command : CommandStringType.VIEW_CHAPTERS,
+  command_type : CommandType.VIEW_CHAPTERS,
   description : "view all chapters in a book",
   action : execute_view_chapters, 
   requires_params : false

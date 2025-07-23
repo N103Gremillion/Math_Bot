@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ChatInputCommandInteraction, ModalBuilder, ModalSubmitInteraction, StringSelectMenuInteraction, TextInputBuilder, TextInputStyle } from "discord.js";
-import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING } from "../command_types";
+import { Command, CommandType, CommandStringType } from "../command_types";
 import { select_book_users_reading } from "../selection_menus";
 import { get_user_id_from_interaction, wrap_str_in_code_block } from "../../utils/util";
 import { ModalType } from "../modals";
@@ -99,8 +99,8 @@ export async function get_pages_read_in_book(interaction : StringSelectMenuInter
 }
 
 export const log_progress_command : Command = {
-  command : COMMAND_TYPE_STRING.LOG_PROGRESS,
-  command_type : COMMAND_TYPE.LOG_PROGRESS,
+  command : CommandStringType.LOG_PROGRESS,
+  command_type : CommandType.LOG_PROGRESS,
   description : "Logs the progress in a book you are reading.",
   action : execute_log_progress,
   requires_params : false

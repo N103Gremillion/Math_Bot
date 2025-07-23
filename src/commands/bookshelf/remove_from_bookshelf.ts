@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, StringSelectMenuInteraction } from "discord.js";
-import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING } from "../command_types";
-import { select_book_menu, select_bookshelf_menu } from "../selection_menus";
+import { Command, CommandType, CommandStringType } from "../command_types";
+import { select_bookshelf_menu } from "../selection_menus";
 import { get_user_id_from_interaction, wrap_str_in_code_block } from "../../utils/util";
 import { remove_book_from_bookshelf } from "../../tables/bookshelf";
 
@@ -34,8 +34,8 @@ Book_isbn: ${book_isbn}.`
 }
 
 export const remove_from_bookshelf_command : Command = {
-  command: COMMAND_TYPE_STRING.REMOVE_FROM_BOOKSHELF,
-  command_type: COMMAND_TYPE.REMOVE_FROM_BOOKSHELF,
+  command: CommandStringType.REMOVE_FROM_BOOKSHELF,
+  command_type: CommandType.REMOVE_FROM_BOOKSHELF,
   description: "remove a book from your bookshelf",
   action: execute_remove_from_bookshelf,
   requires_params : false

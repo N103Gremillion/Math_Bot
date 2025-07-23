@@ -1,8 +1,8 @@
 import { ChatInputCommandInteraction } from "discord.js";
-import { COMMAND_TYPE, COMMAND_TYPE_STRING, Command } from "../command_types";
+import { CommandType, CommandStringType, Command } from "../command_types";
 import { get_book_info_str, wrap_str_in_code_block } from "../../utils/util";
 import { BookInfo, insert_books_table } from "../../tables/books";
-import { BookField } from "./BookField";
+import { BookField } from "./book_field";
 import { insert_authors_table } from "../../tables/authors";
 
 
@@ -25,7 +25,7 @@ export async function execute_register_book (cmd : ChatInputCommandInteraction) 
   // get isbn from response
   const isbn : string = cmd.options.getString(BookField.ISBN)!;
 
-  const book_info : BookInfo | null = await fetch_book_by_ISBN(isbn); 
+  const book_info : BookInfo | null = await fetch_book_by_isbn(isbn); 
 
   if (book_info === null || book_info === undefined) {
     await cmd.reply(
@@ -68,7 +68,7 @@ Note: you can view registered books using /view_books.`;
   await cmd.reply(wrap_str_in_code_block(resulting_response));
 } 
 
-export async function fetch_book_by_ISBN(isbn : string) : Promise<BookInfo | null> {
+export async function fetch_book_by_isbn(isbn : string) : Promise<BookInfo | null> {
   try {
     const response : Response = await fetch(`https://openlibrary.org/isbn/${isbn}.json`, {
       headers : HEADER_INFO
@@ -144,8 +144,8 @@ async function fetch_author_with_key(author_key : string) : Promise<string> {
 }
 
 export const register_book_command : Command = {
-  command: COMMAND_TYPE_STRING.REGISTER_BOOK,
-  command_type: COMMAND_TYPE.REGISTER_BOOK,
+  command: CommandStringType.REGISTER_BOOK,
+  command_type: CommandType.REGISTER_BOOK,
   description: "Adds a book to the database",
   action: execute_register_book,
   requires_params : true

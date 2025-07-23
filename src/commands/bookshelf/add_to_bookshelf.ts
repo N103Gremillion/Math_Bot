@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, StringSelectMenuInteraction } from "discord.js";
-import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING } from "../command_types";
+import { Command, CommandType, CommandStringType } from "../command_types";
 import { select_book_menu } from "../selection_menus";
 import { check_user_registered, fetch_user_id } from "../../tables/users";
 import { wrap_str_in_code_block } from "../../utils/util";
@@ -74,8 +74,8 @@ use /drop_bookshelf to completely empty your bookshelf.`
 }
 
 export const add_to_bookshelf_command : Command = {
-  command: COMMAND_TYPE_STRING.ADD_TO_BOOKSHELF,
-  command_type: COMMAND_TYPE.ADD_TO_BOOKSHELF,
+  command: CommandStringType.ADD_TO_BOOKSHELF,
+  command_type: CommandType.ADD_TO_BOOKSHELF,
   description: "Adds a book to your bookshelf.",
   action: execute_add_to_bookshelf,
   requires_params : false

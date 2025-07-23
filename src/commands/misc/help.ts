@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING, default_command_builder } from "../command_types";
+import { Command, CommandType, CommandStringType } from "../command_types";
 import { wrap_str_in_code_block } from "../../utils/util";
 
 const help_str: string = 
@@ -18,15 +18,16 @@ Overview: This bot helps you track your reading progress through various books.
 
 
 export const help_command : Command = {
-  command : COMMAND_TYPE_STRING.HELP,
-  command_type : COMMAND_TYPE.HELP,
+  command : CommandStringType.HELP,
+  command_type : CommandType.HELP,
   description : "tells information about how to use this bot effectively",
   action : execute_help,
-  command_builder : help_command_command_builder
+  command_builder : help_command_builder
 }
 
-export function help_command_command_builder(cmd : Command) : SlashCommandBuilder {
-  return default_command_builder(cmd);
+
+export function help_command_builder(cmd : Command) : SlashCommandBuilder {
+  return help_command_builder(cmd);
 }
 
 export async function execute_help(cmd : ChatInputCommandInteraction) : Promise<void> {
@@ -36,4 +37,5 @@ export async function execute_help(cmd : ChatInputCommandInteraction) : Promise<
     )
   );
 }
+
 

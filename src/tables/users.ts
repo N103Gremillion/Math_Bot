@@ -52,6 +52,10 @@ export async function remove_from_users_table(user_name : string) : Promise<bool
   }
 }
 
+export async function fetch_all_users(): Promise<UserInfo[]> {
+  return await get_rows(`SELECT * FROM users;`, []);
+}
+
 export async function fetch_user_id(user_name : string) : Promise<number> {
   try {
     const user_ids : UserInfo[] = await get_rows(
