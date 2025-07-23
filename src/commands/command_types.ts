@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
 export enum COMMAND_TYPE_STRING {
   INVALID = "invalid",
@@ -58,11 +58,17 @@ export type Command = {
   /**
    * string displayed to user if command used incorrectly
    * or if user types command with help
-   */
+  **/
   description: string;
+
   // function to run when command is received
   action: (cmd : ChatInputCommandInteraction) => Promise<void>; 
 
-  // tells if the function takes parameter
-  requires_params : boolean;
+  // function describing how to create the command
+  command_builder : (cmd : Command) => SlashCommandBuilder;
+}
+
+// you can use this if you dont have any parameters
+export function default_command_builder(cmd : Command) : SlashCommandBuilder {
+  return new SlashCommandBuilder().setName(cmd.command).setDescription(cmd.description);
 }

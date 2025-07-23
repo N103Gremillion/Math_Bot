@@ -1,7 +1,15 @@
-import { ChatInputCommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { send_message } from "../../events/message";
 import { wrap_str_in_code_block } from "../../utils/util";
-import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING } from "../command_types";
+import { Command, COMMAND_TYPE, COMMAND_TYPE_STRING, default_command_builder } from "../command_types";
+
+export const ping_command: Command = {
+  command_type: COMMAND_TYPE.PING,
+  command: COMMAND_TYPE_STRING.PING,
+  description: "Ping server and display latency",
+  action: execute_ping,
+  command_builder: ping_command_builder
+}
 
 export async function execute_ping (cmd : ChatInputCommandInteraction) : Promise<void> {
   const latency = Date.now() - cmd.createdTimestamp;
@@ -11,10 +19,7 @@ export async function execute_ping (cmd : ChatInputCommandInteraction) : Promise
   await send_message(cmd, block_string);
 }
 
-export const ping_command: Command = {
-    command_type: COMMAND_TYPE.PING,
-    command: COMMAND_TYPE_STRING.PING,
-    description: "Ping server and display latency",
-    action: execute_ping,
-    requires_params : false
+export function ping_command_builder(cmd : Command) : SlashCommandBuilder {
+  return default_command_builder(cmd);
 }
+

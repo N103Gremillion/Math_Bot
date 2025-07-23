@@ -27,12 +27,7 @@ export function init_client() : Client {
     const commands: SlashCommandBuilder[] = [];
 
     commands_g.forEach(cmd => {
-      if (cmd.requires_params) {
-        const slash_command : SlashCommandBuilder = setup_SlashCommand_with_params(cmd);
-        commands.push(slash_command);
-      } else {
-        commands.push(new SlashCommandBuilder().setName(cmd.command).setDescription(cmd.description));
-      }
+      commands.push(cmd.command_builder(cmd));
     });
     
     await guild.commands.set(commands);
