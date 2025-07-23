@@ -1,8 +1,32 @@
-import { ChatInputCommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { wrap_str_in_code_block } from "../../utils/util";
 import { Command, CommandType, CommandStringType } from "../command_types";
 import { check_user_registered, fetch_user_id } from "../../tables/users";
 import { fetch_user_skillpoints_query, increment_user_skillpoints_query, set_user_skillpoints_query } from "../../tables/user_skillpoints";
+
+export const increment_skill_points: Command = {
+  command_type: CommandType.INCREMENT_SKILL_POINTS,
+  command: CommandStringType.INCREMENT_SKILL_POINTS,
+  description: "Increment the skill points of a user",
+  action: increment_skill_points_handler,
+  command_builder : increment_skill_points_command_builder
+}
+
+export function increment_skill_points_command_builder(cmd : Command) : SlashCommandBuilder {
+  const builder = new SlashCommandBuilder()
+    .setName(cmd.command)
+    .setDescription(cmd.description);
+
+  builder.addIntegerOption(option => 
+    option
+    .setName("increment")
+    .setDescription("How many points to increments by ?")
+    .setRequired(true)
+  );
+
+  return builder;
+}
+
 
 export async function increment_skill_points_handler (cmd : ChatInputCommandInteraction) : Promise<void> {
   const user_name : string  = cmd.user.username;
@@ -40,10 +64,3 @@ export async function increment_skill_points_handler (cmd : ChatInputCommandInte
   );
 }
 
-export const increment_skill_points: Command = {
-    command_type: CommandType.INCREMENT_SKILL_POINTS,
-    command: CommandStringType.INCREMENT_SKILL_POINTS,
-    description: "Increment the skill points of a user",
-    action: increment_skill_points_handler,
-    requires_params : true
-}

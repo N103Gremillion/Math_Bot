@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { Command, CommandType, CommandStringType } from "../command_types";
+import { Command, CommandType, CommandStringType, default_command_builder } from "../command_types";
 import { wrap_str_in_code_block } from "../../utils/util";
 
 const help_str: string = 
@@ -27,7 +27,7 @@ export const help_command : Command = {
 
 
 export function help_command_builder(cmd : Command) : SlashCommandBuilder {
-  return help_command_builder(cmd);
+  return default_command_builder(cmd);
 }
 
 export async function execute_help(cmd : ChatInputCommandInteraction) : Promise<void> {

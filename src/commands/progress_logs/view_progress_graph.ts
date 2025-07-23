@@ -1,10 +1,22 @@
-import { ChatInputCommandInteraction, StringSelectMenuInteraction } from "discord.js";
-import { Command, CommandType, CommandStringType } from "../command_types";
+import { ChatInputCommandInteraction, SlashCommandBuilder, StringSelectMenuInteraction } from "discord.js";
+import { Command, CommandType, CommandStringType, default_command_builder } from "../command_types";
 import { get_book_progress_chart } from "../../graphs/book_progress";
 import { get_user_id_from_interaction, wrap_str_in_code_block } from "../../utils/util";
 import { select_book_users_reading } from "../selection_menus";
 import { fetch_all_book_logs, ProgressLogsInfo } from "../../tables/progress_logs";
 import { BookInfo, fetch_book_and_author_info } from "../../tables/books";
+
+export const view_progress_graph_command : Command = {
+  command_type: CommandType.VIEW_PROGRESS_GRAPH,
+  command: CommandStringType.VIEW_PROGRESS_GRAPH,
+  description: "Shows you a graph of you current progress in a book and the projected progress.",
+  action: execute_view_progress_graph,
+  command_builder : view_progress_graph_command_builder
+}
+
+export function view_progress_graph_command_builder(cmd : Command) : SlashCommandBuilder {
+  return default_command_builder(cmd);
+}
 
 export async function execute_view_progress_graph(cmd : ChatInputCommandInteraction) : Promise<void> {
   await select_book_users_reading(cmd);
@@ -33,10 +45,3 @@ book_isbn : ${book_isbn}`
   interaction.reply(graph);
 }
 
-export const view_progress_graph_command : Command = {
-  command_type: CommandType.VIEW_PROGRESS_GRAPH,
-  command: CommandStringType.VIEW_PROGRESS_GRAPH,
-  description: "Shows you a graph of you current progress in a book and the projected progress.",
-  action: execute_view_progress_graph,
-  requires_params : false
-}

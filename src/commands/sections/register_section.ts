@@ -1,11 +1,23 @@
-import { ActionRowBuilder, ChatInputCommandInteraction, ModalBuilder, ModalSubmitInteraction, StringSelectMenuInteraction, TextInputBuilder, TextInputStyle } from "discord.js";
-import { Command, CommandType, CommandStringType } from "../command_types";
+import { ActionRowBuilder, ChatInputCommandInteraction, ModalBuilder, ModalSubmitInteraction, SlashCommandBuilder, StringSelectMenuInteraction, TextInputBuilder, TextInputStyle } from "discord.js";
+import { Command, CommandType, CommandStringType, default_command_builder } from "../command_types";
 import { select_book_menu } from "../selection_menus";
 import { ModalType } from "../modals";
 import { SectionField } from "./SectionField";
 import { wrap_str_in_code_block } from "../../utils/util";
 import { fetch_chapter_end_page, fetch_chapter_start_page, fetch_total_sections_in_chapter } from "../../tables/chapters";
 import { insert_sections_table } from "../../tables/sections";
+
+export const register_section_command : Command = {
+  command: CommandStringType.REGISTER_SECTION,
+  command_type: CommandType.REGISTER_SECTION,
+  description: "register a section in a book to the database",
+  action: execute_register_section,
+  command_builder : register_section_command_builder
+}
+
+export function register_section_command_builder(cmd : Command) : SlashCommandBuilder {
+  return default_command_builder(cmd);
+}
 
 export async function execute_register_section(cmd : ChatInputCommandInteraction) : Promise<void> {
   await select_book_menu(cmd);
@@ -234,10 +246,3 @@ export async function get_section_info(interaction : StringSelectMenuInteraction
 
 }
 
-export const register_section_command : Command = {
-  command: CommandStringType.REGISTER_SECTION,
-  command_type: CommandType.REGISTER_SECTION,
-  description: "register a section in a book to the database",
-  action: execute_register_section,
-  requires_params : false
-}

@@ -1,8 +1,21 @@
-import { ChatInputCommandInteraction, StringSelectMenuInteraction } from "discord.js";
-import { Command, CommandType, CommandStringType } from "../command_types";
+import { ChatInputCommandInteraction, SlashCommandBuilder, StringSelectMenuInteraction } from "discord.js";
+import { Command, CommandType, CommandStringType, default_command_builder } from "../command_types";
 import { select_book_menu } from "../selection_menus";
 import { get_authors_str, wrap_str_in_code_block } from "../../utils/util";
 import { BookInfo, fetch_book_and_author_info, remove_book_from_database } from "../../tables/books";
+
+
+export const remove_book_command : Command = {
+  command : CommandStringType.REMOVE_BOOK,
+  command_type : CommandType.REMOVE_BOOK,
+  description : "remove a book from the database",
+  action : execute_remove_book,
+  command_builder : remove_book_command_builder
+}
+
+export function remove_book_command_builder(cmd : Command) : SlashCommandBuilder {
+  return default_command_builder(cmd);
+}
 
 export async function execute_remove_book(cmd : ChatInputCommandInteraction) : Promise<void> {
   await select_book_menu(cmd);
@@ -46,12 +59,4 @@ Total Chapters: ${book_info.total_chapters ?? "Unknown"}`
       )
     )
   }
-}
-
-export const remove_book_command : Command = {
-  command : CommandStringType.REMOVE_BOOK,
-  command_type : CommandType.REMOVE_BOOK,
-  description : "remove a book from the database",
-  action : execute_remove_book,
-  requires_params : false
 }

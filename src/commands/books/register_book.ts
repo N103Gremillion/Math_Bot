@@ -1,11 +1,9 @@
-import { ChatInputCommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { CommandType, CommandStringType, Command } from "../command_types";
 import { get_book_info_str, wrap_str_in_code_block } from "../../utils/util";
 import { BookInfo, insert_books_table } from "../../tables/books";
 import { BookField } from "./book_field";
 import { insert_authors_table } from "../../tables/authors";
-
-
 
 interface Open_Library_Book_Response {
   full_title?: string;
@@ -18,6 +16,29 @@ interface Open_Library_Book_Response {
 
 const HEADER_INFO = {
   "User-Agent": "MathBot/0.1 (nathan103grem@gmail.com)"
+}
+
+export const register_book_command : Command = {
+  command: CommandStringType.REGISTER_BOOK,
+  command_type: CommandType.REGISTER_BOOK,
+  description: "Adds a book to the database",
+  action: execute_register_book,
+  command_builder : register_book_command_builder
+}
+
+export function register_book_command_builder(cmd : Command) : SlashCommandBuilder {
+  const builder = new SlashCommandBuilder()
+    .setName(cmd.command)
+    .setDescription(cmd.description);
+
+  builder.addStringOption(option =>
+    option
+      .setName(BookField.ISBN)
+      .setDescription("What is the ISBN of the book you want to register.")
+      .setRequired(true)
+  );
+
+  return builder;
 }
 
 export async function execute_register_book (cmd : ChatInputCommandInteraction) : Promise<void> {
@@ -141,12 +162,4 @@ async function fetch_author_with_key(author_key : string) : Promise<string> {
   else {
     return "Unknown Author";
   }
-}
-
-export const register_book_command : Command = {
-  command: CommandStringType.REGISTER_BOOK,
-  command_type: CommandType.REGISTER_BOOK,
-  description: "Adds a book to the database",
-  action: execute_register_book,
-  requires_params : true
 }

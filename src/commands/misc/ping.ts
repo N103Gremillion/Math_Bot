@@ -11,6 +11,10 @@ export const ping_command: Command = {
   command_builder: ping_command_builder
 }
 
+export function ping_command_builder(cmd : Command) : SlashCommandBuilder {
+  return default_command_builder(cmd);
+}
+
 export async function execute_ping (cmd : ChatInputCommandInteraction) : Promise<void> {
   const latency = Date.now() - cmd.createdTimestamp;
   const ping_string = `Pinged Math Bot! \nMessage Latency: ${latency}ms`;
@@ -20,9 +24,7 @@ export async function execute_ping (cmd : ChatInputCommandInteraction) : Promise
 }
 
 
-export function ping_command_builder(cmd : Command) : SlashCommandBuilder {
-  return default_command_builder(cmd);
-}
+
 
 
 

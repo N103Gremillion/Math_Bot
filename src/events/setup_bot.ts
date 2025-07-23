@@ -60,27 +60,3 @@ function setup_command_listener(client : Client) : void {
     await execute_command(cmd);
   });
 }
-
-function setup_SlashCommand_with_params(cmd: Command): SlashCommandBuilder {
-  const builder = new SlashCommandBuilder()
-    .setName(cmd.command)
-    .setDescription(cmd.description);
-
-  if (cmd.command_type === CommandType.REGISTER_BOOK) {
-    builder.addStringOption(option =>
-      option
-        .setName(BookField.ISBN)
-        .setDescription("What is the ISBN of the book you want to register.")
-        .setRequired(true)
-    );
-  }
-  if(cmd.command_type === CommandType.INCREMENT_SKILL_POINTS) {
-    builder.addIntegerOption(option => 
-      option
-      .setName("increment")
-      .setDescription("How many points to increments by ?")
-      .setRequired(true)
-    )
-  }
-  return builder;
-}

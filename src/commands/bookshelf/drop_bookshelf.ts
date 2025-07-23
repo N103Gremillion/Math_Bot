@@ -1,7 +1,19 @@
-import { ChatInputCommandInteraction } from "discord.js";
-import { Command, CommandType, CommandStringType } from "../command_types";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { Command, CommandType, CommandStringType, default_command_builder } from "../command_types";
 import { get_user_id_from_interaction, wrap_str_in_code_block } from "../../utils/util";
 import { clear_bookshelf } from "../../tables/bookshelf";
+
+export const drop_bookshelf_command : Command = {
+  command: CommandStringType.DROP_BOOKSHELF,
+  command_type: CommandType.DROP_BOOKSHELF,
+  description: "Remove all the books from your bookshelf.",
+  action: execute_drop_bookshelf,
+  command_builder : drop_bookshelf_command_builder
+}
+
+export function drop_bookshelf_command_builder(cmd : Command) : SlashCommandBuilder {
+  return default_command_builder(cmd);
+}
 
 async function  execute_drop_bookshelf(cmd : ChatInputCommandInteraction) : Promise<void> {
   const user_id : number = await get_user_id_from_interaction(cmd);
@@ -22,10 +34,3 @@ async function  execute_drop_bookshelf(cmd : ChatInputCommandInteraction) : Prom
   }
 }
 
-export const drop_bookshelf_command : Command = {
-  command: CommandStringType.DROP_BOOKSHELF,
-  command_type: CommandType.DROP_BOOKSHELF,
-  description: "Remove all the books from your bookshelf.",
-  action: execute_drop_bookshelf,
-  requires_params : false
-}

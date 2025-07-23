@@ -1,11 +1,24 @@
-import { ChatInputCommandInteraction, StringSelectMenuInteraction } from "discord.js";
-import { Command, CommandType, CommandStringType } from "../command_types";
+import { ChatInputCommandInteraction, SlashCommandBuilder, StringSelectMenuInteraction } from "discord.js";
+import { Command, CommandType, CommandStringType, default_command_builder } from "../command_types";
 import { select_book_users_reading } from "../selection_menus";
 import { fetch_page_of_logs, ProgressLogsInfo } from "../../tables/progress_logs";
 import { get_logs_str, get_user_id_from_interaction } from "../../utils/util";
 import { BookInfo, fetch_book_and_author_info } from "../../tables/books";
 
 export const LOGS_PER_PAGE : number = 15;
+
+export const view_logs_command : Command = {
+  command : CommandStringType.VIEW_LOGS,
+  command_type : CommandType.VIEW_LOGS,
+  description : "View a page of your past logs for a certian book.",
+  action : execute_view_logs,
+  command_builder : view_logs_command_builder
+  
+}
+
+export function view_logs_command_builder(cmd : Command) : SlashCommandBuilder {
+  return default_command_builder(cmd);
+}
 
 export async function execute_view_logs(cmd : ChatInputCommandInteraction) : Promise<void> {
   await select_book_users_reading(cmd);
@@ -26,10 +39,3 @@ export async function continue_executing_view_logs(
   interaction.reply(logs_response);
 }
 
-export const view_logs_command : Command = {
-  command : CommandStringType.VIEW_LOGS,
-  command_type : CommandType.VIEW_LOGS,
-  description : "View a page of your past logs for a certian book.",
-  action : execute_view_logs,
-  requires_params : false
-}

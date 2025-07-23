@@ -1,11 +1,23 @@
-import { ChatInputCommandInteraction, StringSelectMenuInteraction } from "discord.js";
-import { Command, CommandType, CommandStringType } from "../command_types";
+import { ChatInputCommandInteraction, SlashCommandBuilder, StringSelectMenuInteraction } from "discord.js";
+import { Command, CommandType, CommandStringType, default_command_builder } from "../command_types";
 import { select_book_menu } from "../selection_menus";
 import { check_user_registered, fetch_user_id } from "../../tables/users";
 import { wrap_str_in_code_block } from "../../utils/util";
 import { fetch_total_books_in_bookshelf, insert_into_bookshelf, is_book_in_bookshelf } from "../../tables/bookshelf";
 
 const MAX_BOOKS_IN_BOOKSHELF : number = 5;
+
+export const add_to_bookshelf_command : Command = {
+  command: CommandStringType.ADD_TO_BOOKSHELF,
+  command_type: CommandType.ADD_TO_BOOKSHELF,
+  description: "Adds a book to your bookshelf.",
+  action: execute_add_to_bookshelf,
+  command_builder : add_to_bookshelf_command_builder
+}
+
+export function add_to_bookshelf_command_builder(cmd : Command) : SlashCommandBuilder {
+  return default_command_builder(cmd);
+}
 
 export async function execute_add_to_bookshelf(cmd : ChatInputCommandInteraction) : Promise<void> {
   select_book_menu(cmd);
@@ -73,10 +85,3 @@ use /drop_bookshelf to completely empty your bookshelf.`
 
 }
 
-export const add_to_bookshelf_command : Command = {
-  command: CommandStringType.ADD_TO_BOOKSHELF,
-  command_type: CommandType.ADD_TO_BOOKSHELF,
-  description: "Adds a book to your bookshelf.",
-  action: execute_add_to_bookshelf,
-  requires_params : false
-}

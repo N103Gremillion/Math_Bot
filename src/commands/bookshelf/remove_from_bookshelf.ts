@@ -1,8 +1,20 @@
-import { ChatInputCommandInteraction, StringSelectMenuInteraction } from "discord.js";
-import { Command, CommandType, CommandStringType } from "../command_types";
+import { ChatInputCommandInteraction, SlashCommandBuilder, StringSelectMenuInteraction } from "discord.js";
+import { Command, CommandType, CommandStringType, default_command_builder } from "../command_types";
 import { select_bookshelf_menu } from "../selection_menus";
 import { get_user_id_from_interaction, wrap_str_in_code_block } from "../../utils/util";
 import { remove_book_from_bookshelf } from "../../tables/bookshelf";
+
+export const remove_from_bookshelf_command : Command = {
+  command: CommandStringType.REMOVE_FROM_BOOKSHELF,
+  command_type: CommandType.REMOVE_FROM_BOOKSHELF,
+  description: "remove a book from your bookshelf",
+  action: execute_remove_from_bookshelf,
+  command_builder : remove_from_bookshelf_command_builder
+}
+
+export function remove_from_bookshelf_command_builder(cmd : Command) : SlashCommandBuilder {
+  return default_command_builder(cmd);
+}
 
 export async function execute_remove_from_bookshelf(cmd : ChatInputCommandInteraction) : Promise<void> {
   select_bookshelf_menu(cmd);
@@ -33,10 +45,3 @@ Book_isbn: ${book_isbn}.`
 
 }
 
-export const remove_from_bookshelf_command : Command = {
-  command: CommandStringType.REMOVE_FROM_BOOKSHELF,
-  command_type: CommandType.REMOVE_FROM_BOOKSHELF,
-  description: "remove a book from your bookshelf",
-  action: execute_remove_from_bookshelf,
-  requires_params : false
-}
